@@ -25,12 +25,21 @@ import model.ParameterKund;
  * @author aladhari
  */
 public class JlieferDao implements JlieferDaoInterface {
+    boolean recorded= true;
+    String exception="";
 
     private final String dburlProdukt;
+
+  
 
     public JlieferDao(String dburlProdukt) {
         this.dburlProdukt = dburlProdukt;
     }
+
+    @Override
+    public String getException() {
+        return exception;
+        }
 
     @Override
     public List<String> getKundenNummers() {
@@ -121,7 +130,7 @@ public class JlieferDao implements JlieferDaoInterface {
     }
 
     @Override
-    public void updateTableGin(String kundnummer, String kdBest, String kdBesDate, String kundWunch, String erfasser, String erDatum, String kdPosActiv, List<LieferKund> lieferKunds) {
+    public boolean updateTableGin(String kundnummer, String kdBest, String kdBesDate, String kundWunch, String erfasser, String erDatum, String kdPosActiv, List<LieferKund> lieferKunds) {
        
         lieferKunds.stream().forEach((cnsmr) ->
         {
@@ -153,9 +162,11 @@ public class JlieferDao implements JlieferDaoInterface {
 
             } catch (SQLException ex) {
                 Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+                recorded= false;
+                exception=ex.getMessage();
             }
         });
-          
+        return recorded;
     }
     
    

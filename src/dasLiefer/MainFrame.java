@@ -7,11 +7,15 @@ package dasLiefer;
 
 import dao.JlieferDao;
 import dao.JlieferDaoInterface;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.HeadlessException;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,10 +29,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.InputVerifier;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
 import javax.swing.JTextField;
+import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
@@ -52,6 +62,7 @@ public class MainFrame extends javax.swing.JFrame {
     private int count, increment;
     private String suchen, ersetzen;
     private List<LieferKund> liefkunds;
+    private final JDialog dlgProgress;
     
     /**
      * Creates new form MainFrame
@@ -65,6 +76,16 @@ public class MainFrame extends javax.swing.JFrame {
         //nummers = new ArrayList<>();
         kundNummerComp = new JTextFieldAutoCompletion(jTextFieldKdNr, nummers);
         kundNummerComp.setDataCompletion(nummers);
+        dlgProgress = new JDialog(this, "Bitte warten...", true);//true means that the dialog created is modal
+        JLabel lblStatus = new JLabel("bearbeiten..."); // this is just a label in which you can indicate the state of the processing
+        JProgressBar pbProgress = new JProgressBar(0, 100);
+        pbProgress.setIndeterminate(true); //we'll use an indeterminate progress bar
+        dlgProgress.add(BorderLayout.NORTH, lblStatus);
+        dlgProgress.add(BorderLayout.CENTER, pbProgress);
+        dlgProgress.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE); // prevent the user from closing the dialog
+        dlgProgress.setSize(300, 90);
+        dlgProgress.setResizable(false);
+        dlgProgress.setLocationRelativeTo(getParent());
     }
     private void initializeDataBase() {
 
@@ -338,6 +359,59 @@ public class MainFrame extends javax.swing.JFrame {
         System.out.println(jTable.getValueAt(jTable.getSelectedRow(), 0).toString());
         //jTextFieldKdPosNr.setText(jTable.getValueAt(jTable.getSelectedRow(), 0).toString());
        
+    }
+    
+    private void insertIntoDb(){
+        
+         SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
+             boolean recorded;
+            @Override
+            protected Void doInBackground() throws Exception {
+
+                 SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+        //Date date = new Date();
+        String dateBest="1900/01/01";
+        String dateTod="1900/01/01";
+        String wunchDat="1900/01/01";
+
+        if (jXDatePickerKdBestDat.getDate() != null) {
+            dateBest = format.format(jXDatePickerKdBestDat.getDate());
+            System.out.println(dateBest);
+        }
+        if (jXDatePickerKdBestDat.getDate() != null) {
+            dateTod = format.format(jXDatePickerKdBestDat.getDate());
+        }
+        if (jXDatePickerWunch.getDate() != null) {
+            wunchDat = format.format(jXDatePickerWunch.getDate());
+        }
+                // TODO add your handling code here:
+                try {
+                        recorded=jlieferDaoInterface.updateTableGin(jTextFieldKdNr.getText(), jTextFieldKdBestNr.getText(), dateBest, wunchDat, jTextFieldErfasser.getText(), dateTod, jTextFieldKposAktiv.getText(), liefkunds);
+
+                } catch (Exception ex) {
+                    Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+                    
+                }
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                dlgProgress.dispose();//close the modal dialog
+                //JOptionPane.showMessageDialog(null, "Successeful recorded");
+                if (recorded) {
+                    JOptionPane.showMessageDialog(null, "Successeful recorded");
+                    
+                } else {
+                    JOptionPane.showMessageDialog(null,
+                            "Error when recording "+jlieferDaoInterface.getException(),
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        };
+        sw.execute();
+        dlgProgress.setVisible(true);
     }
 
     /**
@@ -1023,24 +1097,25 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void jButtonSaveInDbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveInDbActionPerformed
         // TODO add your handling code here:
-        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
-        Date date = new Date();
-        String dateBest=null;
-        String dateTod=null;
-        String wunchDat=null;
-
-        if (jXDatePickerKdBestDat.getDate() != null) {
-            dateBest = format.format(jXDatePickerKdBestDat.getDate());
-            System.out.println(dateBest);
-        }
-        if (jXDatePickerKdBestDat.getDate() != null) {
-            dateTod = format.format(jXDatePickerKdBestDat.getDate());
-        }
-        if (jXDatePickerWunch.getDate() != null) {
-            wunchDat = format.format(jXDatePickerWunch.getDate());
-        }
-
-        jlieferDaoInterface.updateTableGin(jTextFieldKdNr.getText(), jTextFieldKdBestNr.getText(), dateBest, wunchDat, jTextFieldErfasser.getText(), dateTod, jTextFieldKposAktiv.getText(), liefkunds);
+        insertIntoDb();
+//        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+//        //Date date = new Date();
+//        String dateBest="1900/01/01";
+//        String dateTod="1900/01/01";
+//        String wunchDat="1900/01/01";
+//
+//        if (jXDatePickerKdBestDat.getDate() != null) {
+//            dateBest = format.format(jXDatePickerKdBestDat.getDate());
+//            System.out.println(dateBest);
+//        }
+//        if (jXDatePickerKdBestDat.getDate() != null) {
+//            dateTod = format.format(jXDatePickerKdBestDat.getDate());
+//        }
+//        if (jXDatePickerWunch.getDate() != null) {
+//            wunchDat = format.format(jXDatePickerWunch.getDate());
+//        }
+//
+//        jlieferDaoInterface.updateTableGin(jTextFieldKdNr.getText(), jTextFieldKdBestNr.getText(), dateBest, wunchDat, jTextFieldErfasser.getText(), dateTod, jTextFieldKposAktiv.getText(), liefkunds);
     }//GEN-LAST:event_jButtonSaveInDbActionPerformed
 
     /**
