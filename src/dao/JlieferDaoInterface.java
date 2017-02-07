@@ -8,6 +8,7 @@ package dao;
 import java.sql.Date;
 import java.util.List;
 import model.LieferKund;
+import model.LieferKundPrufer;
 import model.ParameterKund;
 
 /**
@@ -17,6 +18,7 @@ import model.ParameterKund;
 public interface JlieferDaoInterface 
 {
     public List<String> getKundenNummers();
+    public List<LieferKundPrufer> getListPrugers(String datum);
     public ParameterKund getKundenParameter(String kundNummer);
     public String getLagerNr(String kdNr,String kdArtNr,String kdFarbe,String kdGroesse,String kdVariante);
     public String getException();

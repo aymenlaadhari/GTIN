@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.LieferKund;
+import model.LieferKundPrufer;
 import model.ParameterKund;
 
 /**
@@ -130,6 +131,57 @@ public class JlieferDao implements JlieferDaoInterface {
     }
 
     @Override
+    public List<LieferKundPrufer> getListPrugers(String datum) {
+        List<LieferKundPrufer> kundPrufers = new ArrayList<>();
+        String procName = "{CALL GTIN_Erfassungsdaten_pruefen ('" + datum + "')}";
+        Connection conProdukt;
+        try {
+            conProdukt = DriverManager.getConnection(dburlProdukt);
+            CallableStatement cs = conProdukt.prepareCall(procName);
+            try (ResultSet rs = cs.executeQuery()) {
+                while (rs.next()) {
+                    LieferKundPrufer liefPrufer = new LieferKundPrufer();
+                    liefPrufer.setZeile(rs.getString("Zeile"));
+                    liefPrufer.setTreffer(rs.getString("Treffer"));
+                    liefPrufer.setKundNummer(rs.getString("Kd_Nr"));
+                    liefPrufer.setBestNummer(rs.getString("Kd_Best_Nr"));
+                    liefPrufer.setKdBestDatum(rs.getString("Kd_Best_Datum"));
+                    liefPrufer.setKdWunchDatum(rs.getString("Kd_Wunsch_Datum"));
+                    liefPrufer.setErfasser(rs.getString("Erfasser"));
+                    liefPrufer.setErfassungsDatum(rs.getString("Erfassungs_Datum"));
+                    liefPrufer.setPosiNummer(rs.getString("Kd_Pos_Nr"));
+                    liefPrufer.setArtikelNummer(rs.getString("Kd_Artikel_Nr"));
+                    liefPrufer.setFarbe(rs.getString("Kd_Farbe"));
+                    liefPrufer.setGroesse(rs.getString("Kd_Groesse"));
+                    liefPrufer.setVariante(rs.getString("Kd_Variante"));
+                    liefPrufer.setMenge(rs.getString("Kd_Menge"));
+                    liefPrufer.setPreis(rs.getString("Kd_Menge"));
+                    liefPrufer.setKommission(rs.getString("Kommission"));
+                    liefPrufer.setKd_Pos_activ(rs.getString("Kd_Pos_aktiv"));
+                    liefPrufer.setStatus(rs.getString("Status"));
+                    liefPrufer.setArtikelId(rs.getString("Artikel_ID"));
+                    liefPrufer.setArtikelNummer(rs.getString("Artikel_Nr"));
+                    liefPrufer.setFarbeNummer(rs.getString("Farb_Nr"));
+                    liefPrufer.setGroesse(rs.getString("Groesse"));
+                    liefPrufer.setVarNummer(rs.getString("Var_Nummern"));
+                    liefPrufer.setGtin(rs.getString("GTIN"));
+                    liefPrufer.setZielMenge(rs.getString("Ziel_Menge"));
+                    liefPrufer.setPosGrId(rs.getString("Pos_Gr_ID"));
+                    liefPrufer.setId(rs.getString("ID"));
+                    liefPrufer.setLagerNum(rs.getString("Lager_Nr"));
+                    kundPrufers.add(liefPrufer);
+                }
+                rs.close();
+                cs.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return kundPrufers;
+    }
+
+    @Override
     public boolean updateTableGin(String kundnummer, String kdBest, String kdBesDate, String kundWunch, String erfasser, String erDatum, String kdPosActiv, List<LieferKund> lieferKunds) {
        
         lieferKunds.stream().forEach((cnsmr) ->
@@ -168,7 +220,5 @@ public class JlieferDao implements JlieferDaoInterface {
         });
         return recorded;
     }
-    
-   
 
 }
