@@ -9,18 +9,14 @@ import dao.JlieferDao;
 import dao.JlieferDaoInterface;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Desktop;
 import java.awt.HeadlessException;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -63,7 +59,6 @@ public class MainFrame extends javax.swing.JFrame {
     private String suchen, ersetzen;
     private List<LieferKund> liefkunds;
     private final JDialog dlgProgress;
-    
     /**
      * Creates new form MainFrame
      */
@@ -230,8 +225,7 @@ public class MainFrame extends javax.swing.JFrame {
 //                count = (Integer.valueOf(jTextFieldKdPosNr.getText()));
                 System.out.println("changed");
                 }
-        });
-        
+        }); 
         jTextFieldMenge.setInputVerifier(new InputVerifier() {
             @Override
             public boolean verify(JComponent jc) {
@@ -276,6 +270,9 @@ public class MainFrame extends javax.swing.JFrame {
         });
     }
     private void addToTable(LieferKund lieferKund) {
+        if (jTable.getRowCount() == 0) {
+            count = (Integer.valueOf(jTextFieldKdPosNr.getText()));
+        }
         if (!changed) {
             if ((Integer.valueOf(jTextFieldKdPosNr.getText()) % 10) == 0) {
 
@@ -360,7 +357,6 @@ public class MainFrame extends javax.swing.JFrame {
         //jTextFieldKdPosNr.setText(jTable.getValueAt(jTable.getSelectedRow(), 0).toString());
        
     }
-    
     private void insertIntoDb(){
         
          SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
@@ -413,7 +409,7 @@ public class MainFrame extends javax.swing.JFrame {
         sw.execute();
         dlgProgress.setVisible(true);
     }
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -1098,24 +1094,6 @@ public class MainFrame extends javax.swing.JFrame {
     private void jButtonSaveInDbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveInDbActionPerformed
         // TODO add your handling code here:
         insertIntoDb();
-//        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
-//        //Date date = new Date();
-//        String dateBest="1900/01/01";
-//        String dateTod="1900/01/01";
-//        String wunchDat="1900/01/01";
-//
-//        if (jXDatePickerKdBestDat.getDate() != null) {
-//            dateBest = format.format(jXDatePickerKdBestDat.getDate());
-//            System.out.println(dateBest);
-//        }
-//        if (jXDatePickerKdBestDat.getDate() != null) {
-//            dateTod = format.format(jXDatePickerKdBestDat.getDate());
-//        }
-//        if (jXDatePickerWunch.getDate() != null) {
-//            wunchDat = format.format(jXDatePickerWunch.getDate());
-//        }
-//
-//        jlieferDaoInterface.updateTableGin(jTextFieldKdNr.getText(), jTextFieldKdBestNr.getText(), dateBest, wunchDat, jTextFieldErfasser.getText(), dateTod, jTextFieldKposAktiv.getText(), liefkunds);
     }//GEN-LAST:event_jButtonSaveInDbActionPerformed
 
     /**
