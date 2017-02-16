@@ -64,7 +64,7 @@ public class MainFrame extends javax.swing.JFrame {
     private final JTextFieldAutoCompletion kundNummerComp;
     private ParameterKund parameterKund;
     private final Object[] rowDataMuster = new Object[9];
-    private final Object[] rowDataPrufung = new Object[28];
+    private final Object[] rowDataPrufung = new Object[31];
     private boolean changed=false;
     private int count, increment;
     private String suchen, ersetzen;
@@ -98,26 +98,29 @@ public class MainFrame extends javax.swing.JFrame {
         dlgProgress.setLocationRelativeTo(getParent());
         
         popupMenu = new JPopupMenu();
-        JMenuItem menuItemAdd = new JMenuItem("Add New Row");
-        JMenuItem menuItemRemove = new JMenuItem("Remove Current Row");
+        JMenuItem menuItemAdd = new JMenuItem("GTIN prüfen");
+        //JMenuItem menuItemRemove = new JMenuItem("Remove Current Row");
 
         menuItemAdd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 System.out.println(jTablePrufer.getSelectedRow());
-                JDialogGTIN dialogGTIN = new JDialogGTIN(MainFrame.this, true);
+                LieferKundPrufer kundPrufer = new LieferKundPrufer();
+                LieferKundPrufer kundPruferFamak = new LieferKundPrufer();
+                int[] rows = jTablePrufer.getSelectedRows();
+                for (int i = 0; i < rows.length; i++) {
+                    if (!liefPrufers.get(rows[i] - i).getId().equals("")) {
+                        kundPrufer = liefPrufers.get(rows[i] - i);
+                    } else {
+                        kundPruferFamak = liefPrufers.get(rows[i] - i);
+                    }
+                    System.out.println(rows[i]);
+                }
+                JDialogGTIN dialogGTIN = new JDialogGTIN(MainFrame.this, true, kundPrufer, kundPruferFamak);
                 dialogGTIN.setVisible(true);
             }
         });
-        menuItemRemove.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-            System.out.println("remove");}
-        });
-       
- 
         popupMenu.add(menuItemAdd);
-        popupMenu.add(menuItemRemove);
     }
     private void initializeDataBase() {
         dbUrl = "jdbc:sqlanywhere:uid=" + systemPropertie.getProperty("uid")
@@ -481,6 +484,9 @@ public class MainFrame extends javax.swing.JFrame {
         rowDataPrufung[25] = liefPrufer.getPosGrId();
         rowDataPrufung[26] = liefPrufer.getId();
         rowDataPrufung[27] = liefPrufer.getLagerNum();
+        rowDataPrufung[28] = liefPrufer.getGtinPreis();
+        rowDataPrufung[29] = liefPrufer.getPosGrPreis();
+        rowDataPrufung[30] = liefPrufer.getKalkPreis();
     }
      private void selectInTheTable() {
 
@@ -504,6 +510,8 @@ public class MainFrame extends javax.swing.JFrame {
             System.out.println(rows[i]);
         }
     }
+     
+     
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -819,7 +827,7 @@ public class MainFrame extends javax.swing.JFrame {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(45, 45, 45)
                         .addComponent(jTextFieldKdPosNr, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jTextFieldKdArtNr, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(50, 50, 50)
                         .addComponent(jTextFieldKdFarbe, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -860,7 +868,7 @@ public class MainFrame extends javax.swing.JFrame {
                         .addGap(112, 112, 112)
                         .addComponent(jLabel15)
                         .addGap(216, 216, 216))))
-            .addComponent(jScrollPane1)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1233, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -902,7 +910,6 @@ public class MainFrame extends javax.swing.JFrame {
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
@@ -910,8 +917,11 @@ public class MainFrame extends javax.swing.JFrame {
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(548, 548, 548)
-                        .addComponent(jButtonSaveInDb, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jButtonSaveInDb, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(36, 36, 36)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(52, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -929,17 +939,17 @@ public class MainFrame extends javax.swing.JFrame {
 
         jTablePrufer.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Zeile", "Treffer", "Kd_Nr", "Kd_Best_Nr", "Kd_Best_Datum", "Kd_Wunsch_Datum", "Erfasser", "Erfassungs_Datum#", "Kd_Pos_Nr", "Kd_Artikel_Nr", "Kd_Farbe", "Kd_Groesse", "Kd_Variante", "Kd_Menge", "Kd_Preis", "Kommission", "Kd_Pos_Aktiv", "Status", "Artikel_ID", "Artikel_Nr", "Farbe_Nr", "Groesse", "Var_Nummern", "GTIN", "Ziel_Menge", "Pos_Gr_ID", "ID", "Lager_Nr"
+                "Zeile", "Treffer", "Kd_Nr", "Kd_Best_Nr", "Kd_Best_Datum", "Kd_Wunsch_Datum", "Erfasser", "Erfassungs_Datum#", "Kd_Pos_Nr", "Kd_Artikel_Nr", "Kd_Farbe", "Kd_Groesse", "Kd_Variante", "Kd_Menge", "Kd_Preis", "Kommission", "Kd_Pos_Aktiv", "Status", "Artikel_ID", "Artikel_Nr", "Farbe_Nr", "Groesse", "Var_Nummern", "GTIN", "Ziel_Menge", "Pos_Gr_ID", "ID", "Lager_Nr", "GTIN_Preis", "Pos_Gr_Preis", "Kalk_Preis"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -1013,7 +1023,7 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(333, 333, 333)
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(363, Short.MAX_VALUE))
+                .addContainerGap(451, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1332,9 +1342,7 @@ public class MainFrame extends javax.swing.JFrame {
     private void jTablePruferMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTablePruferMouseClicked
         // TODO add your handling code here:
         if (tableModelPrufer.getRowCount()!=0) {
-            
-        //jTablePrufer.setSelectionBackground(null);
-      
+
         if (evt.getClickCount() == 2){
              JDialogKundenbestellung dialogKundenbestellung = new JDialogKundenbestellung(this, true,liefPrufers.get(jTablePrufer.getSelectedRow()), dbUrl);
              dialogKundenbestellung.setVisible(true);
@@ -1347,18 +1355,17 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void jTablePruferMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTablePruferMouseReleased
         // TODO add your handling code here:
-         int r = jTablePrufer.rowAtPoint(evt.getPoint());
-        if (r >= 0 && r < jTablePrufer.getRowCount()) {
-            jTablePrufer.setRowSelectionInterval(r, r);
-        } else {
-            jTablePrufer.clearSelection();
-        }
+//         int r = jTablePrufer.rowAtPoint(evt.getPoint());
+//        if (r >= 0 && r < jTablePrufer.getRowCount()) {
+//            jTablePrufer.setRowSelectionInterval(r, r);
+//        } else {
+//            jTablePrufer.clearSelection();
+//        }
 
         int rowindex = jTablePrufer.getSelectedRow();
         if (rowindex < 0)
             return;
         if (evt.isPopupTrigger() && evt.getComponent() instanceof JTable ) {
-            
             popupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_jTablePruferMouseReleased

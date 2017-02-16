@@ -169,6 +169,9 @@ public class JlieferDao implements JlieferDaoInterface {
                     liefPrufer.setPosGrId(rs.getString("Pos_Gr_ID"));
                     liefPrufer.setId(rs.getString("ID"));
                     liefPrufer.setLagerNum(rs.getString("Lager_Nr"));
+                    liefPrufer.setGtinPreis(rs.getString("GTIN_Preis"));
+                    liefPrufer.setPosGrPreis(rs.getString("Pos_Gr_Preis"));
+                    liefPrufer.setKalkPreis(rs.getString("kalk_Preis"));
                     kundPrufers.add(liefPrufer);
                 }
                 rs.close();

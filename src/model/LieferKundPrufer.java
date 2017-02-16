@@ -10,7 +10,7 @@ package model;
  * @author aladhari
  */
 public class LieferKundPrufer extends LieferKund{
-    private String bestNummer,zeile, treffer, kundNummer,kdBestDatum, kdWunchDatum, erfasser, erfassungsDatum, kdPosAktiv, status, artikelId, kundenArtikelNummer, farbeNummer,groesse, varNummer, gtin,zielMenge, posGrId, id, lagerNummer;
+    private String bestNummer="",zeile="", treffer="", kundNummer="",kdBestDatum="", kdWunchDatum="", erfasser="", erfassungsDatum="", kdPosAktiv="", status="", artikelId="", kundenArtikelNummer="", farbeNummer="",groesse="", varNummer="", gtin="",zielMenge="", posGrId="", id="", lagerNummer="",gtinPreis="",posGrPreis="",kalkPreis="" ;
 
     public String getZeile() {
         return zeile;
@@ -172,6 +172,30 @@ public class LieferKundPrufer extends LieferKund{
 
     public void setBestNummer(String bestNummer) {
         this.bestNummer = bestNummer;
+    }
+
+    public String getGtinPreis() {
+        return gtinPreis;
+    }
+
+    public void setGtinPreis(String gtinPreis) {
+        this.gtinPreis = gtinPreis;
+    }
+
+    public String getPosGrPreis() {
+        return posGrPreis;
+    }
+
+    public void setPosGrPreis(String posGrPreis) {
+        this.posGrPreis = posGrPreis;
+    }
+
+    public String getKalkPreis() {
+        return kalkPreis;
+    }
+
+    public void setKalkPreis(String kalkPreis) {
+        this.kalkPreis = kalkPreis;
     }
     
 }
