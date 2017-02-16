@@ -104,18 +104,23 @@ public class MainFrame extends javax.swing.JFrame {
         menuItemAdd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                System.out.println(jTablePrufer.getSelectedRow());
                 LieferKundPrufer kundPrufer = new LieferKundPrufer();
                 LieferKundPrufer kundPruferFamak = new LieferKundPrufer();
+
                 int[] rows = jTablePrufer.getSelectedRows();
-                for (int i = 0; i < rows.length; i++) {
-                    if (!liefPrufers.get(rows[i] - i).getId().equals("")) {
-                        kundPrufer = liefPrufers.get(rows[i] - i);
-                    } else {
-                        kundPruferFamak = liefPrufers.get(rows[i] - i);
-                    }
-                    System.out.println(rows[i]);
+                if (liefPrufers.get(rows[0]).getArtikelId().equals("")) {
+                    kundPruferFamak = liefPrufers.get(rows[0]);
+                } else {
+                    kundPrufer = liefPrufers.get(rows[0]);
                 }
+
+                if (liefPrufers.get(rows[1]).getArtikelId().equals("")) {
+                    kundPruferFamak = liefPrufers.get(rows[1]);
+                } else {
+                    kundPrufer = liefPrufers.get(rows[1]);
+                }
+//                kundPruferFamak = liefPrufers.get(rows[0]);
+//                kundPrufer = liefPrufers.get(rows[1]);
                 JDialogGTIN dialogGTIN = new JDialogGTIN(MainFrame.this, true, kundPrufer, kundPruferFamak);
                 dialogGTIN.setVisible(true);
             }
@@ -488,7 +493,7 @@ public class MainFrame extends javax.swing.JFrame {
         rowDataPrufung[29] = liefPrufer.getPosGrPreis();
         rowDataPrufung[30] = liefPrufer.getKalkPreis();
     }
-     private void selectInTheTable() {
+    private void selectInTheTable() {
 
         String pruf1 = jTablePrufer.getValueAt(jTablePrufer.getSelectedRow(), 0).toString();
         String pruf2 = "";
@@ -502,15 +507,14 @@ public class MainFrame extends javax.swing.JFrame {
             }
         }
 
-        int[] rows = jTablePrufer.getSelectedRows();
-        for (int i = 0; i < rows.length; i++) {
-            //Artikel artikel = selectedArtikels.get(rows[i] - i);
-            //tableModelSelectedArtikel.removeRow(rows[i] - i);
-            // selectedArtikels.remove(artikel);
-            System.out.println(rows[i]);
-        }
+//        int[] rows = jTablePrufer.getSelectedRows();
+//        for (int i = 0; i < rows.length; i++) {
+//            //Artikel artikel = selectedArtikels.get(rows[i] - i);
+//            //tableModelSelectedArtikel.removeRow(rows[i] - i);
+//            // selectedArtikels.remove(artikel);
+//            System.out.println(rows[i]);
+//        }
     }
-     
      
     /**
      * This method is called from within the constructor to initialize the form.
@@ -1361,7 +1365,6 @@ public class MainFrame extends javax.swing.JFrame {
 //        } else {
 //            jTablePrufer.clearSelection();
 //        }
-
         int rowindex = jTablePrufer.getSelectedRow();
         if (rowindex < 0)
             return;
