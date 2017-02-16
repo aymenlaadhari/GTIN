@@ -7,8 +7,6 @@ package dao;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.Date;
-
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,7 +25,9 @@ import model.ParameterKund;
  */
 public class JlieferDao implements JlieferDaoInterface {
     boolean recorded= true;
-    String exception="";
+    boolean updated=true;
+    String exceptionRecord="";
+    String exceptionUpdate="";
 
     private final String dburlProdukt;
 
@@ -39,7 +39,7 @@ public class JlieferDao implements JlieferDaoInterface {
 
     @Override
     public String getException() {
-        return exception;
+        return exceptionRecord;
         }
 
     @Override
@@ -78,27 +78,27 @@ public class JlieferDao implements JlieferDaoInterface {
             while (rs.next()) {
 
                 parameterKund.setArtikel_Nr(rs.getString("Artikel_Nr"));
-                System.out.println(rs.getString("Artikel_Nr"));
+                
                 parameterKund.setErsetzen(rs.getString("Ersetzen"));
-                System.out.println(rs.getString("Ersetzen"));
+                
                 parameterKund.setFarbe(rs.getString("Farbe"));
-                System.out.println(rs.getString("Farbe"));
+               
                 parameterKund.setGroesse(rs.getString("Groesse"));
-                System.out.println(rs.getString("Groesse"));
+                
                 parameterKund.setKd_Pos_activ(rs.getString("Kd_Pos_aktiv"));
-                System.out.println(rs.getString("Kd_Pos_aktiv"));
+                
                 parameterKund.setKommission(rs.getString("Kommission"));
-                System.out.println(rs.getString("Kommission"));
+                
                 parameterKund.setMenge(rs.getString("Menge"));
-                System.out.println(rs.getString("Menge"));
+                
                 parameterKund.setPos_Zaehler(rs.getString("Pos_Zaehler"));
-                System.out.println(rs.getString("Pos_Zaehler"));
+                
                 parameterKund.setPreis(rs.getString("Preis"));
-                System.out.println(rs.getString("Preis"));
+                
                 parameterKund.setSuchen(rs.getString("Suchen"));
-                System.out.println(rs.getString("Suchen"));
+                
                 parameterKund.setVariante(rs.getString("Variante"));
-                System.out.println(rs.getString("Variante"));
+                
                 rs.close();
                 statementPro.close();
                 conProdukt.close();
@@ -150,7 +150,7 @@ public class JlieferDao implements JlieferDaoInterface {
                     liefPrufer.setErfasser(rs.getString("Erfasser"));
                     liefPrufer.setErfassungsDatum(rs.getString("Erfassungs_Datum"));
                     liefPrufer.setPosiNummer(rs.getString("Kd_Pos_Nr"));
-                    liefPrufer.setArtikelNummer(rs.getString("Kd_Artikel_Nr"));
+                    liefPrufer.setKundenArtikelNummer(rs.getString("Kd_Artikel_Nr"));
                     liefPrufer.setFarbe(rs.getString("Kd_Farbe"));
                     liefPrufer.setGroesse(rs.getString("Kd_Groesse"));
                     liefPrufer.setVariante(rs.getString("Kd_Variante"));
@@ -160,7 +160,7 @@ public class JlieferDao implements JlieferDaoInterface {
                     liefPrufer.setKd_Pos_activ(rs.getString("Kd_Pos_aktiv"));
                     liefPrufer.setStatus(rs.getString("Status"));
                     liefPrufer.setArtikelId(rs.getString("Artikel_ID"));
-                    liefPrufer.setArtikelNummer(rs.getString("Artikel_Nr"));
+                    liefPrufer.setArtikel_Nr(rs.getString("Artikel_Nr"));
                     liefPrufer.setFarbeNummer(rs.getString("Farb_Nr"));
                     liefPrufer.setGroesse(rs.getString("Groesse"));
                     liefPrufer.setVarNummer(rs.getString("Var_Nummern"));
@@ -215,10 +215,33 @@ public class JlieferDao implements JlieferDaoInterface {
             } catch (SQLException ex) {
                 Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
                 recorded= false;
-                exception=ex.getMessage();
+                exceptionRecord=ex.getMessage();
             }
         });
         return recorded;
     }
 
+    @Override
+    public boolean updateTablePrufen(String id, String posNr, String artikelNr, String farbe, String groesse, String variante, String menge, String preis, String kommission) {
+     String procName = "{CALL GTIN_Erfassungsdaten_aendern( '" + id 
+                    + "', '" + posNr + "', '" + artikelNr + "', '" + farbe + "', '" + groesse 
+                    + "', '" + variante + "', '" + menge + "' , '" + preis 
+                    + "', '"+ kommission + "')}";
+            Connection conProdukt;
+            try {
+                conProdukt = DriverManager.getConnection(dburlProdukt);
+                try (CallableStatement cs = conProdukt.prepareCall(procName)) {
+                    
+                    cs.executeQuery();
+                    cs.close();
+                    conProdukt.close();
+                }
+
+            } catch (SQLException ex) {
+                Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+                updated= false;
+                exceptionUpdate=ex.getMessage();
+            } 
+            return updated;
+    }
 }

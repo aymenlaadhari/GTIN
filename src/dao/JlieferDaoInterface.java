@@ -23,4 +23,5 @@ public interface JlieferDaoInterface
     public String getLagerNr(String kdNr,String kdArtNr,String kdFarbe,String kdGroesse,String kdVariante);
     public String getException();
     public boolean updateTableGin(String kundnummer, String kdBest, String kdBesDate,String kundWunch, String erfasser, String erDatum,String kdPosActiv, List<LieferKund> lieferKunds);
+    public boolean updateTablePrufen(String id, String posNr, String artikelNr, String aarbe, String groesse, String variante,String menge, String preis, String kommission);
 }

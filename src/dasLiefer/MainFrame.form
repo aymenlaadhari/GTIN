@@ -586,34 +586,34 @@
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                       <Table columnCount="28" rowCount="4">
-                        <Column editable="true" title="Zeile" type="java.lang.Object"/>
-                        <Column editable="true" title="Treffer" type="java.lang.Object"/>
-                        <Column editable="true" title="Kd_Nr" type="java.lang.Object"/>
-                        <Column editable="true" title="Kd_Best_Nr" type="java.lang.Object"/>
-                        <Column editable="true" title="Kd_Best_Datum" type="java.lang.Object"/>
-                        <Column editable="true" title="Kd_Wunsch_Datum" type="java.lang.Object"/>
-                        <Column editable="true" title="Erfasser" type="java.lang.Object"/>
-                        <Column editable="true" title="Erfassungs_Datum#" type="java.lang.Object"/>
-                        <Column editable="true" title="Kd_Pos_Nr" type="java.lang.Object"/>
-                        <Column editable="true" title="Kd_Artikel_Nr" type="java.lang.Object"/>
-                        <Column editable="true" title="Kd_Farbe" type="java.lang.Object"/>
-                        <Column editable="true" title="Kd_Groesse" type="java.lang.Object"/>
-                        <Column editable="true" title="Kd_Variante" type="java.lang.Object"/>
-                        <Column editable="true" title="Kd_Menge" type="java.lang.Object"/>
-                        <Column editable="true" title="Kd_Preis" type="java.lang.Object"/>
-                        <Column editable="true" title="Kommission" type="java.lang.Object"/>
-                        <Column editable="true" title="Kd_Pos_Aktiv" type="java.lang.Object"/>
-                        <Column editable="true" title="Status" type="java.lang.Object"/>
-                        <Column editable="true" title="Artikel_ID" type="java.lang.Object"/>
-                        <Column editable="true" title="Artikel_Nr" type="java.lang.Object"/>
-                        <Column editable="true" title="Farbe_Nr" type="java.lang.Object"/>
-                        <Column editable="true" title="Groesse" type="java.lang.Object"/>
-                        <Column editable="true" title="Var_Nummern" type="java.lang.Object"/>
-                        <Column editable="true" title="GTIN" type="java.lang.Object"/>
-                        <Column editable="true" title="Ziel_Menge" type="java.lang.Object"/>
-                        <Column editable="true" title="Pos_Gr_ID" type="java.lang.Object"/>
-                        <Column editable="true" title="ID" type="java.lang.Object"/>
-                        <Column editable="true" title="Lager_Nr" type="java.lang.Object"/>
+                        <Column editable="false" title="Zeile" type="java.lang.Object"/>
+                        <Column editable="false" title="Treffer" type="java.lang.Object"/>
+                        <Column editable="false" title="Kd_Nr" type="java.lang.Object"/>
+                        <Column editable="false" title="Kd_Best_Nr" type="java.lang.Object"/>
+                        <Column editable="false" title="Kd_Best_Datum" type="java.lang.Object"/>
+                        <Column editable="false" title="Kd_Wunsch_Datum" type="java.lang.Object"/>
+                        <Column editable="false" title="Erfasser" type="java.lang.Object"/>
+                        <Column editable="false" title="Erfassungs_Datum#" type="java.lang.Object"/>
+                        <Column editable="false" title="Kd_Pos_Nr" type="java.lang.Object"/>
+                        <Column editable="false" title="Kd_Artikel_Nr" type="java.lang.Object"/>
+                        <Column editable="false" title="Kd_Farbe" type="java.lang.Object"/>
+                        <Column editable="false" title="Kd_Groesse" type="java.lang.Object"/>
+                        <Column editable="false" title="Kd_Variante" type="java.lang.Object"/>
+                        <Column editable="false" title="Kd_Menge" type="java.lang.Object"/>
+                        <Column editable="false" title="Kd_Preis" type="java.lang.Object"/>
+                        <Column editable="false" title="Kommission" type="java.lang.Object"/>
+                        <Column editable="false" title="Kd_Pos_Aktiv" type="java.lang.Object"/>
+                        <Column editable="false" title="Status" type="java.lang.Object"/>
+                        <Column editable="false" title="Artikel_ID" type="java.lang.Object"/>
+                        <Column editable="false" title="Artikel_Nr" type="java.lang.Object"/>
+                        <Column editable="false" title="Farbe_Nr" type="java.lang.Object"/>
+                        <Column editable="false" title="Groesse" type="java.lang.Object"/>
+                        <Column editable="false" title="Var_Nummern" type="java.lang.Object"/>
+                        <Column editable="false" title="GTIN" type="java.lang.Object"/>
+                        <Column editable="false" title="Ziel_Menge" type="java.lang.Object"/>
+                        <Column editable="false" title="Pos_Gr_ID" type="java.lang.Object"/>
+                        <Column editable="false" title="ID" type="java.lang.Object"/>
+                        <Column editable="false" title="Lager_Nr" type="java.lang.Object"/>
                       </Table>
                     </Property>
                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -766,6 +766,7 @@
                   </Properties>
                   <Events>
                     <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTablePruferMouseClicked"/>
+                    <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTablePruferMouseReleased"/>
                   </Events>
                 </Component>
               </SubComponents>

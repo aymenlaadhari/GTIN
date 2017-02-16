@@ -10,7 +10,7 @@ package model;
  * @author aladhari
  */
 public class LieferKundPrufer extends LieferKund{
-    private String bestNummer,zeile, treffer, kundNummer,kdBestDatum, kdWunchDatum, erfasser, erfassungsDatum, kdPosAktiv, status, artikelId, artikelNummer, farbeNummer,groesse, varNummer, gtin,zielMenge, posGrId, id, lagerNummer;
+    private String bestNummer,zeile, treffer, kundNummer,kdBestDatum, kdWunchDatum, erfasser, erfassungsDatum, kdPosAktiv, status, artikelId, kundenArtikelNummer, farbeNummer,groesse, varNummer, gtin,zielMenge, posGrId, id, lagerNummer;
 
     public String getZeile() {
         return zeile;
@@ -92,13 +92,15 @@ public class LieferKundPrufer extends LieferKund{
         this.artikelId = artikelId;
     }
 
-    public String getArtikelNummer() {
-        return artikelNummer;
+    public String getKundenArtikelNummer() {
+        return kundenArtikelNummer;
     }
 
-    public void setArtikelNummer(String artikelNummer) {
-        this.artikelNummer = artikelNummer;
+    public void setKundenArtikelNummer(String kundenArtikelNummer) {
+        this.kundenArtikelNummer = kundenArtikelNummer;
     }
+
+   
 
     public String getFarbeNummer() {
         return farbeNummer;

@@ -7,12 +7,18 @@ package dasLiefer;
 
 import dao.JlieferDao;
 import dao.JlieferDaoInterface;
+import dasLieferDialog.JDialogGTIN;
+import dasLieferDialog.JDialogKundenbestellung;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.HeadlessException;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,8 +37,11 @@ import javax.swing.InputVerifier;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
@@ -55,13 +64,15 @@ public class MainFrame extends javax.swing.JFrame {
     private final JTextFieldAutoCompletion kundNummerComp;
     private ParameterKund parameterKund;
     private final Object[] rowDataMuster = new Object[9];
-   private final Object[] rowDataPrufung = new Object[28];
+    private final Object[] rowDataPrufung = new Object[28];
     private boolean changed=false;
     private int count, increment;
     private String suchen, ersetzen;
     private List<LieferKund> liefkunds;
     private List<LieferKundPrufer> liefPrufers;
     private final JDialog dlgProgress;
+    private String dbUrl;
+    JPopupMenu popupMenu;
     /**
      * Creates new form MainFrame
      */
@@ -72,7 +83,7 @@ public class MainFrame extends javax.swing.JFrame {
         initializeDataBase();
         tableModel = (DefaultTableModel) jTable.getModel();
         tableModelPrufer = (DefaultTableModel) jTablePrufer.getModel();
-        //nummers = new ArrayList<>();
+        tableModelPrufer.setRowCount(0);
         kundNummerComp = new JTextFieldAutoCompletion(jTextFieldKdNr, nummers);
         kundNummerComp.setDataCompletion(nummers);
         dlgProgress = new JDialog(this, "Bitte warten...", true);//true means that the dialog created is modal
@@ -85,20 +96,41 @@ public class MainFrame extends javax.swing.JFrame {
         dlgProgress.setSize(300, 90);
         dlgProgress.setResizable(false);
         dlgProgress.setLocationRelativeTo(getParent());
+        
+        popupMenu = new JPopupMenu();
+        JMenuItem menuItemAdd = new JMenuItem("Add New Row");
+        JMenuItem menuItemRemove = new JMenuItem("Remove Current Row");
+
+        menuItemAdd.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                System.out.println(jTablePrufer.getSelectedRow());
+                JDialogGTIN dialogGTIN = new JDialogGTIN(MainFrame.this, true);
+                dialogGTIN.setVisible(true);
+            }
+        });
+        menuItemRemove.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+            System.out.println("remove");}
+        });
+       
+ 
+        popupMenu.add(menuItemAdd);
+        popupMenu.add(menuItemRemove);
     }
     private void initializeDataBase() {
-        String dburlProdukt = "jdbc:sqlanywhere:uid=" + systemPropertie.getProperty("uid")
+        dbUrl = "jdbc:sqlanywhere:uid=" + systemPropertie.getProperty("uid")
                 + ";pwd=" + systemPropertie.getProperty("pwd")
                 + ";eng=" + systemPropertie.getProperty("eng")
                 + ";database=" + systemPropertie.getProperty("database")
                 + ";links=" + systemPropertie.getProperty("links")
                 + "(host=" + systemPropertie.getProperty("host") + ")";
-        jlieferDaoInterface = new JlieferDao(dburlProdukt);
+        jlieferDaoInterface = new JlieferDao(dbUrl);
 
         try {
             nummers = jlieferDaoInterface.getKundenNummers();
-           
-            System.out.println("the size is: " + nummers.size());
+
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this,
@@ -151,6 +183,7 @@ public class MainFrame extends javax.swing.JFrame {
         });
         liefkunds= new ArrayList<>();
         liefPrufers = new ArrayList<>();
+        
     }
     private Properties loadPropertie(String propertieName) {
         try {
@@ -212,21 +245,21 @@ public class MainFrame extends javax.swing.JFrame {
             @Override
             public void changedUpdate(DocumentEvent de) {
                 changed=true;
-                System.out.println("changed");
+                
                }
 
             @Override
             public void insertUpdate(DocumentEvent de) {
                 changed=true;
                 count = (Integer.valueOf(jTextFieldKdPosNr.getText()));
-                System.out.println("changed");
+                
                }
 
             @Override
             public void removeUpdate(DocumentEvent de) {
 //                changed=true;
 //                count = (Integer.valueOf(jTextFieldKdPosNr.getText()));
-                System.out.println("changed");
+                
                 }
         }); 
         jTextFieldMenge.setInputVerifier(new InputVerifier() {
@@ -356,7 +389,7 @@ public class MainFrame extends javax.swing.JFrame {
         tableModel.addRow(rowDataMuster);
         jTable.setRowSelectionInterval(jTable.getRowCount() - 1, jTable.getRowCount() - 1);
         jTable.scrollRectToVisible(new Rectangle(jTable.getCellRect(jTable.getRowCount() - 1, 0, true)));
-        System.out.println(jTable.getValueAt(jTable.getSelectedRow(), 0).toString());
+        
         //jTextFieldKdPosNr.setText(jTable.getValueAt(jTable.getSelectedRow(), 0).toString());
        
     }
@@ -375,7 +408,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         if (jXDatePickerKdBestDat.getDate() != null) {
             dateBest = format.format(jXDatePickerKdBestDat.getDate());
-            System.out.println(dateBest);
+            
         }
         if (jXDatePickerKdBestDat.getDate() != null) {
             dateTod = format.format(jXDatePickerKdBestDat.getDate());
@@ -412,16 +445,13 @@ public class MainFrame extends javax.swing.JFrame {
         sw.execute();
         dlgProgress.setVisible(true);
     }
-    
-    private void populateJtablePrufung(List<LieferKundPrufer> kundPrufers)
-    {
+    private void populateJtablePrufung(List<LieferKundPrufer> kundPrufers){
         kundPrufers.stream().forEach((cnsmr)->
         {
            addToPrufungTable(cnsmr);
            tableModelPrufer.addRow(rowDataPrufung);
         });
     }
-    
     private void addToPrufungTable(LieferKundPrufer liefPrufer) {
         rowDataPrufung[0] = liefPrufer.getZeile();
         rowDataPrufung[1] = liefPrufer.getTreffer();
@@ -432,7 +462,7 @@ public class MainFrame extends javax.swing.JFrame {
         rowDataPrufung[6] = liefPrufer.getErfasser();
         rowDataPrufung[7] = liefPrufer.getErfassungsDatum();
         rowDataPrufung[8] = liefPrufer.getPosiNummer();
-        rowDataPrufung[9] = liefPrufer.getArtikelNummer();
+        rowDataPrufung[9] = liefPrufer.getKundenArtikelNummer();
         rowDataPrufung[10] = liefPrufer.getFarbe();
         rowDataPrufung[11] = liefPrufer.getGroesse();
         rowDataPrufung[12] = liefPrufer.getVariante();
@@ -442,7 +472,7 @@ public class MainFrame extends javax.swing.JFrame {
         rowDataPrufung[16] = liefPrufer.getKd_Pos_activ();
         rowDataPrufung[17] = liefPrufer.getStatus();
         rowDataPrufung[18] = liefPrufer.getArtikelId();
-        rowDataPrufung[19] = liefPrufer.getArtikelNummer();
+        rowDataPrufung[19] = liefPrufer.getArtikel_Nr();
         rowDataPrufung[20] = liefPrufer.getFarbeNummer();
         rowDataPrufung[21] = liefPrufer.getGroesse();
         rowDataPrufung[22] = liefPrufer.getVarNummer();
@@ -452,7 +482,28 @@ public class MainFrame extends javax.swing.JFrame {
         rowDataPrufung[26] = liefPrufer.getId();
         rowDataPrufung[27] = liefPrufer.getLagerNum();
     }
-    
+     private void selectInTheTable() {
+
+        String pruf1 = jTablePrufer.getValueAt(jTablePrufer.getSelectedRow(), 0).toString();
+        String pruf2 = "";
+        if (jTablePrufer.getValueAt(jTablePrufer.getSelectedRow(), 1) != null) {
+            pruf2 = jTablePrufer.getValueAt(jTablePrufer.getSelectedRow(), 1).toString();
+        }
+        for (int i = 0; i < jTablePrufer.getRowCount(); i++) {
+            if (pruf1.equals(jTablePrufer.getValueAt(i, 1)) || pruf2.equals(jTablePrufer.getValueAt(i, 0))) {
+                jTablePrufer.getSelectionModel().addSelectionInterval(i, i);
+                jTablePrufer.setSelectionBackground(Color.decode("#00AF33"));
+            }
+        }
+
+        int[] rows = jTablePrufer.getSelectedRows();
+        for (int i = 0; i < rows.length; i++) {
+            //Artikel artikel = selectedArtikels.get(rows[i] - i);
+            //tableModelSelectedArtikel.removeRow(rows[i] - i);
+            // selectedArtikels.remove(artikel);
+            System.out.println(rows[i]);
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -886,10 +937,21 @@ public class MainFrame extends javax.swing.JFrame {
             new String [] {
                 "Zeile", "Treffer", "Kd_Nr", "Kd_Best_Nr", "Kd_Best_Datum", "Kd_Wunsch_Datum", "Erfasser", "Erfassungs_Datum#", "Kd_Pos_Nr", "Kd_Artikel_Nr", "Kd_Farbe", "Kd_Groesse", "Kd_Variante", "Kd_Menge", "Kd_Preis", "Kommission", "Kd_Pos_Aktiv", "Status", "Artikel_ID", "Artikel_Nr", "Farbe_Nr", "Groesse", "Var_Nummern", "GTIN", "Ziel_Menge", "Pos_Gr_ID", "ID", "Lager_Nr"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jTablePrufer.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTablePruferMouseClicked(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                jTablePruferMouseReleased(evt);
             }
         });
         jScrollPane2.setViewportView(jTablePrufer);
@@ -1269,23 +1331,38 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void jTablePruferMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTablePruferMouseClicked
         // TODO add your handling code here:
-        jTablePrufer.setSelectionBackground(null);
-      String pruf1 = jTablePrufer.getValueAt(jTablePrufer.getSelectedRow(), 0).toString();
-      String pruf2="";
-        if (jTablePrufer.getValueAt(jTablePrufer.getSelectedRow(), 1)!= null) {
-           pruf2 = jTablePrufer.getValueAt(jTablePrufer.getSelectedRow(), 1).toString(); 
+        if (tableModelPrufer.getRowCount()!=0) {
+            
+        //jTablePrufer.setSelectionBackground(null);
+      
+        if (evt.getClickCount() == 2){
+             JDialogKundenbestellung dialogKundenbestellung = new JDialogKundenbestellung(this, true,liefPrufers.get(jTablePrufer.getSelectedRow()), dbUrl);
+             dialogKundenbestellung.setVisible(true);
+         }else if (evt.getButton() == MouseEvent.BUTTON3) {
+            System.out.println("right button");
         }
-        for (int i = 0; i < jTablePrufer.getRowCount(); i++) {
-            if (pruf1.equals(jTablePrufer.getValueAt(i, 1)) || pruf2.equals(jTablePrufer.getValueAt(i, 0))) {
-                jTablePrufer.getSelectionModel().addSelectionInterval(i, i);
-                jTablePrufer.setSelectionBackground(Color.decode("#00AF33"));
-            }
-        }
-        
-        
-        
+       selectInTheTable();
+}
     }//GEN-LAST:event_jTablePruferMouseClicked
 
+    private void jTablePruferMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTablePruferMouseReleased
+        // TODO add your handling code here:
+         int r = jTablePrufer.rowAtPoint(evt.getPoint());
+        if (r >= 0 && r < jTablePrufer.getRowCount()) {
+            jTablePrufer.setRowSelectionInterval(r, r);
+        } else {
+            jTablePrufer.clearSelection();
+        }
+
+        int rowindex = jTablePrufer.getSelectedRow();
+        if (rowindex < 0)
+            return;
+        if (evt.isPopupTrigger() && evt.getComponent() instanceof JTable ) {
+            
+            popupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+        }
+    }//GEN-LAST:event_jTablePruferMouseReleased
+   
     /**
      * @param args the command line arguments
      */
