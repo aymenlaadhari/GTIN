@@ -104,24 +104,31 @@ public class MainFrame extends javax.swing.JFrame {
         menuItemAdd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                LieferKundPrufer kundPrufer = new LieferKundPrufer();
-                LieferKundPrufer kundPruferFamak = new LieferKundPrufer();
+                LieferKundPrufer kundPrufer= new LieferKundPrufer();
+                LieferKundPrufer kundPruferFamak= new LieferKundPrufer();
 
                 int[] rows = jTablePrufer.getSelectedRows();
-                if (liefPrufers.get(rows[0]).getArtikelId().equals("")) {
+                if (liefPrufers.get(rows[0]).getPosGrId() != null) {
                     kundPruferFamak = liefPrufers.get(rows[0]);
+                   // System.out.println(rows[0] + "kund famak ok and the posGridIT is : " + kundPruferFamak.getPosGrId());
                 } else {
                     kundPrufer = liefPrufers.get(rows[0]);
+                    //System.out.println(rows[0] + "kund prufer ok and the posGridIT is : " + kundPrufer.getPosGrId());
                 }
 
-                if (liefPrufers.get(rows[1]).getArtikelId().equals("")) {
+                if (liefPrufers.get(rows[1]).getPosGrId() != null) {
                     kundPruferFamak = liefPrufers.get(rows[1]);
+                   // System.out.println(rows[1] + "kund famak ok and the posGridIT is : " + kundPruferFamak.getPosGrId());
                 } else {
                     kundPrufer = liefPrufers.get(rows[1]);
+                   // System.out.println(rows[1] + "kund prufer ok and the posGridIT is : " + kundPrufer.getPosGrId());
                 }
 //                kundPruferFamak = liefPrufers.get(rows[0]);
 //                kundPrufer = liefPrufers.get(rows[1]);
-                JDialogGTIN dialogGTIN = new JDialogGTIN(MainFrame.this, true, kundPrufer, kundPruferFamak);
+
+                String preisVariante = jlieferDaoInterface.getPreisVariante(kundPruferFamak.getPosGrId());
+                System.out.println("posGridID:"+kundPruferFamak.getPosGrId()+"and the preisVariante is: "+preisVariante);
+                JDialogGTIN dialogGTIN = new JDialogGTIN(MainFrame.this, true, kundPrufer, kundPruferFamak,preisVariante, dbUrl);
                 dialogGTIN.setVisible(true);
             }
         });

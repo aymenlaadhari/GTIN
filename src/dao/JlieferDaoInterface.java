@@ -24,4 +24,6 @@ public interface JlieferDaoInterface
     public String getException();
     public boolean updateTableGin(String kundnummer, String kdBest, String kdBesDate,String kundWunch, String erfasser, String erDatum,String kdPosActiv, List<LieferKund> lieferKunds);
     public boolean updateTablePrufen(String id, String posNr, String artikelNr, String aarbe, String groesse, String variante,String menge, String preis, String kommission);
+    public String getPreisVariante(String posGridID);
+    public String gtinStammsatzAnderung(String indicator, String ArtNr, String FarbNr,String Größe,String Varianten,String GTIN,String PosGrID);
 }

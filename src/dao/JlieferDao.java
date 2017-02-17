@@ -185,6 +185,48 @@ public class JlieferDao implements JlieferDaoInterface {
     }
 
     @Override
+    public String getPreisVariante(String posGridID) {
+    String ret = "";
+        try {
+            String proc = "SELECT GTIN_Preisermittlung_Varianten_GrPosID('" + posGridID + "')";
+            Connection conProdukt = DriverManager.getConnection(dburlProdukt);
+            Statement s = conProdukt.createStatement();
+            try (ResultSet rs = s.executeQuery(proc)) {
+                while (rs.next()) {
+                    ret = rs.getString(1);
+                }
+                rs.close();
+                s.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return ret;    
+    }
+
+    @Override
+    public String gtinStammsatzAnderung(String indicator, String ArtNr, String FarbNr, String Größe, String Varianten, String GTIN, String PosGrID) {
+     String ret = "";
+        try {
+            String proc = "SELECT GTIN_Stammsatz_anlegen_aendern ( '0', '"+ArtNr+"', '"+FarbNr+"', '"+Größe+"', '"+Varianten+"', '"+GTIN+"', '"+PosGrID+"' )";
+            Connection conProdukt = DriverManager.getConnection(dburlProdukt);
+            Statement s = conProdukt.createStatement();
+            try (ResultSet rs = s.executeQuery(proc)) {
+                while (rs.next()) {
+                    ret = rs.getString(1);
+                }
+                rs.close();
+                s.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return ret;     
+    }
+
+    @Override
     public boolean updateTableGin(String kundnummer, String kdBest, String kdBesDate, String kundWunch, String erfasser, String erDatum, String kdPosActiv, List<LieferKund> lieferKunds) {
        
         lieferKunds.stream().forEach((cnsmr) ->
@@ -239,7 +281,6 @@ public class JlieferDao implements JlieferDaoInterface {
                     cs.close();
                     conProdukt.close();
                 }
-
             } catch (SQLException ex) {
                 Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
                 updated= false;

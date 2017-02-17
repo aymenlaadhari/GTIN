@@ -5,6 +5,9 @@
  */
 package dasLieferDialog;
 
+import dao.JlieferDao;
+import dao.JlieferDaoInterface;
+import javax.swing.JOptionPane;
 import model.LieferKundPrufer;
 
 /**
@@ -12,31 +15,35 @@ import model.LieferKundPrufer;
  * @author aladhari
  */
 public class JDialogGTIN extends javax.swing.JDialog {
+    private final JlieferDaoInterface jlieferDaoInterface;
     /**
      * Creates new form JDialogGTIN
      * @param parent
      * @param modal
      * @param kundPrufer
      * @param kundPruferFamak
+     * @param preisVariante
      */
-    public JDialogGTIN(java.awt.Frame parent, boolean modal, LieferKundPrufer kundPrufer, LieferKundPrufer kundPruferFamak) {
+    public JDialogGTIN(java.awt.Frame parent, boolean modal, LieferKundPrufer kundPrufer, LieferKundPrufer kundPruferFamak, String preisVariante, String dbUrl) {
         super(parent, modal);
         initComponents();
+        jlieferDaoInterface = new JlieferDao(dbUrl);
         jLabelkundNummer.setText(kundPrufer.getKundNummer());
         jTextFieldArtikelNummer.setText(kundPrufer.getKundenArtikelNummer());
         jTextFieldFarbe.setText(kundPrufer.getFarbe());
         jTextFieldGroesse.setText(kundPrufer.getGroesse());
-        jTextFieldVariante.setText(kundPrufer.getVariante());
+        jTextFieldVariante.setText(kundPrufer.getVarNummer());
         
-        jTextFieldGTIN.setText(kundPrufer.getGtin());
+        jTextFieldGTIN.setText(kundPruferFamak.getGtin());
         jTextFieldGTIN.setEditable(false);
         
         jTextFieldFarbNum.setText(kundPruferFamak.getFarbeNummer());
-        jTextFieldPreisGrossBasis.setText(kundPrufer.getGtinPreis());
-        jTextFieldPreisVarianten.setText(kundPrufer.getPosGrPreis());
-        jTextFieldPreisGesamt.setText(kundPrufer.getPreis());
-        
-        jTextFieldPosGrID.setText(kundPrufer.getPosGrId());
+        Float varianten = Float.parseFloat(preisVariante);
+        Float grossenBasis = (Float.parseFloat(kundPruferFamak.getPosGrPreis())- varianten);
+        jTextFieldPreisGrossBasis.setText(String.format("%.2f",grossenBasis));
+        jTextFieldPreisVarianten.setText(String.format("%.2f", varianten));
+        jTextFieldPreisGesamt.setText(String.format("%.2f",Float.parseFloat(preisVariante)+grossenBasis));
+        jTextFieldPosGrID.setText(kundPruferFamak.getPosGrId());
         jTextFieldPosGrID.setEditable(false);
         
         jTextFieldArtNummerFamak.setText(kundPruferFamak.getArtikel_Nr());
@@ -276,6 +283,11 @@ public class JDialogGTIN extends javax.swing.JDialog {
         );
 
         jButton1.setText("Übernehmen");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Abbrechen");
 
@@ -317,6 +329,43 @@ public class JDialogGTIN extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextFieldPreisGesamtActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        String meldung = jlieferDaoInterface.gtinStammsatzAnderung("0", jTextFieldArtikelNummer.getText(), jTextFieldFarbNum.getText(), jTextFieldGroesse.getText(), jTextFieldVariantenFamak.getText(), jTextFieldGTIN.getText(), jTextFieldPosGrID.getText());
+        System.out.println(meldung);
+        String message="";
+        switch (meldung) {
+            case "0":  message = " keine Verarbeitung (Änderung) vorgenommen";
+            break;
+            
+            case "1":  message = "Änderung vorgenommen";
+                     break;
+   
+            case "3":  message = "GTIN fehlt";
+                     break;
+            case "4":  message = "Artikel-Nr. fehlt";
+                     break;
+            case "5":  message = "Farb-Nr. fehlt";
+                     break;
+            case "6":  message = " Groesse fehlt";
+                     break;
+            case "7":  message = "Varianten-Nummern fehlen";
+                     break;
+            case "8":  message = "Positionsgrößen-ID fehlt";
+                     break;
+            case "9":
+                message = "Artikel-Daten stimmen nicht mit Positionsgröße überein";
+                break;
+            case "11":
+                message = "GTIN ist fehlerhaft";
+                break;
+        }
+        JOptionPane.showMessageDialog(this,
+                message,
+                "Inane warning",
+                JOptionPane.WARNING_MESSAGE);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -347,7 +396,7 @@ public class JDialogGTIN extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                JDialogGTIN dialog = new JDialogGTIN(new javax.swing.JFrame(), true, new LieferKundPrufer(), new LieferKundPrufer());
+                JDialogGTIN dialog = new JDialogGTIN(new javax.swing.JFrame(), true, new LieferKundPrufer(), new LieferKundPrufer(),"","");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
