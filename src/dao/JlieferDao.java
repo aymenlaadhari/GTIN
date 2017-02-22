@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Kund;
 import model.LieferKund;
 import model.LieferKundPrufer;
 import model.ParameterKund;
@@ -30,9 +31,6 @@ public class JlieferDao implements JlieferDaoInterface {
     String exceptionUpdate="";
 
     private final String dburlProdukt;
-
-  
-
     public JlieferDao(String dburlProdukt) {
         this.dburlProdukt = dburlProdukt;
     }
@@ -131,6 +129,39 @@ public class JlieferDao implements JlieferDaoInterface {
     }
 
     @Override
+    public List<Kund> getListKundGtin(String gtin) {
+        List<Kund> kunds = new ArrayList<>();
+        String procName = "{CALL GTIN_Kunden_GTIN_Liste ('" +gtin+ "')}";
+        Connection conProdukt;
+        try {
+            conProdukt = DriverManager.getConnection(dburlProdukt);
+            CallableStatement cs = conProdukt.prepareCall(procName);
+            try (ResultSet rs = cs.executeQuery()) {
+                while (rs.next()) {
+                    Kund kund = new Kund();
+                    kund.setKdNummer(rs.getString(1));
+                    kund.setKdArtNummer(rs.getString(2));
+                    kund.setKdFarbe(rs.getString(3));
+                    kund.setKdGrosse(rs.getString(4));
+                    kund.setKdvariante(rs.getString(5));
+                    kund.setKdName(rs.getString(6));
+                    kunds.add(kund);
+                }
+                rs.close();
+                cs.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        kunds.stream().forEach(cnsmr->{
+            System.out.println(cnsmr.getKdArtNummer());
+    });
+        return kunds;
+        
+    }
+
+    @Override
     public List<LieferKundPrufer> getListPrugers(String datum) {
         List<LieferKundPrufer> kundPrufers = new ArrayList<>();
         String procName = "{CALL GTIN_Erfassungsdaten_pruefen ('" + datum + "')}";
@@ -185,6 +216,28 @@ public class JlieferDao implements JlieferDaoInterface {
     }
 
     @Override
+    public String getMeldung(String vorgangNummer, String meldungNummer) {
+        String ret = "";
+        try {
+            String proc = "CALL GTIN_Meldung('1','" + meldungNummer + "')";
+            Connection conProdukt = DriverManager.getConnection(dburlProdukt);
+            Statement s = conProdukt.createStatement();
+            try (ResultSet rs = s.executeQuery(proc)) {
+                while (rs.next()) {
+                    ret = rs.getString("Meldung_Text")+"--"+rs.getString("Vorgang_Text");
+                    System.out.println(ret);
+                }
+                rs.close();
+                s.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return ret; 
+        }
+
+    @Override
     public String getPreisVariante(String posGridID) {
     String ret = "";
         try {
@@ -206,10 +259,12 @@ public class JlieferDao implements JlieferDaoInterface {
     }
 
     @Override
-    public String gtinStammsatzAnderung(String indicator, String ArtNr, String FarbNr, String Größe, String Varianten, String GTIN, String PosGrID) {
+    public String gtinStammsatzAnderung(String indicator, String ArtNr, String FarbNr, String Gross, String Varianten, String GTIN, String PosGrID) {
      String ret = "";
         try {
-            String proc = "SELECT GTIN_Stammsatz_anlegen_aendern ( '0', '"+ArtNr+"', '"+FarbNr+"', '"+Größe+"', '"+Varianten+"', '"+GTIN+"', '"+PosGrID+"' )";
+            //String proc = "SELECT GTIN_Stammsatz_anlegen_aendern ( '0', '1701000', '13', 'EL', ';001;002;061O;072;091;111C;111D;', '', '2230531' )";
+            String proc = "SELECT GTIN_Stammsatz_anlegen_aendern ( '"+indicator+"', '"+ArtNr+"', '"+FarbNr+"', '"+Gross+"', '"+Varianten+"', '"+GTIN+"', '"+PosGrID+"' )";
+            
             Connection conProdukt = DriverManager.getConnection(dburlProdukt);
             Statement s = conProdukt.createStatement();
             try (ResultSet rs = s.executeQuery(proc)) {

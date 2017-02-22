@@ -17,6 +17,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.FileInputStream;
@@ -72,6 +73,7 @@ public class MainFrame extends javax.swing.JFrame {
     private List<LieferKundPrufer> liefPrufers;
     private final JDialog dlgProgress;
     private String dbUrl;
+    private boolean ctrlPressed;
     JPopupMenu popupMenu;
     /**
      * Creates new form MainFrame
@@ -133,6 +135,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         popupMenu.add(menuItemAdd);
+        ctrlPressed = false;
     }
     private void initializeDataBase() {
         dbUrl = "jdbc:sqlanywhere:uid=" + systemPropertie.getProperty("uid")
@@ -501,7 +504,10 @@ public class MainFrame extends javax.swing.JFrame {
         rowDataPrufung[30] = liefPrufer.getKalkPreis();
     }
     private void selectInTheTable() {
-
+   
+        if (ctrlPressed) {
+            
+        }
         String pruf1 = jTablePrufer.getValueAt(jTablePrufer.getSelectedRow(), 0).toString();
         String pruf2 = "";
         if (jTablePrufer.getValueAt(jTablePrufer.getSelectedRow(), 1) != null) {
@@ -975,6 +981,11 @@ public class MainFrame extends javax.swing.JFrame {
                 jTablePruferMouseReleased(evt);
             }
         });
+        jTablePrufer.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTablePruferKeyPressed(evt);
+            }
+        });
         jScrollPane2.setViewportView(jTablePrufer);
 
         jButtonVerarbeiten.setText("Änderungen verarbeiten");
@@ -1379,6 +1390,12 @@ public class MainFrame extends javax.swing.JFrame {
             popupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_jTablePruferMouseReleased
+
+    private void jTablePruferKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTablePruferKeyPressed
+        // TODO add your handling code here:
+       System.out.println(evt.isControlDown());
+       ctrlPressed = evt.isControlDown();
+    }//GEN-LAST:event_jTablePruferKeyPressed
    
     /**
      * @param args the command line arguments

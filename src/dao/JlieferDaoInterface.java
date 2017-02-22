@@ -7,6 +7,7 @@ package dao;
 
 import java.sql.Date;
 import java.util.List;
+import model.Kund;
 import model.LieferKund;
 import model.LieferKundPrufer;
 import model.ParameterKund;
@@ -26,4 +27,6 @@ public interface JlieferDaoInterface
     public boolean updateTablePrufen(String id, String posNr, String artikelNr, String aarbe, String groesse, String variante,String menge, String preis, String kommission);
     public String getPreisVariante(String posGridID);
     public String gtinStammsatzAnderung(String indicator, String ArtNr, String FarbNr,String Größe,String Varianten,String GTIN,String PosGrID);
+    public String getMeldung(String vorgangNummer, String meldung);
+    public List<Kund> getListKundGtin(String gtin);
 }
