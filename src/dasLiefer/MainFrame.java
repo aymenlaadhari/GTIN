@@ -75,6 +75,7 @@ public class MainFrame extends javax.swing.JFrame {
     private String dbUrl;
     private boolean ctrlPressed;
     JPopupMenu popupMenu;
+    LieferKundPrufer kundPruferFamak , kundPrufer;
     /**
      * Creates new form MainFrame
      */
@@ -106,8 +107,8 @@ public class MainFrame extends javax.swing.JFrame {
         menuItemAdd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                LieferKundPrufer kundPrufer= new LieferKundPrufer();
-                LieferKundPrufer kundPruferFamak= new LieferKundPrufer();
+                kundPrufer= new LieferKundPrufer();
+                kundPruferFamak= new LieferKundPrufer();
 
                 int[] rows = jTablePrufer.getSelectedRows();
                 if (liefPrufers.get(rows[0]).getPosGrId() != null) {
@@ -504,10 +505,7 @@ public class MainFrame extends javax.swing.JFrame {
         rowDataPrufung[30] = liefPrufer.getKalkPreis();
     }
     private void selectInTheTable() {
-   
-        if (ctrlPressed) {
-            
-        }
+
         String pruf1 = jTablePrufer.getValueAt(jTablePrufer.getSelectedRow(), 0).toString();
         String pruf2 = "";
         if (jTablePrufer.getValueAt(jTablePrufer.getSelectedRow(), 1) != null) {
@@ -519,6 +517,28 @@ public class MainFrame extends javax.swing.JFrame {
                 jTablePrufer.setSelectionBackground(Color.decode("#00AF33"));
             }
         }
+        
+        if (ctrlPressed) {
+            
+            int[] rows = jTablePrufer.getSelectedRows();
+            int posfamak= rows[0];
+                if (liefPrufers.get(rows[0]).getPosGrId() != null) {
+                    kundPruferFamak = liefPrufers.get(rows[0]);
+                    posfamak = rows[0];
+                   // System.out.println(rows[0] + "kund famak ok and the posGridIT is : " + kundPruferFamak.getPosGrId());
+                }
+
+                if (liefPrufers.get(rows[1]).getPosGrId() != null) {
+                    kundPruferFamak = liefPrufers.get(rows[1]);
+                    posfamak = rows[1];
+                   // System.out.println(rows[1] + "kund famak ok and the posGridIT is : " + kundPruferFamak.getPosGrId());
+                }
+                
+                jTablePrufer.setRowSelectionInterval(posfamak, posfamak);
+                
+                ctrlPressed= false;
+            
+        }
 
 //        int[] rows = jTablePrufer.getSelectedRows();
 //        for (int i = 0; i < rows.length; i++) {
@@ -528,7 +548,7 @@ public class MainFrame extends javax.swing.JFrame {
 //            System.out.println(rows[i]);
 //        }
     }
-     
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -1395,6 +1415,7 @@ public class MainFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
        System.out.println(evt.isControlDown());
        ctrlPressed = evt.isControlDown();
+       
     }//GEN-LAST:event_jTablePruferKeyPressed
    
     /**
