@@ -36,6 +36,29 @@ public class JlieferDao implements JlieferDaoInterface {
     }
 
     @Override
+    public String anlegenAndern(String indicator, String kundNummer, String kundfarbe, String kundGroesse, String variante, String gtin, String posGrId, String grundPreis, String varPreis) {
+    String ret = "";
+        try {
+            //String proc = "SELECT GTIN_Stammsatz_anlegen_aendern ( '0', '1701000', '13', 'EL', ';001;002;061O;072;091;111C;111D;', '', '2230531' )";
+            String proc = "SELECT GTIN_Kunde_KdArtNr_anlegen_aendern( '"+indicator+"', '"+kundNummer+"', '"+kundfarbe+"', '"+kundGroesse+"', '"+variante+"', '"+gtin+"', '"+posGrId+"', '"+grundPreis+"', '"+varPreis+"' )";
+            
+            Connection conProdukt = DriverManager.getConnection(dburlProdukt);
+            Statement s = conProdukt.createStatement();
+            try (ResultSet rs = s.executeQuery(proc)) {
+                while (rs.next()) {
+                    ret = rs.getString(1);
+                }
+                rs.close();
+                s.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return ret;     
+    }
+
+    @Override
     public String getException() {
         return exceptionRecord;
         }

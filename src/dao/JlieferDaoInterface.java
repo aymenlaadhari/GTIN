@@ -27,6 +27,7 @@ public interface JlieferDaoInterface
     public boolean updateTablePrufen(String id, String posNr, String artikelNr, String aarbe, String groesse, String variante,String menge, String preis, String kommission);
     public String getPreisVariante(String posGridID);
     public String gtinStammsatzAnderung(String indicator, String ArtNr, String FarbNr,String Größe,String Varianten,String GTIN,String PosGrID);
+    public String anlegenAndern(String indicator, String kundNummer,String kundfarbe, String kundGroesse, String variante, String gtin,String posGrId, String grundPreis, String varPreis );
     public String getMeldung(String vorgangNummer, String meldung);
     public List<Kund> getListKundGtin(String gtin);
 }

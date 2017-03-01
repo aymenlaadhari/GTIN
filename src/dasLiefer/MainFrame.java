@@ -17,8 +17,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -130,7 +128,7 @@ public class MainFrame extends javax.swing.JFrame {
 //                kundPrufer = liefPrufers.get(rows[1]);
 
                 String preisVariante = jlieferDaoInterface.getPreisVariante(kundPruferFamak.getPosGrId());
-                System.out.println("posGridID:"+kundPruferFamak.getPosGrId()+"and the preisVariante is: "+preisVariante);
+                //System.out.println("posGridID:"+kundPruferFamak.getPosGrId()+"and the preisVariante is: "+preisVariante);
                 JDialogGTIN dialogGTIN = new JDialogGTIN(MainFrame.this, true, kundPrufer, kundPruferFamak,preisVariante, dbUrl);
                 dialogGTIN.setVisible(true);
             }
@@ -518,27 +516,27 @@ public class MainFrame extends javax.swing.JFrame {
             }
         }
         
-        if (ctrlPressed) {
-            
-            int[] rows = jTablePrufer.getSelectedRows();
-            int posfamak= rows[0];
-                if (liefPrufers.get(rows[0]).getPosGrId() != null) {
-                    kundPruferFamak = liefPrufers.get(rows[0]);
-                    posfamak = rows[0];
-                   // System.out.println(rows[0] + "kund famak ok and the posGridIT is : " + kundPruferFamak.getPosGrId());
-                }
-
-                if (liefPrufers.get(rows[1]).getPosGrId() != null) {
-                    kundPruferFamak = liefPrufers.get(rows[1]);
-                    posfamak = rows[1];
-                   // System.out.println(rows[1] + "kund famak ok and the posGridIT is : " + kundPruferFamak.getPosGrId());
-                }
-                
-                jTablePrufer.setRowSelectionInterval(posfamak, posfamak);
-                
-                ctrlPressed= false;
-            
-        }
+//        if (ctrlPressed) {
+//            
+//            int[] rows = jTablePrufer.getSelectedRows();
+//            int posfamak= rows[0];
+//                if (liefPrufers.get(rows[0]).getPosGrId() != null) {
+//                    kundPruferFamak = liefPrufers.get(rows[0]);
+//                    posfamak = rows[0];
+//                   // System.out.println(rows[0] + "kund famak ok and the posGridIT is : " + kundPruferFamak.getPosGrId());
+//                }
+//
+//                if (liefPrufers.get(rows[1]).getPosGrId() != null) {
+//                    kundPruferFamak = liefPrufers.get(rows[1]);
+//                    posfamak = rows[1];
+//                   // System.out.println(rows[1] + "kund famak ok and the posGridIT is : " + kundPruferFamak.getPosGrId());
+//                }
+//                
+//                jTablePrufer.setRowSelectionInterval(posfamak, posfamak);
+//                
+//                ctrlPressed= false;
+//            
+//        }
 
 //        int[] rows = jTablePrufer.getSelectedRows();
 //        for (int i = 0; i < rows.length; i++) {
@@ -548,7 +546,6 @@ public class MainFrame extends javax.swing.JFrame {
 //            System.out.println(rows[i]);
 //        }
     }
-    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

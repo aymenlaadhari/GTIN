@@ -7,7 +7,6 @@ package dasLieferDialog;
 
 import dao.JlieferDao;
 import dao.JlieferDaoInterface;
-import dasLiefer.MainFrame;
 import java.awt.event.KeyEvent;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -358,8 +357,9 @@ public class JDialogGTIN extends javax.swing.JDialog {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         String meldung = jlieferDaoInterface.gtinStammsatzAnderung("0", jTextFieldArtNummerFamak.getText(), jTextFieldFarbNum.getText(), jTextFieldGroesseFamak.getText(), jTextFieldVariantenFamak.getText(), jTextFieldGTIN.getText(), jTextFieldPosGrID.getText());
-
+        String meldung2;
         String message = jlieferDaoInterface.getMeldung("1", meldung);
+        String message2;
         String[] parts = message.split("--");
         String part1 = parts[0]; // 004
         String part2 = parts[1]; // 034556
@@ -370,12 +370,41 @@ public class JDialogGTIN extends javax.swing.JDialog {
             JDialogGTINAndern dialogGTINAndern = new JDialogGTINAndern(this, kunds, part1, dbUrl, kundPruferFamak);
             dialogGTINAndern.setVisible(true);
 
-        } else {
+        } else if (((meldung.equals("0")|| meldung.equals("1")) && !kundPruferFamak.getGtin().equals("")) || meldung.length()>4) {
+            String gtinParam;
+            if (meldung.length()>4) {
+               gtinParam = meldung; 
+            }else
+            {
+               gtinParam = kundPruferFamak.getGtin(); 
+            }
+              meldung2 = jlieferDaoInterface.anlegenAndern("0", kundPrufer.getKundNummer(), kundPrufer.getFarbe(), kundPrufer.getGroesse(), kundPrufer.getVariante(), gtinParam, kundPruferFamak.getPosGrId(), jTextFieldPreisGrossBasis.getText(), jTextFieldPreisVarianten.getText());
+        message2 = jlieferDaoInterface.getMeldung("1", meldung2);
+        String[] parts2 = message2.split("--");
+        String part1_1 = parts2[0]; // 004
+        String part2_1 = parts2[1]; // 034556
+            if (part1_1.contains("30")) {
+                JDialogKundenArtikelDatenAndern artikelDatenAndern = new JDialogKundenArtikelDatenAndern(this, true);
+                artikelDatenAndern.setVisible(true);
+            }else if (part1_1.contains("38")) {
+                
+                System.out.println("yes no dialog");
+            } else
+            {
+                JOptionPane.showMessageDialog(null,
+                    part1_1,
+                    part2_1,
+                    JOptionPane.WARNING_MESSAGE);
+            }
+        
+        }else {
             JOptionPane.showMessageDialog(null,
                     part1,
                     part2,
                     JOptionPane.WARNING_MESSAGE);
         }
+        
+        
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jTextFieldPreisGrossBasisKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldPreisGrossBasisKeyPressed

@@ -10,6 +10,7 @@ import dao.JlieferDaoInterface;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import model.Kund;
 import model.LieferKund;
@@ -141,7 +142,15 @@ public class JDialogGTINAndern extends javax.swing.JDialog {
     private void jButtonJaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonJaActionPerformed
         // TODO add your handling code here:
         String meldung = daoInterface.gtinStammsatzAnderung("1", kundPrufer.getArtikel_Nr(), kundPrufer.getFarbeNummer(), kundPrufer.getGroesse(), kundPrufer.getVarNummer(), kundPrufer.getGtin(), kundPrufer.getPosGrId());
-        System.out.println(meldung);
+        String message = daoInterface.getMeldung("1", meldung);
+        String[] parts = message.split("--");
+        String part1 = parts[0]; // 004
+        String part2 = parts[1]; // 034556
+        JOptionPane.showMessageDialog(null,
+                    part1,
+                    part2,
+                    JOptionPane.WARNING_MESSAGE);
+        
     }//GEN-LAST:event_jButtonJaActionPerformed
 
     /**
