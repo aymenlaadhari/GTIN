@@ -36,11 +36,11 @@ public class JlieferDao implements JlieferDaoInterface {
     }
 
     @Override
-    public String anlegenAndern(String indicator, String kundNummer, String kundfarbe, String kundGroesse, String variante, String gtin, String posGrId, String grundPreis, String varPreis) {
+    public String anlegenAndern(String indicator, String kundNummer, String kundArtNummer, String kundfarbe, String kundGroesse, String variante, String gtin, String posGrId, String grundPreis, String varPreis) {
     String ret = "";
         try {
             //String proc = "SELECT GTIN_Stammsatz_anlegen_aendern ( '0', '1701000', '13', 'EL', ';001;002;061O;072;091;111C;111D;', '', '2230531' )";
-            String proc = "SELECT GTIN_Kunde_KdArtNr_anlegen_aendern( '"+indicator+"', '"+kundNummer+"', '"+kundfarbe+"', '"+kundGroesse+"', '"+variante+"', '"+gtin+"', '"+posGrId+"', '"+grundPreis+"', '"+varPreis+"' )";
+            String proc = "SELECT GTIN_Kunde_KdArtNr_anlegen_aendern( '"+indicator+"', '"+kundNummer+"', '"+kundArtNummer+"', '"+kundfarbe+"', '"+kundGroesse+"', '"+variante+"', '"+gtin+"', '"+posGrId+"', '"+grundPreis+"', '"+varPreis+"' )";
             
             Connection conProdukt = DriverManager.getConnection(dburlProdukt);
             Statement s = conProdukt.createStatement();
@@ -177,15 +177,15 @@ public class JlieferDao implements JlieferDaoInterface {
         } catch (SQLException ex) {
             Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
         }
-        kunds.stream().forEach(cnsmr->{
-            System.out.println(cnsmr.getKdArtNummer());
-    });
+//        kunds.stream().forEach(cnsmr->{
+//            System.out.println(cnsmr.getKdArtNummer());
+//    });
         return kunds;
         
     }
 
     @Override
-    public List<LieferKundPrufer> getListPrugers(String datum) {
+    public List<LieferKundPrufer> getListPrufers(String datum) {
         List<LieferKundPrufer> kundPrufers = new ArrayList<>();
         String procName = "{CALL GTIN_Erfassungsdaten_pruefen ('" + datum + "')}";
         Connection conProdukt;
@@ -195,37 +195,45 @@ public class JlieferDao implements JlieferDaoInterface {
             try (ResultSet rs = cs.executeQuery()) {
                 while (rs.next()) {
                     LieferKundPrufer liefPrufer = new LieferKundPrufer();
-                    liefPrufer.setZeile(rs.getString("Zeile"));
-                    liefPrufer.setTreffer(rs.getString("Treffer"));
-                    liefPrufer.setKundNummer(rs.getString("Kd_Nr"));
-                    liefPrufer.setBestNummer(rs.getString("Kd_Best_Nr"));
-                    liefPrufer.setKdBestDatum(rs.getString("Kd_Best_Datum"));
-                    liefPrufer.setKdWunchDatum(rs.getString("Kd_Wunsch_Datum"));
-                    liefPrufer.setErfasser(rs.getString("Erfasser"));
-                    liefPrufer.setErfassungsDatum(rs.getString("Erfassungs_Datum"));
-                    liefPrufer.setPosiNummer(rs.getString("Kd_Pos_Nr"));
-                    liefPrufer.setKundenArtikelNummer(rs.getString("Kd_Artikel_Nr"));
-                    liefPrufer.setFarbe(rs.getString("Kd_Farbe"));
-                    liefPrufer.setGroesse(rs.getString("Kd_Groesse"));
-                    liefPrufer.setVariante(rs.getString("Kd_Variante"));
-                    liefPrufer.setMenge(rs.getString("Kd_Menge"));
-                    liefPrufer.setPreis(rs.getString("Kd_Menge"));
-                    liefPrufer.setKommission(rs.getString("Kommission"));
-                    liefPrufer.setKd_Pos_activ(rs.getString("Kd_Pos_aktiv"));
-                    liefPrufer.setStatus(rs.getString("Status"));
-                    liefPrufer.setArtikelId(rs.getString("Artikel_ID"));
-                    liefPrufer.setArtikel_Nr(rs.getString("Artikel_Nr"));
-                    liefPrufer.setFarbeNummer(rs.getString("Farb_Nr"));
-                    liefPrufer.setGroesse(rs.getString("Groesse"));
-                    liefPrufer.setVarNummer(rs.getString("Var_Nummern"));
-                    liefPrufer.setGtin(rs.getString("GTIN"));
-                    liefPrufer.setZielMenge(rs.getString("Ziel_Menge"));
-                    liefPrufer.setPosGrId(rs.getString("Pos_Gr_ID"));
-                    liefPrufer.setId(rs.getString("ID"));
-                    liefPrufer.setLagerNum(rs.getString("Lager_Nr"));
-                    liefPrufer.setGtinPreis(rs.getString("GTIN_Preis"));
-                    liefPrufer.setPosGrPreis(rs.getString("Pos_Gr_Preis"));
-                    liefPrufer.setKalkPreis(rs.getString("kalk_Preis"));
+                    
+//                     if (rs.wasNull()) {
+//                        System.out.println("was NULL");
+//                    } else {
+//                        System.out.println("not NULL");
+//                    }
+//                     String handel = rs.getString("Erfasser") != null ? rs.getString("Erfasser") : "-1";
+//                     System.out.println(handel);
+                    liefPrufer.setZeile(rs.getString("Zeile") != null ? rs.getString("Zeile") : "");
+                    liefPrufer.setTreffer(rs.getString("Treffer") != null ? rs.getString("Treffer") : "");
+                    liefPrufer.setKundNummer(rs.getString("Kd_Nr") != null ? rs.getString("Kd_Nr") : "");
+                    liefPrufer.setBestNummer(rs.getString("Kd_Best_Nr") != null ? rs.getString("Kd_Best_Nr") : "");
+                    liefPrufer.setKdBestDatum(rs.getString("Kd_Best_Datum") != null ? rs.getString("Kd_Best_Datum") : "");
+                    liefPrufer.setKdWunchDatum(rs.getString("Kd_Wunsch_Datum") != null ? rs.getString("Kd_Wunsch_Datum") : "");
+                    liefPrufer.setErfasser(rs.getString("Erfasser") != null ? rs.getString("Erfasser") : "");
+                    liefPrufer.setErfassungsDatum(rs.getString("Erfassungs_Datum") != null ? rs.getString("Erfassungs_Datum") : "");
+                    liefPrufer.setPosiNummer(rs.getString("Kd_Pos_Nr") != null ? rs.getString("Kd_Pos_Nr") : "");
+                    liefPrufer.setKundenArtikelNummer(rs.getString("Kd_Artikel_Nr") != null ? rs.getString("Kd_Artikel_Nr") : "");
+                    liefPrufer.setFarbe(rs.getString("Kd_Farbe") != null ? rs.getString("Kd_Farbe") : "");
+                    liefPrufer.setGroesse(rs.getString("Kd_Groesse") != null ? rs.getString("Kd_Groesse") : "");
+                    liefPrufer.setVariante(rs.getString("Kd_Variante") != null ? rs.getString("Kd_Variante") : "");
+                    liefPrufer.setMenge(rs.getString("Kd_Menge") != null ? rs.getString("Kd_Menge") : "");
+                    liefPrufer.setPreis(rs.getString("Kd_Preis") != null ? rs.getString("Kd_Preis") : "");
+                    liefPrufer.setKommission(rs.getString("Kommission") != null ? rs.getString("Kommission") : "");
+                    liefPrufer.setKd_Pos_activ(rs.getString("Kd_Pos_aktiv") != null ? rs.getString("Kd_Pos_aktiv") : "");
+                    liefPrufer.setStatus(rs.getString("Status") != null ? rs.getString("Status") : "");
+                    liefPrufer.setArtikelId(rs.getString("Artikel_ID") != null ? rs.getString("Artikel_ID") : "");
+                    liefPrufer.setArtikel_Nr(rs.getString("Artikel_Nr") != null ? rs.getString("Artikel_Nr") : "");
+                    liefPrufer.setFarbeNummer(rs.getString("Farb_Nr") != null ? rs.getString("Farb_Nr") : "");
+                    liefPrufer.setGroesse(rs.getString("Groesse") != null ? rs.getString("Groesse") : "");
+                    liefPrufer.setVarNummer(rs.getString("Var_Nummern") != null ? rs.getString("Var_Nummern") : "");
+                    liefPrufer.setGtin(rs.getString("GTIN") != null ? rs.getString("GTIN") : "");
+                    liefPrufer.setZielMenge(rs.getString("Ziel_Menge") != null ? rs.getString("Ziel_Menge") : "");
+                    liefPrufer.setPosGrId(rs.getString("Pos_Gr_ID") != null ? rs.getString("Pos_Gr_ID") : "");
+                    liefPrufer.setId(rs.getString("ID") != null ? rs.getString("ID") : "");
+                    liefPrufer.setLagerNum(rs.getString("Lager_Nr") != null ? rs.getString("Lager_Nr") : "");
+                    liefPrufer.setGtinPreis(rs.getString("GTIN_Preis") != null ? rs.getString("GTIN_Preis") : "");
+                    liefPrufer.setPosGrPreis(rs.getString("Pos_Gr_Preis") != null ? rs.getString("Pos_Gr_Preis") : "");
+                    liefPrufer.setKalkPreis(rs.getString("kalk_Preis") != null ? rs.getString("kalk_Preis") : "");
                     kundPrufers.add(liefPrufer);
                 }
                 rs.close();
@@ -242,13 +250,13 @@ public class JlieferDao implements JlieferDaoInterface {
     public String getMeldung(String vorgangNummer, String meldungNummer) {
         String ret = "";
         try {
-            String proc = "CALL GTIN_Meldung('1','" + meldungNummer + "')";
+            String proc = "CALL GTIN_Meldung('" + vorgangNummer + "','" + meldungNummer + "')";
             Connection conProdukt = DriverManager.getConnection(dburlProdukt);
             Statement s = conProdukt.createStatement();
             try (ResultSet rs = s.executeQuery(proc)) {
                 while (rs.next()) {
                     ret = rs.getString("Meldung_Text")+"--"+rs.getString("Vorgang_Text");
-                    System.out.println(ret);
+                    
                 }
                 rs.close();
                 s.close();

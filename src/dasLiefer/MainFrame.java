@@ -109,7 +109,7 @@ public class MainFrame extends javax.swing.JFrame {
                 kundPruferFamak= new LieferKundPrufer();
 
                 int[] rows = jTablePrufer.getSelectedRows();
-                if (liefPrufers.get(rows[0]).getPosGrId() != null) {
+                if (!"".equals(liefPrufers.get(rows[0]).getPosGrId())) {
                     kundPruferFamak = liefPrufers.get(rows[0]);
                    // System.out.println(rows[0] + "kund famak ok and the posGridIT is : " + kundPruferFamak.getPosGrId());
                 } else {
@@ -117,7 +117,7 @@ public class MainFrame extends javax.swing.JFrame {
                     //System.out.println(rows[0] + "kund prufer ok and the posGridIT is : " + kundPrufer.getPosGrId());
                 }
 
-                if (liefPrufers.get(rows[1]).getPosGrId() != null) {
+                if (!"".equals(liefPrufers.get(rows[1]).getPosGrId())) {
                     kundPruferFamak = liefPrufers.get(rows[1]);
                    // System.out.println(rows[1] + "kund famak ok and the posGridIT is : " + kundPruferFamak.getPosGrId());
                 } else {
@@ -129,6 +129,7 @@ public class MainFrame extends javax.swing.JFrame {
 
                 String preisVariante = jlieferDaoInterface.getPreisVariante(kundPruferFamak.getPosGrId());
                 //System.out.println("posGridID:"+kundPruferFamak.getPosGrId()+"and the preisVariante is: "+preisVariante);
+                //System.out.println("1"+"/"+kundPrufer.getKundenArtikelNummer()+"/"+ kundPrufer.getFarbeNummer()+"/"+kundPrufer.getGroesse()+"/"+kundPrufer.getVarNummer()+"/"+kundPrufer.getGtin()+"/"+kundPrufer.getPosGrId());
                 JDialogGTIN dialogGTIN = new JDialogGTIN(MainFrame.this, true, kundPrufer, kundPruferFamak,preisVariante, dbUrl);
                 dialogGTIN.setVisible(true);
             }
@@ -1367,7 +1368,7 @@ public class MainFrame extends javax.swing.JFrame {
         tableModelPrufer.setRowCount(0);
         SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
         try {
-            liefPrufers = jlieferDaoInterface.getListPrugers(format.format(jXDatePickerBisDatum.getDate()));
+            liefPrufers = jlieferDaoInterface.getListPrufers(format.format(jXDatePickerBisDatum.getDate()));
         } catch (Exception e) {
              JOptionPane.showMessageDialog(null,
                             "Error getting DATA  "+jlieferDaoInterface.getException()+","+e.getMessage(),
@@ -1386,7 +1387,7 @@ public class MainFrame extends javax.swing.JFrame {
              JDialogKundenbestellung dialogKundenbestellung = new JDialogKundenbestellung(this, true,liefPrufers.get(jTablePrufer.getSelectedRow()), dbUrl);
              dialogKundenbestellung.setVisible(true);
          }else if (evt.getButton() == MouseEvent.BUTTON3) {
-            System.out.println("right button");
+            //System.out.println("right button");
         }
        selectInTheTable();
 }
@@ -1410,7 +1411,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void jTablePruferKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTablePruferKeyPressed
         // TODO add your handling code here:
-       System.out.println(evt.isControlDown());
+       //System.out.println(evt.isControlDown());
        ctrlPressed = evt.isControlDown();
        
     }//GEN-LAST:event_jTablePruferKeyPressed

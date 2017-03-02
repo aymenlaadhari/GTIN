@@ -26,7 +26,8 @@ public class JDialogGTINAndern extends javax.swing.JDialog {
     private final DefaultTableModel tableModel;
     private final Object[] rowData = new Object[6];
     private final JlieferDaoInterface daoInterface;
-    private LieferKundPrufer kundPrufer;
+    private final LieferKundPrufer kundPruferFamamk, kundPrufer;
+    String preisGrossBasis, preisVarianten;
 
     /**
      * Creates new form JDialogGTINAndern
@@ -35,15 +36,21 @@ public class JDialogGTINAndern extends javax.swing.JDialog {
      * @param kunds
      * @param dbUrl
      * @param kundPruferFamamk
+     * @param kundPrufer
+     * @param preisGrossBasis
+     * @param preisVarianten
 
      */
-    public JDialogGTINAndern(javax.swing.JDialog parent,List<Kund> kunds, String meldung, String dbUrl, LieferKundPrufer kundPruferFamamk) {
+    public JDialogGTINAndern(javax.swing.JDialog parent,List<Kund> kunds, String meldung, String dbUrl, LieferKundPrufer kundPruferFamamk, LieferKundPrufer kundPrufer, String preisGrossBasis, String preisVarianten) {
         super(parent);
         initComponents();
         tableModel = (DefaultTableModel) jTableKd.getModel();
         tableModel.setRowCount(0);
         this.kunds = kunds;
-        this.kundPrufer = kundPruferFamamk;
+        this.kundPruferFamamk = kundPruferFamamk;
+        this.kundPrufer = kundPrufer;
+        this.preisGrossBasis = preisGrossBasis.replace(",", ".");
+        this.preisVarianten = preisVarianten.replace(",", ".");
         jLabelMeldung.setText(meldung);
         populateJtable(kunds);
         daoInterface = new JlieferDao(dbUrl);
@@ -141,15 +148,70 @@ public class JDialogGTINAndern extends javax.swing.JDialog {
 
     private void jButtonJaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonJaActionPerformed
         // TODO add your handling code here:
-        String meldung = daoInterface.gtinStammsatzAnderung("1", kundPrufer.getArtikel_Nr(), kundPrufer.getFarbeNummer(), kundPrufer.getGroesse(), kundPrufer.getVarNummer(), kundPrufer.getGtin(), kundPrufer.getPosGrId());
+        //System.out.println("1"+"/"+kundPrufer.kundPrufer.getArtikel_Nr()+"/"+ kundPrufer.getFarbeNummer()+"/"+kundPrufer.getGroesse()+"/"+kundPrufer.getVarNummer()+"/"+kundPrufer.getGtin()+"/"+kundPrufer.getPosGrId());
+        String meldung = daoInterface.gtinStammsatzAnderung("1", kundPruferFamamk.getArtikel_Nr(), kundPruferFamamk.getFarbeNummer(), kundPruferFamamk.getGroesse(), kundPruferFamamk.getVarNummer(), kundPruferFamamk.getGtin(), kundPruferFamamk.getPosGrId());
+        System.out.println("meldung: "+meldung);
+        String meldung2;
         String message = daoInterface.getMeldung("1", meldung);
-        String[] parts = message.split("--");
+        String message2;
+       
+        
+         if (((meldung.equals("0")|| meldung.equals("1")) && !kundPruferFamamk.getGtin().equals("")) || meldung.length()>4) {
+            String gtinParam;
+            if (meldung.length()>4) {
+               gtinParam = meldung; 
+            }else
+            {
+               gtinParam = kundPruferFamamk.getGtin(); 
+            }
+        meldung2 = daoInterface.anlegenAndern("0", kundPrufer.getKundNummer(),kundPrufer.getKundenArtikelNummer(), kundPrufer.getFarbe(), kundPrufer.getGroesse(), kundPrufer.getVariante(), gtinParam, kundPruferFamamk.getPosGrId(), preisGrossBasis, preisVarianten);
+        message2 = daoInterface.getMeldung("2", meldung2);
+             System.out.println("meldung2:" +meldung2);
+             System.out.println("message2:"+message2);
+        String[] parts2 = message2.split("--");
+        String part1_1 = parts2[0]; // 004
+        String part2_1 = parts2[1]; // 034556
+            if (part1_1.contains("30")) {
+                JDialogKundenArtikelDatenAndern artikelDatenAndern = new JDialogKundenArtikelDatenAndern(this, true);
+                artikelDatenAndern.setVisible(true);
+            }else if (part1_1.contains("38")) {
+                
+                int reply = JOptionPane.showConfirmDialog(null, "Der Preis ist 0,00.\n"
+                        + "Soll der Artikel wirklich so angelegt werden?", "Actung", JOptionPane.YES_NO_OPTION);
+                if (reply == JOptionPane.YES_OPTION)
+                {
+                   String meldung3 = daoInterface.anlegenAndern("1", kundPrufer.getKundNummer(),kundPrufer.getKundenArtikelNummer(), kundPrufer.getFarbe(), kundPrufer.getGroesse(), kundPrufer.getVariante(), gtinParam, kundPruferFamamk.getPosGrId(), preisGrossBasis, preisVarianten);
+                   String message3 = daoInterface.getMeldung("2", meldung3);
+                   System.out.println("meldung2:" +meldung2);
+                   System.out.println("message2:"+message2);
+                   String[] parts3 = message3.split("--");
+                   String part1_3 = parts3[0]; // 004
+                   String part2_3 = parts3[1]; // 034556
+                   JOptionPane.showMessageDialog(null,
+                    part1_3,
+                    part2_3,
+                    JOptionPane.WARNING_MESSAGE);
+                }
+                
+            } else
+            {
+                JOptionPane.showMessageDialog(null,
+                    part1_1,
+                    part2_1,
+                    JOptionPane.WARNING_MESSAGE);
+            }
+        
+        } else
+         {
+             String[] parts = message.split("--");
         String part1 = parts[0]; // 004
         String part2 = parts[1]; // 034556
         JOptionPane.showMessageDialog(null,
                     part1,
                     part2,
                     JOptionPane.WARNING_MESSAGE);
+         }
+              
         
     }//GEN-LAST:event_jButtonJaActionPerformed
 
@@ -183,7 +245,7 @@ public class JDialogGTINAndern extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                JDialogGTINAndern dialog = new JDialogGTINAndern(new JDialog(),new ArrayList<>(),"","",new LieferKundPrufer());
+                JDialogGTINAndern dialog = new JDialogGTINAndern(new JDialog(),new ArrayList<>(),"","",new LieferKundPrufer(),new LieferKundPrufer(),"","");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
