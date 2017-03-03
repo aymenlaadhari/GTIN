@@ -30,4 +30,5 @@ public interface JlieferDaoInterface
     public String anlegenAndern(String indicator, String kundNummer, String kundArtNummer,String kundfarbe, String kundGroesse, String variante, String gtin,String posGrId, String grundPreis, String varPreis );
     public String getMeldung(String vorgangNummer, String meldung);
     public List<Kund> getListKundGtin(String gtin);
-}
+    public List<LieferKundPrufer> getListGtinAnderung(String KdNr,String KdArtNr,String KdFarbe,String KdGroße,String KdVariante,String GTIN);
+   }

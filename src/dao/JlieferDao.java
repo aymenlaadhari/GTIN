@@ -35,6 +35,8 @@ public class JlieferDao implements JlieferDaoInterface {
         this.dburlProdukt = dburlProdukt;
     }
 
+   
+
     @Override
     public String anlegenAndern(String indicator, String kundNummer, String kundArtNummer, String kundfarbe, String kundGroesse, String variante, String gtin, String posGrId, String grundPreis, String varPreis) {
     String ret = "";
@@ -149,6 +151,40 @@ public class JlieferDao implements JlieferDaoInterface {
             Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         return ret;
+    }
+
+    @Override
+    public List<LieferKundPrufer> getListGtinAnderung(String KdNr, String KdArtNr, String KdFarbe, String KdGroße, String KdVariante, String GTIN) {
+    List<LieferKundPrufer> listGtinAnderung = new ArrayList<>();
+        String procName = "{CALL GTIN_Kunde_KdArtNr_Liste ('" + KdNr + "','" + KdArtNr + "','" + KdFarbe + "','" + KdGroße + "','" + KdVariante + "','" + GTIN + "')}";
+        Connection conProdukt;
+        try {
+            conProdukt = DriverManager.getConnection(dburlProdukt);
+            CallableStatement cs = conProdukt.prepareCall(procName);
+            try (ResultSet rs = cs.executeQuery()) {
+                while (rs.next()) {
+                    LieferKundPrufer kund = new LieferKundPrufer();
+                    
+                    kund.setKundenArtikelNummer(rs.getString(2));
+                    kund.setFarbeNummer(rs.getString(3));
+                    kund.setGroesse(rs.getString(4));
+                    kund.setVarNummer(rs.getString(5));
+                    kund.setGtin(rs.getString(1));
+                    listGtinAnderung.add(kund);
+                    
+                }
+                rs.close();
+                cs.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+//        kunds.stream().forEach(cnsmr->{
+//            System.out.println(cnsmr.getKdArtNummer());
+//    });
+        return listGtinAnderung;
+        
     }
 
     @Override

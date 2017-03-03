@@ -5,22 +5,70 @@
  */
 package dasLieferDialog;
 
+import dao.JlieferDao;
+import dao.JlieferDaoInterface;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import model.LieferKundPrufer;
 
 /**
  *
  * @author aladhari
  */
 public class JDialogKundenArtikelDatenAndern extends javax.swing.JDialog {
+    private List<LieferKundPrufer> listGtinAnderung;
+    private final DefaultTableModel tableModel;
+    private final Object[] rowData = new Object[5];
+    private final JlieferDaoInterface daoInterface;
+    private final LieferKundPrufer kundPruferFamamk, kundPrufer;
+    private String preisGrossBasis, preisVarianten, gtinParam;
 
     /**
      * Creates new form JDialogKundenArtikelDatenAndern
      * @param parent
      * @param modal
+     * @param listGtinAnderung
+     * @param kundPruferFamamk
+     * @param kundPrufer
+     * @param dbUrl
+     * @param gtinParam
+     * @param preisGrossBasis
+     * @param preisVarianten
      */
-    public JDialogKundenArtikelDatenAndern(javax.swing.JDialog parent, boolean modal) {
+    public JDialogKundenArtikelDatenAndern(javax.swing.JDialog parent, boolean modal, List<LieferKundPrufer> listGtinAnderung,LieferKundPrufer kundPruferFamamk, LieferKundPrufer kundPrufer,String dbUrl, String gtinParam,String preisGrossBasis,String preisVarianten) {
         super(parent, modal);
         initComponents();
+        this.listGtinAnderung = listGtinAnderung;
+        tableModel = (DefaultTableModel) jTable1.getModel();
+        tableModel.setRowCount(0);
+        populateTable(listGtinAnderung);
+        daoInterface = new JlieferDao(dbUrl);
+        this.kundPrufer = kundPrufer;
+        this.kundPruferFamamk = kundPruferFamamk;
+        this.gtinParam = gtinParam;
+        this.preisGrossBasis = preisGrossBasis;
+        this.preisVarianten = preisVarianten;
+        
+    }
+    
+    private void populateTable(List<LieferKundPrufer> listGtinAnderung)
+    {
+        listGtinAnderung.stream().forEach(cnsmr ->
+        {
+            addRow(cnsmr);
+        });
+    }
+    
+    private void addRow(LieferKundPrufer kundPrufer) {
+        rowData[0] = kundPrufer.getGtin();
+        rowData[1] = kundPrufer.getKundenArtikelNummer();
+        rowData[2] = kundPrufer.getFarbe();
+        rowData[3] = kundPrufer.getGroesse();
+        rowData[4] = kundPrufer.getVarNummer();
+        tableModel.addRow(rowData);
     }
 
     /**
@@ -53,6 +101,11 @@ public class JDialogKundenArtikelDatenAndern extends javax.swing.JDialog {
         jScrollPane1.setViewportView(jTable1);
 
         jButton1.setText("JA");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("NEIN");
 
@@ -82,6 +135,23 @@ public class JDialogKundenArtikelDatenAndern extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        System.out.println("1"+"/"+kundPrufer.getKundNummer()+"/"+ kundPrufer.getKundenArtikelNummer()+"/"+kundPrufer.getFarbe()+"/"+kundPrufer.getGroesse()+"/"+kundPrufer.getVariante()+"/"+gtinParam+"/"+kundPruferFamamk.getPosGrId()+"/"+preisGrossBasis+"/"+preisVarianten);
+       
+        String meldung3 = daoInterface.anlegenAndern("1", kundPrufer.getKundNummer(),kundPrufer.getKundenArtikelNummer(), kundPrufer.getFarbe(), kundPrufer.getGroesse(), kundPrufer.getVariante(), gtinParam, kundPruferFamamk.getPosGrId(), preisGrossBasis, preisVarianten);
+        System.out.println(meldung3);
+        String message3 = daoInterface.getMeldung("2", meldung3);
+        System.out.println(message3);
+        String[] parts3 = message3.split("--");
+                   String part1_3 = parts3[0]; // 004
+                   String part2_3 = parts3[1]; // 034556
+                   JOptionPane.showMessageDialog(null,
+                    part1_3,
+                    part2_3,
+                    JOptionPane.WARNING_MESSAGE);
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -113,7 +183,7 @@ public class JDialogKundenArtikelDatenAndern extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                JDialogKundenArtikelDatenAndern dialog = new JDialogKundenArtikelDatenAndern(new JDialog(), true);
+                JDialogKundenArtikelDatenAndern dialog = new JDialogKundenArtikelDatenAndern(new JDialog(), true, new ArrayList<>(),new LieferKundPrufer(), new LieferKundPrufer(),"", "","","");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
