@@ -100,7 +100,7 @@ public class MainFrame extends javax.swing.JFrame {
         
         popupMenu = new JPopupMenu();
         JMenuItem menuItemAdd = new JMenuItem("GTIN prüfen");
-        //JMenuItem menuItemRemove = new JMenuItem("Remove Current Row");
+        //JMenuItem menuItemRemove = new JMenuItem("Remove Current Row");  
 
         menuItemAdd.addActionListener(new ActionListener() {
             @Override
