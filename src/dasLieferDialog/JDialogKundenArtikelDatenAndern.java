@@ -24,7 +24,7 @@ public class JDialogKundenArtikelDatenAndern extends javax.swing.JDialog {
     private final Object[] rowData = new Object[5];
     private final JlieferDaoInterface daoInterface;
     private final LieferKundPrufer kundPruferFamamk, kundPrufer;
-    private String preisGrossBasis, preisVarianten, gtinParam;
+    private String preisGrossBasis, preisVarianten, gtinParam, meldung;
 
     /**
      * Creates new form JDialogKundenArtikelDatenAndern
@@ -49,8 +49,8 @@ public class JDialogKundenArtikelDatenAndern extends javax.swing.JDialog {
         this.kundPrufer = kundPrufer;
         this.kundPruferFamamk = kundPruferFamamk;
         this.gtinParam = gtinParam;
-        this.preisGrossBasis = preisGrossBasis;
-        this.preisVarianten = preisVarianten;
+        this.preisGrossBasis = preisGrossBasis.replace(",", ".");
+        this.preisVarianten = preisVarianten.replace(",", ".");
         
     }
     
@@ -65,10 +65,14 @@ public class JDialogKundenArtikelDatenAndern extends javax.swing.JDialog {
     private void addRow(LieferKundPrufer kundPrufer) {
         rowData[0] = kundPrufer.getGtin();
         rowData[1] = kundPrufer.getKundenArtikelNummer();
-        rowData[2] = kundPrufer.getFarbe();
+        rowData[2] = kundPrufer.getFarbeNummer();
         rowData[3] = kundPrufer.getGroesse();
         rowData[4] = kundPrufer.getVarNummer();
         tableModel.addRow(rowData);
+    }
+
+    public String getMeldung() {
+        return meldung;
     }
 
     /**
@@ -86,6 +90,7 @@ public class JDialogKundenArtikelDatenAndern extends javax.swing.JDialog {
         jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Kunden-Artikel-daten ändern");
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -143,19 +148,20 @@ public class JDialogKundenArtikelDatenAndern extends javax.swing.JDialog {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        System.out.println("1"+"/"+kundPrufer.getKundNummer()+"/"+ kundPrufer.getKundenArtikelNummer()+"/"+kundPrufer.getFarbe()+"/"+kundPrufer.getGroesse()+"/"+kundPrufer.getVariante()+"/"+gtinParam+"/"+kundPruferFamamk.getPosGrId()+"/"+preisGrossBasis+"/"+preisVarianten);
-       
-        String meldung3 = daoInterface.anlegenAndern("1", kundPrufer.getKundNummer(),kundPrufer.getKundenArtikelNummer(), kundPrufer.getFarbe(), kundPrufer.getGroesse(), kundPrufer.getVariante(), gtinParam, kundPruferFamamk.getPosGrId(), preisGrossBasis, preisVarianten);
-        System.out.println(meldung3);
-        String message3 = daoInterface.getMeldung("2", meldung3);
-        System.out.println(message3);
-        String[] parts3 = message3.split("--");
+        //System.out.println("1"+"/"+kundPrufer.getKundNummer()+"/"+ kundPrufer.getKundenArtikelNummer()+"/"+kundPrufer.getFarbe()+"/"+kundPrufer.getGroesse()+"/"+kundPrufer.getVariante()+"/"+gtinParam+"/"+kundPruferFamamk.getPosGrId()+"/"+preisGrossBasis+"/"+preisVarianten);
+        System.out.println("kundprufer : "+kundPrufer.getGroesse()+"-"+kundPrufer.getFarbe()+""+kundPrufer.getVariante());
+        meldung = daoInterface.anlegenAndern("1", kundPrufer.getKundNummer(),kundPrufer.getKundenArtikelNummer(), kundPrufer.getFarbe(), kundPrufer.getGroesse(), kundPrufer.getVariante(), gtinParam, kundPruferFamamk.getPosGrId(), preisGrossBasis, preisVarianten);
+        System.out.println("melung in KundenArtikelDaten: "+meldung);
+        String message = daoInterface.getMeldung("2", meldung);
+        System.out.println("message in KundenArtikelDaten: "+message);
+        String[] parts3 = message.split("--");
                    String part1_3 = parts3[0]; // 004
                    String part2_3 = parts3[1]; // 034556
                    JOptionPane.showMessageDialog(null,
                     part1_3,
                     part2_3,
                     JOptionPane.WARNING_MESSAGE);
+                   dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
