@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Faktor;
 import model.Kund;
 import model.LieferKund;
 import model.LieferKundPrufer;
@@ -151,6 +152,37 @@ public class JlieferDao implements JlieferDaoInterface {
             Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         return ret;
+    }
+
+    @Override
+    public List<Faktor> getListFaktor(String kundNummer, String artNummer) {
+        List<Faktor> listfaktor = new ArrayList<>();
+        String procName = "{CALL GTIN_ME_Faktor_Liste ('" + kundNummer + "','" + artNummer + "')}";
+        Connection conProdukt;
+        try {
+            conProdukt = DriverManager.getConnection(dburlProdukt);
+            CallableStatement cs = conProdukt.prepareCall(procName);
+            try (ResultSet rs = cs.executeQuery()) {
+                while (rs.next()) {
+                    Faktor faktor = new Faktor();
+                    if (kundNummer.equals("000000")) {
+                        faktor.setMe(rs.getString(1));
+                    } else {
+                        faktor.setZehler(rs.getString(1));
+                        faktor.setMe(rs.getString(2));
+                        faktor.setRunde(rs.getString(3));
+                        faktor.setNks(rs.getString(4));
+                    }
+                    listfaktor.add(faktor);
+                }
+                rs.close();
+                cs.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return listfaktor;
     }
 
     @Override

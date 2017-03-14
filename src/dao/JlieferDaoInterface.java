@@ -7,6 +7,7 @@ package dao;
 
 import java.sql.Date;
 import java.util.List;
+import model.Faktor;
 import model.Kund;
 import model.LieferKund;
 import model.LieferKundPrufer;
@@ -31,4 +32,5 @@ public interface JlieferDaoInterface
     public String getMeldung(String vorgangNummer, String meldung);
     public List<Kund> getListKundGtin(String gtin);
     public List<LieferKundPrufer> getListGtinAnderung(String KdNr,String KdArtNr,String KdFarbe,String KdGroße,String KdVariante,String GTIN);
+    public List<Faktor> getListFaktor(String kundNummer, String artNummer);
    }
