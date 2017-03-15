@@ -10,6 +10,8 @@ import dao.JlieferDaoInterface;
 import java.awt.event.KeyEvent;
 import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import model.Faktor;
 import model.Kund;
 import model.LieferKundPrufer;
 
@@ -19,9 +21,12 @@ import model.LieferKundPrufer;
  */
 public class JDialogGTIN extends javax.swing.JDialog {
     private final JlieferDaoInterface jlieferDaoInterface;
+    private final DefaultTableModel tableModel;
     private final String dbUrl;
     private final LieferKundPrufer kundPrufer,kundPruferFamak;
     private Float varianten, grossenBasis;
+    private final Object[] rowData = new Object[5];
+    private final List<Faktor> faktors;
     /**
      * Creates new form JDialogGTIN
      * @param parent
@@ -62,8 +67,32 @@ public class JDialogGTIN extends javax.swing.JDialog {
         jTextFieldArtNummerFamak.setText(kundPruferFamak.getArtikel_Nr());
         jTextFieldGroesseFamak.setText(kundPruferFamak.getGroesse());
         jTextFieldVariantenFamak.setText(kundPruferFamak.getVarNummer());
+        
+        tableModel = (DefaultTableModel) jTableFaktor.getModel();
+        tableModel.setRowCount(0);
+        
+        faktors = jlieferDaoInterface.getListFaktor(kundPrufer.getKundNummer(), kundPruferFamak.getArtikel_Nr());
+        String menge = jlieferDaoInterface.getListFaktor("000000", kundPruferFamak.getArtikel_Nr()).get(0).getMe();
+        
+        addToTable(faktors.get(0));
+        jTextFieldDastex.setText(menge);
+        
     }
 
+    private void addToTable(Faktor faktor){
+        rowData[0] = faktor.getZehler();
+        rowData[1] = faktor.getMe();
+        rowData[2] = faktor.getFaktor();
+        rowData[3] = faktor.getRunde();
+        rowData[4] = faktor.getNks();
+        tableModel.addRow(rowData);
+    }
+    
+//    private void populateJtable(List<Faktor> faktors){
+//        faktors.stream().forEach(cnsmr ->{
+//            addToTable(cnsmr);
+//        });
+//    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -112,7 +141,7 @@ public class JDialogGTIN extends javax.swing.JDialog {
         jTextFieldDastex = new javax.swing.JTextField();
         jLabel18 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jTableFaktor = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -333,15 +362,28 @@ public class JDialogGTIN extends javax.swing.JDialog {
 
         jLabel18.setText("KUNDE");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jTableFaktor.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null}
+                {null, null, null, null, null}
             },
             new String [] {
-                "Z", "ME", "FAKTOR", "NKS"
+                "Z", "ME", "FAKTOR", "RUNDE", "NKS"
             }
-        ));
-        jScrollPane1.setViewportView(jTable1);
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTableFaktor.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableFaktorMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(jTableFaktor);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -361,7 +403,6 @@ public class JDialogGTIN extends javax.swing.JDialog {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel18)
                         .addGap(119, 119, 119))))
         );
@@ -374,9 +415,11 @@ public class JDialogGTIN extends javax.swing.JDialog {
                     .addComponent(jLabel18))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextFieldDastex, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jTextFieldDastex, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 28, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -384,23 +427,21 @@ public class JDialogGTIN extends javax.swing.JDialog {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jPanelKundenAnlegen, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(16, 16, 16))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())))
-            .addGroup(layout.createSequentialGroup()
                 .addGap(85, 85, 85)
                 .addComponent(jButton1)
                 .addGap(32, 32, 32)
                 .addComponent(jButton2)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanelKundenAnlegen, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -525,7 +566,7 @@ public class JDialogGTIN extends javax.swing.JDialog {
                    kundPrufer.setFarbe(jTextFieldFarbe.getText());
                    kundPrufer.setGroesse(jTextFieldGroesse.getText());
                    kundPrufer.setVarNummer(jTextFieldVariante.getText());
-                    List<LieferKundPrufer> listGtinAnderung = jlieferDaoInterface.getListGtinAnderung(kundPrufer.getKundNummer(), kundPrufer.getKundenArtikelNummer(), jTextFieldFarbe.getText(), jTextFieldGroesse.getText(), kundPrufer.getVariante(), gtinParam);
+                    List<LieferKundPrufer> listGtinAnderung = jlieferDaoInterface.getListGtinAnderung(kundPrufer.getKundNummer(), kundPrufer.getKundenArtikelNummer(), jTextFieldFarbe.getText(), jTextFieldGroesse.getText(), kundPrufer.getVariante(), gtinParam, jTextFieldPreisGrossBasis.getText(), jTextFieldPreisVarianten.getText());
                    
                     JDialogKundenArtikelDatenAndern artikelDatenAndern = new JDialogKundenArtikelDatenAndern(this, true, listGtinAnderung, kundPruferFamak, kundPrufer, this.dbUrl, gtinParam, jTextFieldPreisGrossBasis.getText(), jTextFieldPreisVarianten.getText());
                     artikelDatenAndern.setVisible(true);
@@ -582,6 +623,14 @@ public class JDialogGTIN extends javax.swing.JDialog {
         dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    private void jTableFaktorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableFaktorMouseClicked
+        // TODO add your handling code here:
+        if (evt.getClickCount() == 2){
+            JDialogListFaktor dialogListFaktor = new JDialogListFaktor(this, true, faktors);
+            dialogListFaktor.setVisible(true);
+        }
+    }//GEN-LAST:event_jTableFaktorMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -611,6 +660,7 @@ public class JDialogGTIN extends javax.swing.JDialog {
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 JDialogGTIN dialog = new JDialogGTIN(new javax.swing.JFrame(), true, new LieferKundPrufer(), new LieferKundPrufer(),"","");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -650,7 +700,7 @@ public class JDialogGTIN extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanelKundenAnlegen;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTableFaktor;
     private javax.swing.JTextField jTextFieldArtNummerFamak;
     private javax.swing.JTextField jTextFieldArtikelNummer;
     private javax.swing.JTextField jTextFieldDastex;

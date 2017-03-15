@@ -186,9 +186,9 @@ public class JlieferDao implements JlieferDaoInterface {
     }
 
     @Override
-    public List<LieferKundPrufer> getListGtinAnderung(String KdNr, String KdArtNr, String KdFarbe, String KdGroße, String KdVariante, String GTIN) {
+    public List<LieferKundPrufer> getListGtinAnderung(String KdNr, String KdArtNr, String KdFarbe, String KdGroße, String KdVariante, String GTIN, String grundPreis,String varPreis) {
     List<LieferKundPrufer> listGtinAnderung = new ArrayList<>();
-        String procName = "{CALL GTIN_Kunde_KdArtNr_Liste ('" + KdNr + "','" + KdArtNr + "','" + KdFarbe + "','" + KdGroße + "','" + KdVariante + "','" + GTIN + "')}";
+        String procName = "{CALL GTIN_Kunde_KdArtNr_Liste ('" + KdNr + "','" + KdArtNr + "','" + KdFarbe + "','" + KdGroße + "','" + KdVariante + "','" + GTIN + "','" + grundPreis + "','" + varPreis + "')}";
         Connection conProdukt;
         try {
             conProdukt = DriverManager.getConnection(dburlProdukt);
