@@ -168,10 +168,12 @@ public class JlieferDao implements JlieferDaoInterface {
                     if (kundNummer.equals("000000")) {
                         faktor.setMe(rs.getString(1));
                     } else {
-                        faktor.setZehler(rs.getString(1));
-                        faktor.setMe(rs.getString(2));
-                        faktor.setRunde(rs.getString(3));
-                        faktor.setNks(rs.getString(4));
+                        faktor.setZehler(rs.getString(1) != null ? rs.getString(1) : "");
+                        faktor.setMe(rs.getString(2) != null ? rs.getString(2) : "");
+                        faktor.setFaktor(rs.getString(3) != null ? rs.getString(3) : "");
+                        faktor.setRunde(rs.getString(4) != null ? rs.getString(4) : "");
+                        faktor.setNks(rs.getString(5) != null ? rs.getString(5) : "");
+                      
                     }
                     listfaktor.add(faktor);
                 }
@@ -378,6 +380,29 @@ public class JlieferDao implements JlieferDaoInterface {
             Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         return ret;     
+    }
+
+    @Override
+    public String updateFaktor(String indice, String KdNr, String ArtikelNr, String Faktor, String runden, String NKS) {
+      String ret = "";
+        try {
+            //String proc = "SELECT GTIN_Stammsatz_anlegen_aendern ( '0', '1701000', '13', 'EL', ';001;002;061O;072;091;111C;111D;', '', '2230531' )";
+            String proc = "SELECT GTIN_ME_Faktor_anlegen_aendern( '"+indice+"', '"+KdNr+"', '"+ArtikelNr+"', '"+Faktor+"', '"+runden+"', '"+NKS+"')";
+           
+            Connection conProdukt = DriverManager.getConnection(dburlProdukt);
+            Statement s = conProdukt.createStatement();
+            try (ResultSet rs = s.executeQuery(proc)) {
+                while (rs.next()) {
+                    ret = rs.getString(1);
+                }
+                rs.close();
+                s.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return ret;   
     }
 
     @Override

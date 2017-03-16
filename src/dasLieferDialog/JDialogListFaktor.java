@@ -5,11 +5,17 @@
  */
 package dasLieferDialog;
 
+import dao.JlieferDao;
+import dao.JlieferDaoInterface;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.AbstractAction;
 import javax.swing.JDialog;
 import javax.swing.table.DefaultTableModel;
 import model.Faktor;
+import util.TableCellListener;
 
 /**
  *
@@ -17,24 +23,65 @@ import model.Faktor;
  */
 public class JDialogListFaktor extends javax.swing.JDialog {
 
-   
-private final DefaultTableModel tableModel;
-private final Object[] rowData = new Object[5];
+    private final String dbUrl ;
+    private String meldung5;
+   // private final JlieferDaoInterface jlieferDaoInterface;
+    private final DefaultTableModel tableModel;
+    private final Object[] rowData = new Object[5];
+    //private final TableCellListener tclFaktor;
+    private Faktor selectedFaktor;
+    private List<Faktor> faktorsGlobal;
+
     /**
      * Creates new form JDialogListFaktor
+     *
      * @param parent
      * @param modal
      * @param faktors
+     * @param dbUrl
+     * @param kdNummer
+     * @param artNummer
      */
-    public JDialogListFaktor(javax.swing.JDialog parent, boolean modal,List<Faktor> faktors) {
+    public JDialogListFaktor(javax.swing.JDialog parent, boolean modal, List<Faktor> faktors, String dbUrl, String kdNummer, String artNummer) {
         super(parent, modal);
         initComponents();
+        this.dbUrl = dbUrl;
         tableModel = (DefaultTableModel) jTableFaktor.getModel();
         tableModel.setRowCount(0);
-        populateJtable(faktors);
+        this.faktorsGlobal = faktors;
+        populateJtable(faktorsGlobal);
+//        jlieferDaoInterface = new JlieferDao(dbUrl);
+//        tclFaktor = new TableCellListener(jTableFaktor, new AbstractAction() {
+//            @Override
+//            public void actionPerformed(ActionEvent ae) {
+//                switch (tclFaktor.getColumn()) {
+//                    case 2:
+//                        faktorsGlobal.get(tclFaktor.getRow()).setFaktor(tclFaktor.getNewValue().toString());
+//
+//                        break;
+//
+//                    case 3:
+//                        faktorsGlobal.get(tclFaktor.getRow()).setRunde(tclFaktor.getNewValue().toString());
+//
+//                        break;
+//                        
+//                    case 4:
+//                        faktorsGlobal.get(tclFaktor.getRow()).setNks(tclFaktor.getNewValue().toString());
+//
+//                        break;
+//                }
+//                jTableFaktor.setSelectionBackground(Color.decode("#ffb3b3"));
+//                
+//                meldung5 = jlieferDaoInterface.updateFaktor("0", kdNummer, artNummer, faktorsGlobal.get(tclFaktor.getRow()).getFaktor(), faktorsGlobal.get(tclFaktor.getRow()).getRunde(), faktorsGlobal.get(tclFaktor.getRow()).getNks());
+//                System.out.println("meldung5: "+meldung5);
+//                String message = jlieferDaoInterface.getMeldung("5", meldung5);
+//                System.out.println("message: "+message);
+//            }
+//        });
+//        
     }
-    
-    private void addToTable(Faktor faktor){
+
+    private void addToTable(Faktor faktor) {
         rowData[0] = faktor.getZehler();
         rowData[1] = faktor.getMe();
         rowData[2] = faktor.getFaktor();
@@ -42,12 +89,32 @@ private final Object[] rowData = new Object[5];
         rowData[4] = faktor.getNks();
         tableModel.addRow(rowData);
     }
-    
-    private void populateJtable(List<Faktor> faktors){
-        faktors.stream().forEach(cnsmr ->{
+
+    private void populateJtable(List<Faktor> faktors) {
+        faktors.stream().forEach(cnsmr -> {
             addToTable(cnsmr);
         });
     }
+
+    public List<Faktor> getFaktorsGlobal() {
+        return faktorsGlobal;
+    }
+
+    public void setFaktorsGlobal(List<Faktor> faktorsGlobal) {
+        this.faktorsGlobal = faktorsGlobal;
+    }
+
+//    private void initialiseSelectedFaktor(int position) {
+//        selectFaktor = faktorsGlobal.get(position);
+//    }
+
+    public Faktor getSelectedFaktor() {
+        return selectedFaktor;
+    }
+
+   
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -84,6 +151,11 @@ private final Object[] rowData = new Object[5];
                 return canEdit [columnIndex];
             }
         });
+        jTableFaktor.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableFaktorMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTableFaktor);
 
         jLabel1.setText("MENGENHEIT KUNDE");
@@ -115,6 +187,14 @@ private final Object[] rowData = new Object[5];
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jTableFaktorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableFaktorMouseClicked
+        // TODO add your handling code here:
+        if (evt.getClickCount() == 2){
+            selectedFaktor = faktorsGlobal.get(jTableFaktor.getSelectedRow());
+            dispose();
+        }
+    }//GEN-LAST:event_jTableFaktorMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -145,7 +225,7 @@ private final Object[] rowData = new Object[5];
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                JDialogListFaktor dialog = new JDialogListFaktor(new JDialog(), true,new ArrayList<>());
+                JDialogListFaktor dialog = new JDialogListFaktor(new JDialog(), true, new ArrayList<>(),"","","");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

@@ -27,6 +27,7 @@ public class JDialogGTIN extends javax.swing.JDialog {
     private Float varianten, grossenBasis;
     private final Object[] rowData = new Object[5];
     private final List<Faktor> faktors;
+    private Faktor localfaktor;
     /**
      * Creates new form JDialogGTIN
      * @param parent
@@ -72,9 +73,10 @@ public class JDialogGTIN extends javax.swing.JDialog {
         tableModel.setRowCount(0);
         
         faktors = jlieferDaoInterface.getListFaktor(kundPrufer.getKundNummer(), kundPruferFamak.getArtikel_Nr());
+        localfaktor = faktors.get(0);
         String menge = jlieferDaoInterface.getListFaktor("000000", kundPruferFamak.getArtikel_Nr()).get(0).getMe();
         
-        addToTable(faktors.get(0));
+        addToTable(localfaktor);
         jTextFieldDastex.setText(menge);
         
     }
@@ -88,11 +90,10 @@ public class JDialogGTIN extends javax.swing.JDialog {
         tableModel.addRow(rowData);
     }
     
-//    private void populateJtable(List<Faktor> faktors){
-//        faktors.stream().forEach(cnsmr ->{
-//            addToTable(cnsmr);
-//        });
-//    }
+    private void populateJtable(Faktor faktor){
+        tableModel.setRowCount(0);
+        addToTable(faktor);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -360,6 +361,8 @@ public class JDialogGTIN extends javax.swing.JDialog {
 
         jLabel17.setText("DASTEX");
 
+        jTextFieldDastex.setEditable(false);
+
         jLabel18.setText("KUNDE");
 
         jTableFaktor.setModel(new javax.swing.table.DefaultTableModel(
@@ -433,15 +436,11 @@ public class JDialogGTIN extends javax.swing.JDialog {
                 .addComponent(jButton2)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanelKundenAnlegen, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanelKundenAnlegen, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -626,8 +625,31 @@ public class JDialogGTIN extends javax.swing.JDialog {
     private void jTableFaktorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableFaktorMouseClicked
         // TODO add your handling code here:
         if (evt.getClickCount() == 2){
-            JDialogListFaktor dialogListFaktor = new JDialogListFaktor(this, true, faktors);
+            JDialogListFaktor dialogListFaktor = new JDialogListFaktor(this, true, faktors,dbUrl,kundPrufer.getKundNummer(),kundPruferFamak.getArtikel_Nr());
             dialogListFaktor.setVisible(true);
+            
+            String meldung5 = jlieferDaoInterface.updateFaktor("0", kundPrufer.getKundNummer(), kundPruferFamak.getArtikel_Nr(), localfaktor.getFaktor(), localfaktor.getRunde(), localfaktor.getNks());
+            
+            String message = jlieferDaoInterface.getMeldung("5", meldung5);
+            
+            String[] parts = message.split("--");
+            String part1 = parts[1];
+            String part2 = parts[0];
+            int reply = JOptionPane.showConfirmDialog(null, part2, part1, JOptionPane.YES_NO_OPTION);
+            if (reply == JOptionPane.YES_OPTION) {
+                localfaktor = dialogListFaktor.getSelectedFaktor();
+                populateJtable(localfaktor);
+                String meldung = jlieferDaoInterface.updateFaktor("1", kundPrufer.getKundNummer(), kundPruferFamak.getArtikel_Nr(), localfaktor.getFaktor(), localfaktor.getRunde(), localfaktor.getNks());
+                String message1 = jlieferDaoInterface.getMeldung("5", meldung);
+                System.out.println(message1);
+                String[] parts1 = message.split("--");
+            String part1_1 = parts1[1];
+            String part2_1 = parts1[0];
+                JOptionPane.showMessageDialog(null,
+                            part2_1,
+                            part1_1,
+                            JOptionPane.INFORMATION_MESSAGE);
+            }
         }
     }//GEN-LAST:event_jTableFaktorMouseClicked
 

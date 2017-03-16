@@ -33,4 +33,5 @@ public interface JlieferDaoInterface
     public List<Kund> getListKundGtin(String gtin);
     public List<LieferKundPrufer> getListGtinAnderung(String KdNr,String KdArtNr,String KdFarbe,String KdGroße,String KdVariante,String GTIN, String grundPreis,String varPreis);
     public List<Faktor> getListFaktor(String kundNummer, String artNummer);
+    public String updateFaktor(String indice, String KdNr,String ArtikelNr,String Faktor,String runden,String NKS);
    }
