@@ -36,8 +36,6 @@ public class JlieferDao implements JlieferDaoInterface {
         this.dburlProdukt = dburlProdukt;
     }
 
-   
-
     @Override
     public String anlegenAndern(String indicator, String kundNummer, String kundArtNummer, String kundfarbe, String kundGroesse, String variante, String gtin, String posGrId, String grundPreis, String varPreis) {
     String ret = "";

@@ -470,39 +470,34 @@ public class JDialogGTIN extends javax.swing.JDialog {
         // TODO add your handling code here:
         //System.out.println("1"+"/"+kundPrufer.getKundenArtikelNummer()+"/"+ kundPrufer.getFarbeNummer()+"/"+kundPrufer.getGroesse()+"/"+kundPrufer.getVarNummer()+"/"+kundPrufer.getGtin()+"/"+kundPrufer.getPosGrId());
         String meldung = jlieferDaoInterface.gtinStammsatzAnderung("0", jTextFieldArtNummerFamak.getText(), jTextFieldFarbNum.getText(), jTextFieldGroesseFamak.getText(), jTextFieldVariantenFamak.getText(), jTextFieldGTIN.getText(), jTextFieldPosGrID.getText());
-        String indicator="";
+        String indicator = "";
         String message;
-        
+
         System.out.println(meldung);
-        
-        if (meldung.length()> 4) {
+
+        if (meldung.length() > 4) {
             if (meldung.contains("-")) {
                 indicator = "E-";
-            } else
-            {
+            } else {
                 indicator = "E";
             }
-                
-                message = jlieferDaoInterface.getMeldung("1", indicator);
-                System.out.println(message);
-        }else
-            {
-              message = jlieferDaoInterface.getMeldung("1", meldung);  
-            }
-        
+
+            message = jlieferDaoInterface.getMeldung("1", indicator);
+            System.out.println(message);
+        } else {
+            message = jlieferDaoInterface.getMeldung("1", meldung);
+        }
 
         String[] parts = message.split("--");
         String part1;
         if (indicator.equals("")) {
             part1 = parts[0];
-        }else
-        {
-          part1 = parts[0]+" "+meldung;  
+        } else {
+            part1 = parts[0] + " " + meldung;
         }
-       
-        String part2 = parts[1]; 
-        
-        
+
+        String part2 = parts[1];
+
 //
         if (meldung.equals("10")) {
 
@@ -510,19 +505,19 @@ public class JDialogGTIN extends javax.swing.JDialog {
             kundPrufer.setFarbe(jTextFieldFarbe.getText());
             kundPrufer.setGroesse(jTextFieldGroesse.getText());
             kundPrufer.setVarNummer(jTextFieldVariante.getText());
-            JDialogGTINAndern dialogGTINAndern = new JDialogGTINAndern(this,true, kunds, part1, dbUrl, kundPruferFamak, kundPrufer,jTextFieldPreisGrossBasis.getText(), jTextFieldPreisVarianten.getText());
+            JDialogGTINAndern dialogGTINAndern = new JDialogGTINAndern(this, true, kunds, part1, dbUrl, kundPruferFamak, kundPrufer, jTextFieldPreisGrossBasis.getText(), jTextFieldPreisVarianten.getText());
             dialogGTINAndern.setVisible(true);
             meldung = dialogGTINAndern.getMeldung();
             System.out.println(meldung);
             System.out.println("we are here");
 
-        }else {
+        } else {
             JOptionPane.showMessageDialog(null,
                     part1,
                     part2,
                     JOptionPane.WARNING_MESSAGE);
         }
-        
+
         if (((meldung.equals("0") || meldung.equals("1")) && !jTextFieldGTIN.getText().equals("")) || meldung.length() > 4) {
             String gtinParam;
             String message2;
@@ -540,13 +535,10 @@ public class JDialogGTIN extends javax.swing.JDialog {
             String indcator = "";
             message2 = jlieferDaoInterface.getMeldung("2", meldung2);
             System.out.println("meldung2:" + meldung2);
-            
-            
-            if (meldung2.length()>4) {
-               indcator="E";
-               message2 = jlieferDaoInterface.getMeldung("2", indcator);
-            }else
-            {
+            if (meldung2.length() > 4) {
+                indcator = "E";
+                message2 = jlieferDaoInterface.getMeldung("2", indcator);
+            } else {
                 message2 = jlieferDaoInterface.getMeldung("2", meldung2);
                 System.out.println("message2:" + message2);
             }
@@ -554,40 +546,40 @@ public class JDialogGTIN extends javax.swing.JDialog {
             String part1_1; // 004
             if (indcator.equals("")) {
                 part1_1 = parts2[0];
-            }else
-            {
-                part1_1 = parts2[0]+" "+meldung2;
+            } else {
+                part1_1 = parts2[0] + " " + meldung2;
             }
             String part2_1 = parts2[1]; // 034556
             switch (meldung2) {
                 case "30":
                     //System.out.println(kundPrufer.getKundNummer()+"-"+ kundPrufer.getKundenArtikelNummer()+"-"+ kundPrufer.getFarbe()+"-"+ kundPrufer.getGroesse()+"-"+ kundPrufer.getVariante()+"-"+gtinParam);
-                   kundPrufer.setFarbe(jTextFieldFarbe.getText());
-                   kundPrufer.setGroesse(jTextFieldGroesse.getText());
-                   kundPrufer.setVarNummer(jTextFieldVariante.getText());
+                    kundPrufer.setFarbe(jTextFieldFarbe.getText());
+                    kundPrufer.setGroesse(jTextFieldGroesse.getText());
+                    kundPrufer.setVarNummer(jTextFieldVariante.getText());
                     List<LieferKundPrufer> listGtinAnderung = jlieferDaoInterface.getListGtinAnderung(kundPrufer.getKundNummer(), kundPrufer.getKundenArtikelNummer(), jTextFieldFarbe.getText(), jTextFieldGroesse.getText(), kundPrufer.getVariante(), gtinParam, jTextFieldPreisGrossBasis.getText(), jTextFieldPreisVarianten.getText());
-                   
+
                     JDialogKundenArtikelDatenAndern artikelDatenAndern = new JDialogKundenArtikelDatenAndern(this, true, listGtinAnderung, kundPruferFamak, kundPrufer, this.dbUrl, gtinParam, jTextFieldPreisGrossBasis.getText(), jTextFieldPreisVarianten.getText());
                     artikelDatenAndern.setVisible(true);
                     //meldung = artikelDatenAndern.getMeldung();
                     break;
                 case "38":
                     int reply = JOptionPane.showConfirmDialog(null, message2, "Actung", JOptionPane.YES_NO_OPTION);
-                    
+
                     if (reply == JOptionPane.YES_OPTION) {
                         String meldung3 = jlieferDaoInterface.anlegenAndern("1", kundPrufer.getKundNummer(), kundPrufer.getKundenArtikelNummer(), jTextFieldFarbe.getText(), jTextFieldGroesse.getText(), jTextFieldVariante.getText(), gtinParam, jTextFieldPosGrID.getText(), preisGrossBasis, preisVarianten);
                         String message3 = jlieferDaoInterface.getMeldung("2", meldung3);
                         System.out.println("meldung3:" + meldung3);
                         System.out.println("message3:" + message3);
-                        
-                   String[] parts3 = message3.split("--");
-                   String part1_3 = parts3[0]; // 004
-                   String part2_3 = parts3[1]; // 034556
-                   JOptionPane.showMessageDialog(null,
-                    part1_3,
-                    part2_3,
-                    JOptionPane.WARNING_MESSAGE);
-                    }   break;
+
+                        String[] parts3 = message3.split("--");
+                        String part1_3 = parts3[0]; // 004
+                        String part2_3 = parts3[1]; // 034556
+                        JOptionPane.showMessageDialog(null,
+                                part1_3,
+                                part2_3,
+                                JOptionPane.WARNING_MESSAGE);
+                    }
+                    break;
                 default:
                     JOptionPane.showMessageDialog(null,
                             part1_1,
@@ -624,32 +616,45 @@ public class JDialogGTIN extends javax.swing.JDialog {
 
     private void jTableFaktorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableFaktorMouseClicked
         // TODO add your handling code here:
-        if (evt.getClickCount() == 2){
-            JDialogListFaktor dialogListFaktor = new JDialogListFaktor(this, true, faktors,dbUrl,kundPrufer.getKundNummer(),kundPruferFamak.getArtikel_Nr());
+        if (evt.getClickCount() == 2) {
+            JDialogListFaktor dialogListFaktor = new JDialogListFaktor(this, true, faktors, dbUrl, kundPrufer.getKundNummer(), kundPruferFamak.getArtikel_Nr());
             dialogListFaktor.setVisible(true);
-            
-            String meldung5 = jlieferDaoInterface.updateFaktor("0", kundPrufer.getKundNummer(), kundPruferFamak.getArtikel_Nr(), localfaktor.getFaktor(), localfaktor.getRunde(), localfaktor.getNks());
-            
-            String message = jlieferDaoInterface.getMeldung("5", meldung5);
-            
-            String[] parts = message.split("--");
-            String part1 = parts[1];
-            String part2 = parts[0];
-            int reply = JOptionPane.showConfirmDialog(null, part2, part1, JOptionPane.YES_NO_OPTION);
-            if (reply == JOptionPane.YES_OPTION) {
-                localfaktor = dialogListFaktor.getSelectedFaktor();
-                populateJtable(localfaktor);
-                String meldung = jlieferDaoInterface.updateFaktor("1", kundPrufer.getKundNummer(), kundPruferFamak.getArtikel_Nr(), localfaktor.getFaktor(), localfaktor.getRunde(), localfaktor.getNks());
-                String message1 = jlieferDaoInterface.getMeldung("5", meldung);
-                System.out.println(message1);
-                String[] parts1 = message.split("--");
-            String part1_1 = parts1[1];
-            String part2_1 = parts1[0];
-                JOptionPane.showMessageDialog(null,
-                            part2_1,
-                            part1_1,
+            if (localfaktor != dialogListFaktor.getSelectedFaktor()) {
+
+                String meldung5 = jlieferDaoInterface.updateFaktor("0", kundPrufer.getKundNummer(), kundPruferFamak.getArtikel_Nr(), localfaktor.getFaktor(), localfaktor.getRunde(), localfaktor.getNks());
+                String message = jlieferDaoInterface.getMeldung("5", meldung5);
+
+                String[] parts = message.split("--");
+                String part1 = parts[1];
+                String part2 = parts[0];
+                if (meldung5.equals("59") || meldung5.equals("60")) {
+                    int reply = JOptionPane.showConfirmDialog(null, part2, part1, JOptionPane.YES_NO_OPTION);
+                    if (reply == JOptionPane.YES_OPTION) {
+                        localfaktor = dialogListFaktor.getSelectedFaktor();
+                        populateJtable(localfaktor);
+                        String meldung = jlieferDaoInterface.updateFaktor("1", kundPrufer.getKundNummer(), kundPruferFamak.getArtikel_Nr(), localfaktor.getFaktor(), localfaktor.getRunde(), localfaktor.getNks());
+                        String message1 = jlieferDaoInterface.getMeldung("5", meldung);
+                        System.out.println(message1);
+                        String[] parts1 = message.split("--");
+                        String part1_1 = parts1[1];
+                        String part2_1 = parts1[0];
+                        JOptionPane.showMessageDialog(null,
+                                part2_1,
+                                part1_1,
+                                JOptionPane.INFORMATION_MESSAGE);
+                    }
+                } else {
+
+                    JOptionPane.showMessageDialog(null,
+                            part2,
+                            part1,
                             JOptionPane.INFORMATION_MESSAGE);
+                    localfaktor = dialogListFaktor.getSelectedFaktor();
+                    populateJtable(localfaktor);
+                }
+
             }
+
         }
     }//GEN-LAST:event_jTableFaktorMouseClicked
 
