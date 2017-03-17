@@ -26,7 +26,7 @@ public class JDialogGTIN extends javax.swing.JDialog {
     private final LieferKundPrufer kundPrufer,kundPruferFamak;
     private Float varianten, grossenBasis;
     private final Object[] rowData = new Object[5];
-    private final List<Faktor> faktors;
+    private  List<Faktor> faktors;
     private Faktor localfaktor;
     /**
      * Creates new form JDialogGTIN
@@ -472,9 +472,7 @@ public class JDialogGTIN extends javax.swing.JDialog {
         String meldung = jlieferDaoInterface.gtinStammsatzAnderung("0", jTextFieldArtNummerFamak.getText(), jTextFieldFarbNum.getText(), jTextFieldGroesseFamak.getText(), jTextFieldVariantenFamak.getText(), jTextFieldGTIN.getText(), jTextFieldPosGrID.getText());
         String indicator = "";
         String message;
-
         System.out.println(meldung);
-
         if (meldung.length() > 4) {
             if (meldung.contains("-")) {
                 indicator = "E-";
@@ -487,7 +485,6 @@ public class JDialogGTIN extends javax.swing.JDialog {
         } else {
             message = jlieferDaoInterface.getMeldung("1", meldung);
         }
-
         String[] parts = message.split("--");
         String part1;
         if (indicator.equals("")) {
@@ -495,10 +492,7 @@ public class JDialogGTIN extends javax.swing.JDialog {
         } else {
             part1 = parts[0] + " " + meldung;
         }
-
         String part2 = parts[1];
-
-//
         if (meldung.equals("10")) {
 
             List<Kund> kunds = jlieferDaoInterface.getListKundGtin(jTextFieldGTIN.getText());
@@ -619,10 +613,13 @@ public class JDialogGTIN extends javax.swing.JDialog {
         if (evt.getClickCount() == 2) {
             JDialogListFaktor dialogListFaktor = new JDialogListFaktor(this, true, faktors, dbUrl, kundPrufer.getKundNummer(), kundPruferFamak.getArtikel_Nr());
             dialogListFaktor.setVisible(true);
-            if (localfaktor != dialogListFaktor.getSelectedFaktor()) {
-
+            if (localfaktor != dialogListFaktor.getSelectedFaktor() && dialogListFaktor.getSelectedFaktor()!=null) {
+               localfaktor = dialogListFaktor.getSelectedFaktor();
+                System.out.println("0"+"-"+kundPrufer.getKundNummer()+"-"+kundPruferFamak.getArtikel_Nr()+"-"+localfaktor.getFaktor()+"-"+localfaktor.getRunde()+"-"+localfaktor.getNks());
                 String meldung5 = jlieferDaoInterface.updateFaktor("0", kundPrufer.getKundNummer(), kundPruferFamak.getArtikel_Nr(), localfaktor.getFaktor(), localfaktor.getRunde(), localfaktor.getNks());
                 String message = jlieferDaoInterface.getMeldung("5", meldung5);
+                System.out.println("meldung5: "+meldung5);
+                System.out.println("message5: "+message);
 
                 String[] parts = message.split("--");
                 String part1 = parts[1];
@@ -630,18 +627,21 @@ public class JDialogGTIN extends javax.swing.JDialog {
                 if (meldung5.equals("59") || meldung5.equals("60")) {
                     int reply = JOptionPane.showConfirmDialog(null, part2, part1, JOptionPane.YES_NO_OPTION);
                     if (reply == JOptionPane.YES_OPTION) {
-                        localfaktor = dialogListFaktor.getSelectedFaktor();
-                        populateJtable(localfaktor);
+                        
+                        
                         String meldung = jlieferDaoInterface.updateFaktor("1", kundPrufer.getKundNummer(), kundPruferFamak.getArtikel_Nr(), localfaktor.getFaktor(), localfaktor.getRunde(), localfaktor.getNks());
                         String message1 = jlieferDaoInterface.getMeldung("5", meldung);
                         System.out.println(message1);
-                        String[] parts1 = message.split("--");
+                        String[] parts1 = message1.split("--");
                         String part1_1 = parts1[1];
                         String part2_1 = parts1[0];
                         JOptionPane.showMessageDialog(null,
                                 part2_1,
                                 part1_1,
                                 JOptionPane.INFORMATION_MESSAGE);
+                        faktors = jlieferDaoInterface.getListFaktor(kundPrufer.getKundNummer(), kundPruferFamak.getArtikel_Nr());
+                        localfaktor = faktors.get(0);
+                        populateJtable(localfaktor);
                     }
                 } else {
 
@@ -649,7 +649,9 @@ public class JDialogGTIN extends javax.swing.JDialog {
                             part2,
                             part1,
                             JOptionPane.INFORMATION_MESSAGE);
-                    localfaktor = dialogListFaktor.getSelectedFaktor();
+                    //localfaktor = dialogListFaktor.getSelectedFaktor();
+                    faktors = jlieferDaoInterface.getListFaktor(kundPrufer.getKundNummer(), kundPruferFamak.getArtikel_Nr());
+                    localfaktor = faktors.get(0);
                     populateJtable(localfaktor);
                 }
 
