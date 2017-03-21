@@ -5,8 +5,8 @@
  */
 package dasLieferDialog;
 
-import dao.JlieferDao;
-import dao.JlieferDaoInterface;
+import dasLieferdao.JlieferDao;
+import dasLieferdao.JlieferDaoInterface;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JDialog;

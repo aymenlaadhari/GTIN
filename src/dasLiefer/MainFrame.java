@@ -5,8 +5,8 @@
  */
 package dasLiefer;
 
-import dao.JlieferDao;
-import dao.JlieferDaoInterface;
+import dasLieferdao.JlieferDao;
+import dasLieferdao.JlieferDaoInterface;
 import dasLieferDialog.JDialogGTIN;
 import dasLieferDialog.JDialogKundenbestellung;
 import java.awt.BorderLayout;
@@ -49,6 +49,7 @@ import javax.swing.table.DefaultTableModel;
 import model.LieferKund;
 import model.LieferKundPrufer;
 import model.ParameterKund;
+import model.VerwendeteMengenstaffel;
 import util.JTextFieldAutoCompletion;
 
 /**
@@ -73,7 +74,8 @@ public class MainFrame extends javax.swing.JFrame {
     private String dbUrl;
     private boolean ctrlPressed;
     JPopupMenu popupMenu;
-    LieferKundPrufer kundPruferFamak , kundPrufer;
+    private LieferKundPrufer kundPruferFamak , kundPrufer;
+    private VerwendeteMengenstaffel verwendeteMengenstaffel;
     /**
      * Creates new form MainFrame
      */
@@ -547,6 +549,7 @@ public class MainFrame extends javax.swing.JFrame {
 //            System.out.println(rows[i]);
 //        }
     }
+   
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -956,7 +959,7 @@ public class MainFrame extends javax.swing.JFrame {
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(36, 36, 36)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(52, Short.MAX_VALUE))
+                .addContainerGap(103, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1063,13 +1066,13 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(333, 333, 333)
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(451, Short.MAX_VALUE))
+                .addContainerGap(502, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addGap(44, 44, 44)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
                 .addGap(33, 33, 33)
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(48, 48, 48))
@@ -1093,85 +1096,63 @@ public class MainFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextFieldKdNrKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldKdNrKeyPressed
+    private void jButtonLadenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLadenActionPerformed
         // TODO add your handling code here:
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            initiliseFelder();
-              jTextFieldKdBestNr.setText("");
-        
-        jXDatePickerWunch.setDate(null);
-        jXDatePickerKdBestDat.setDate(null);
-            tableModel.setRowCount(0);
-           parameterKund= jlieferDaoInterface.getKundenParameter(jTextFieldKdNr.getText());
-            configureTable(parameterKund);
-            jTextFieldKdPosNr.setText(parameterKund.getPos_Zaehler());
-            jTextFieldKdBestNr.requestFocus();
+        tableModelPrufer.setRowCount(0);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+        try {
+            liefPrufers = jlieferDaoInterface.getListPrufers(format.format(jXDatePickerBisDatum.getDate()));
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null,
+                "Error getting DATA  "+jlieferDaoInterface.getException()+","+e.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_jTextFieldKdNrKeyPressed
 
-    private void jTextFieldKdPosNrMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextFieldKdPosNrMouseClicked
-        // TODO add your handling code here:
-         if (evt.getClickCount() == 2) {
-             jTextFieldKdPosNr.setEnabled(true);
-             jTextFieldKdPosNr.requestFocus();
-         }
-    }//GEN-LAST:event_jTextFieldKdPosNrMouseClicked
+        populateJtablePrufung(liefPrufers);
+    }//GEN-LAST:event_jButtonLadenActionPerformed
 
-    private void jTextFieldKdArtNrMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextFieldKdArtNrMouseClicked
+    private void jTablePruferKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTablePruferKeyPressed
         // TODO add your handling code here:
-        if (evt.getClickCount() == 2) {
-             jTextFieldKdArtNr.setEnabled(true);
-             jTextFieldKdArtNr.requestFocus();
-         }
-    }//GEN-LAST:event_jTextFieldKdArtNrMouseClicked
+        //System.out.println(evt.isControlDown());
+        ctrlPressed = evt.isControlDown();
 
-    private void jTextFieldKdFarbeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextFieldKdFarbeMouseClicked
-        // TODO add your handling code here:
-        if (evt.getClickCount() == 2) {
-             jTextFieldKdFarbe.setEnabled(true);
-             jTextFieldKdFarbe.requestFocus();
-         }
-    }//GEN-LAST:event_jTextFieldKdFarbeMouseClicked
+    }//GEN-LAST:event_jTablePruferKeyPressed
 
-    private void jTextFieldKdGroesseMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextFieldKdGroesseMouseClicked
+    private void jTablePruferMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTablePruferMouseReleased
         // TODO add your handling code here:
-        if (evt.getClickCount() == 2) {
-             jTextFieldKdGroesse.setEnabled(true);
-             jTextFieldKdGroesse.requestFocus();
-         }
-    }//GEN-LAST:event_jTextFieldKdGroesseMouseClicked
+        //         int r = jTablePrufer.rowAtPoint(evt.getPoint());
+        //        if (r >= 0 && r < jTablePrufer.getRowCount()) {
+            //            jTablePrufer.setRowSelectionInterval(r, r);
+            //        } else {
+            //            jTablePrufer.clearSelection();
+            //        }
+        int rowindex = jTablePrufer.getSelectedRow();
+        if (rowindex < 0)
+        return;
+        if (evt.isPopupTrigger() && evt.getComponent() instanceof JTable ) {
+            popupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+        }
+    }//GEN-LAST:event_jTablePruferMouseReleased
 
-    private void jTextFieldKdVariantMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextFieldKdVariantMouseClicked
+    private void jTablePruferMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTablePruferMouseClicked
         // TODO add your handling code here:
-        if (evt.getClickCount() == 2) {
-             jTextFieldKdVariant.setEnabled(true);
-             jTextFieldKdVariant.requestFocus();
-         }
-    }//GEN-LAST:event_jTextFieldKdVariantMouseClicked
+        if (tableModelPrufer.getRowCount()!=0) {
 
-    private void jTextFieldMengeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextFieldMengeMouseClicked
-        // TODO add your handling code here:
-        if (evt.getClickCount() == 2) {
-             jTextFieldMenge.setEnabled(true);
-             jTextFieldMenge.requestFocus();
-         }
-    }//GEN-LAST:event_jTextFieldMengeMouseClicked
+            if (evt.getClickCount() == 2){
+                JDialogKundenbestellung dialogKundenbestellung = new JDialogKundenbestellung(this, true,liefPrufers.get(jTablePrufer.getSelectedRow()), dbUrl);
+                dialogKundenbestellung.setVisible(true);
+            }else if (evt.getButton() == MouseEvent.BUTTON3) {
+                //System.out.println("right button");
+            }
+            selectInTheTable();
+        }
+    }//GEN-LAST:event_jTablePruferMouseClicked
 
-    private void jTextFieldkdPreisMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextFieldkdPreisMouseClicked
+    private void jButtonSaveInDbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveInDbActionPerformed
         // TODO add your handling code here:
-        if (evt.getClickCount() == 2) {
-             jTextFieldkdPreis.setEnabled(true);
-             jTextFieldkdPreis.requestFocus();
-         }
-    }//GEN-LAST:event_jTextFieldkdPreisMouseClicked
-
-    private void jTextFieldKommissionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextFieldKommissionMouseClicked
-        // TODO add your handling code here:
-        if (evt.getClickCount() == 2) {
-             jTextFieldKommission.setEnabled(true);
-             jTextFieldKommission.requestFocus();
-         }
-    }//GEN-LAST:event_jTextFieldKommissionMouseClicked
+        insertIntoDb();
+    }//GEN-LAST:event_jButtonSaveInDbActionPerformed
 
     private void jButtonAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddActionPerformed
         // TODO add your handling code here:
@@ -1194,7 +1175,7 @@ public class MainFrame extends javax.swing.JFrame {
                 //selectedMusterArtikel = new MusterArtikel();
                 tableModel.setRowCount(0);
                 //initilizeFelder();
-                
+
             }
 
             //refreshPosition(jTable.getRowCount());
@@ -1212,8 +1193,16 @@ public class MainFrame extends javax.swing.JFrame {
                 configureTable(parameterKund);
             }
         }
-        
+
     }//GEN-LAST:event_jTextFieldKommissionKeyPressed
+
+    private void jTextFieldKommissionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextFieldKommissionMouseClicked
+        // TODO add your handling code here:
+        if (evt.getClickCount() == 2) {
+            jTextFieldKommission.setEnabled(true);
+            jTextFieldKommission.requestFocus();
+        }
+    }//GEN-LAST:event_jTextFieldKommissionMouseClicked
 
     private void jTextFieldkdPreisKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldkdPreisKeyPressed
         // TODO add your handling code here:
@@ -1228,6 +1217,14 @@ public class MainFrame extends javax.swing.JFrame {
 
         }
     }//GEN-LAST:event_jTextFieldkdPreisKeyPressed
+
+    private void jTextFieldkdPreisMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextFieldkdPreisMouseClicked
+        // TODO add your handling code here:
+        if (evt.getClickCount() == 2) {
+            jTextFieldkdPreis.setEnabled(true);
+            jTextFieldkdPreis.requestFocus();
+        }
+    }//GEN-LAST:event_jTextFieldkdPreisMouseClicked
 
     private void jTextFieldMengeKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldMengeKeyPressed
         // TODO add your handling code here:
@@ -1244,10 +1241,18 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jTextFieldMengeKeyPressed
 
+    private void jTextFieldMengeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextFieldMengeMouseClicked
+        // TODO add your handling code here:
+        if (evt.getClickCount() == 2) {
+            jTextFieldMenge.setEnabled(true);
+            jTextFieldMenge.requestFocus();
+        }
+    }//GEN-LAST:event_jTextFieldMengeMouseClicked
+
     private void jTextFieldKdVariantKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldKdVariantKeyPressed
         // TODO add your handling code here:
-         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-          if (jTextFieldMenge.isEnabled()) {
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            if (jTextFieldMenge.isEnabled()) {
                 jTextFieldMenge.requestFocus();
             } else if (jTextFieldkdPreis.isEnabled()) {
                 jTextFieldkdPreis.requestFocus();
@@ -1260,6 +1265,14 @@ public class MainFrame extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_jTextFieldKdVariantKeyPressed
+
+    private void jTextFieldKdVariantMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextFieldKdVariantMouseClicked
+        // TODO add your handling code here:
+        if (evt.getClickCount() == 2) {
+            jTextFieldKdVariant.setEnabled(true);
+            jTextFieldKdVariant.requestFocus();
+        }
+    }//GEN-LAST:event_jTextFieldKdVariantMouseClicked
 
     private void jTextFieldKdGroesseKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldKdGroesseKeyPressed
         // TODO add your handling code here:
@@ -1279,6 +1292,14 @@ public class MainFrame extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_jTextFieldKdGroesseKeyPressed
+
+    private void jTextFieldKdGroesseMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextFieldKdGroesseMouseClicked
+        // TODO add your handling code here:
+        if (evt.getClickCount() == 2) {
+            jTextFieldKdGroesse.setEnabled(true);
+            jTextFieldKdGroesse.requestFocus();
+        }
+    }//GEN-LAST:event_jTextFieldKdGroesseMouseClicked
 
     private void jTextFieldKdFarbeKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldKdFarbeKeyPressed
         // TODO add your handling code here:
@@ -1300,6 +1321,14 @@ public class MainFrame extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_jTextFieldKdFarbeKeyPressed
+
+    private void jTextFieldKdFarbeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextFieldKdFarbeMouseClicked
+        // TODO add your handling code here:
+        if (evt.getClickCount() == 2) {
+            jTextFieldKdFarbe.setEnabled(true);
+            jTextFieldKdFarbe.requestFocus();
+        }
+    }//GEN-LAST:event_jTextFieldKdFarbeMouseClicked
 
     private void jTextFieldKdArtNrKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldKdArtNrKeyPressed
         // TODO add your handling code here:
@@ -1326,6 +1355,14 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jTextFieldKdArtNrKeyPressed
 
+    private void jTextFieldKdArtNrMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextFieldKdArtNrMouseClicked
+        // TODO add your handling code here:
+        if (evt.getClickCount() == 2) {
+            jTextFieldKdArtNr.setEnabled(true);
+            jTextFieldKdArtNr.requestFocus();
+        }
+    }//GEN-LAST:event_jTextFieldKdArtNrMouseClicked
+
     private void jTextFieldKdPosNrKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldKdPosNrKeyPressed
         // TODO add your handling code here:
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -1336,6 +1373,21 @@ public class MainFrame extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_jTextFieldKdPosNrKeyPressed
+
+    private void jTextFieldKdPosNrMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextFieldKdPosNrMouseClicked
+        // TODO add your handling code here:
+        if (evt.getClickCount() == 2) {
+            jTextFieldKdPosNr.setEnabled(true);
+            jTextFieldKdPosNr.requestFocus();
+        }
+    }//GEN-LAST:event_jTextFieldKdPosNrMouseClicked
+
+    private void jTextFieldKposAktivKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldKposAktivKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            jTextFieldKdArtNr.requestFocus();
+        }
+    }//GEN-LAST:event_jTextFieldKposAktivKeyPressed
 
     private void jTextFieldErfasserKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldErfasserKeyPressed
         // TODO add your handling code here:
@@ -1351,70 +1403,21 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jTextFieldKdBestNrKeyPressed
 
-    private void jTextFieldKposAktivKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldKposAktivKeyPressed
+    private void jTextFieldKdNrKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldKdNrKeyPressed
         // TODO add your handling code here:
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            jTextFieldKdArtNr.requestFocus();
+            initiliseFelder();
+            jTextFieldKdBestNr.setText("");
+
+            jXDatePickerWunch.setDate(null);
+            jXDatePickerKdBestDat.setDate(null);
+            tableModel.setRowCount(0);
+            parameterKund= jlieferDaoInterface.getKundenParameter(jTextFieldKdNr.getText());
+            configureTable(parameterKund);
+            jTextFieldKdPosNr.setText(parameterKund.getPos_Zaehler());
+            jTextFieldKdBestNr.requestFocus();
         }
-    }//GEN-LAST:event_jTextFieldKposAktivKeyPressed
-
-    private void jButtonSaveInDbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveInDbActionPerformed
-        // TODO add your handling code here:
-        insertIntoDb();
-    }//GEN-LAST:event_jButtonSaveInDbActionPerformed
-
-    private void jButtonLadenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLadenActionPerformed
-        // TODO add your handling code here:
-        tableModelPrufer.setRowCount(0);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
-        try {
-            liefPrufers = jlieferDaoInterface.getListPrufers(format.format(jXDatePickerBisDatum.getDate()));
-        } catch (Exception e) {
-             JOptionPane.showMessageDialog(null,
-                            "Error getting DATA  "+jlieferDaoInterface.getException()+","+e.getMessage(),
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
-        }
-        
-        populateJtablePrufung(liefPrufers);
-    }//GEN-LAST:event_jButtonLadenActionPerformed
-
-    private void jTablePruferMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTablePruferMouseClicked
-        // TODO add your handling code here:
-        if (tableModelPrufer.getRowCount()!=0) {
-
-        if (evt.getClickCount() == 2){
-             JDialogKundenbestellung dialogKundenbestellung = new JDialogKundenbestellung(this, true,liefPrufers.get(jTablePrufer.getSelectedRow()), dbUrl);
-             dialogKundenbestellung.setVisible(true);
-         }else if (evt.getButton() == MouseEvent.BUTTON3) {
-            //System.out.println("right button");
-        }
-       selectInTheTable();
-}
-    }//GEN-LAST:event_jTablePruferMouseClicked
-
-    private void jTablePruferMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTablePruferMouseReleased
-        // TODO add your handling code here:
-//         int r = jTablePrufer.rowAtPoint(evt.getPoint());
-//        if (r >= 0 && r < jTablePrufer.getRowCount()) {
-//            jTablePrufer.setRowSelectionInterval(r, r);
-//        } else {
-//            jTablePrufer.clearSelection();
-//        }
-        int rowindex = jTablePrufer.getSelectedRow();
-        if (rowindex < 0)
-            return;
-        if (evt.isPopupTrigger() && evt.getComponent() instanceof JTable ) {
-            popupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
-        }
-    }//GEN-LAST:event_jTablePruferMouseReleased
-
-    private void jTablePruferKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTablePruferKeyPressed
-        // TODO add your handling code here:
-       //System.out.println(evt.isControlDown());
-       ctrlPressed = evt.isControlDown();
-       
-    }//GEN-LAST:event_jTablePruferKeyPressed
+    }//GEN-LAST:event_jTextFieldKdNrKeyPressed
    
     /**
      * @param args the command line arguments

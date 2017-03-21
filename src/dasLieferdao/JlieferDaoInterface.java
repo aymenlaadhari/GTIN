@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package dao;
+package dasLieferdao;
 
 
 import java.util.List;
@@ -12,6 +12,9 @@ import model.Kund;
 import model.LieferKund;
 import model.LieferKundPrufer;
 import model.ParameterKund;
+import model.VerfugbareGroßen;
+import model.VerfugbareMengenstaffeln;
+import model.VerwendeteMengenstaffel;
 
 /**
  *
@@ -34,4 +37,6 @@ public interface JlieferDaoInterface
     public List<LieferKundPrufer> getListGtinAnderung(String KdNr,String KdArtNr,String KdFarbe,String KdGroße,String KdVariante,String GTIN, String grundPreis,String varPreis);
     public List<Faktor> getListFaktor(String kundNummer, String artNummer);
     public String updateFaktor(String indice, String KdNr,String ArtikelNr,String Faktor,String runden,String NKS);
+    public VerwendeteMengenstaffel getVerMengen(String indice,String kdNum,String artNum,String barbNum,String groesse, String posGridId);
+    public List<VerfugbareMengenstaffeln> getListVerfugmeng(String indice,String kdNum,String artNum,String barbNum,String groesse);
    }

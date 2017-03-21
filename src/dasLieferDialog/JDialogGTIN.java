@@ -5,8 +5,8 @@
  */
 package dasLieferDialog;
 
-import dao.JlieferDao;
-import dao.JlieferDaoInterface;
+import dasLieferdao.JlieferDao;
+import dasLieferdao.JlieferDaoInterface;
 import java.awt.event.KeyEvent;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -14,6 +14,8 @@ import javax.swing.table.DefaultTableModel;
 import model.Faktor;
 import model.Kund;
 import model.LieferKundPrufer;
+import model.VerfugbareMengenstaffeln;
+import model.VerwendeteMengenstaffel;
 
 /**
  *
@@ -28,6 +30,8 @@ public class JDialogGTIN extends javax.swing.JDialog {
     private final Object[] rowData = new Object[5];
     private  List<Faktor> faktors;
     private Faktor localfaktor;
+    private final VerwendeteMengenstaffel verwendeteMengenstaffel;
+    private final List<VerfugbareMengenstaffeln> verfugbareMengenstaffelns;
     /**
      * Creates new form JDialogGTIN
      * @param parent
@@ -75,7 +79,8 @@ public class JDialogGTIN extends javax.swing.JDialog {
         faktors = jlieferDaoInterface.getListFaktor(kundPrufer.getKundNummer(), kundPruferFamak.getArtikel_Nr());
         localfaktor = faktors.get(0);
         String menge = jlieferDaoInterface.getListFaktor("000000", kundPruferFamak.getArtikel_Nr()).get(0).getMe();
-        
+        verwendeteMengenstaffel = jlieferDaoInterface.getVerMengen("1", kundPrufer.getKundNummer(), kundPruferFamak.getArtikel_Nr(), kundPruferFamak.getFarbeNummer(), kundPruferFamak.getGroesse(), kundPruferFamak.getPosGrId());
+        verfugbareMengenstaffelns = jlieferDaoInterface.getListVerfugmeng("2", kundPrufer.getKundNummer(), kundPruferFamak.getArtikel_Nr(), kundPruferFamak.getFarbeNummer(), kundPruferFamak.getGroesse());
         addToTable(localfaktor);
         jTextFieldDastex.setText(menge);
         
@@ -143,6 +148,7 @@ public class JDialogGTIN extends javax.swing.JDialog {
         jLabel18 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTableFaktor = new javax.swing.JTable();
+        jButtonMehrereGros = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -425,6 +431,13 @@ public class JDialogGTIN extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
+        jButtonMehrereGros.setText("Mehrere Größen verarbeiten");
+        jButtonMehrereGros.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonMehrereGrosActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -442,6 +455,10 @@ public class JDialogGTIN extends javax.swing.JDialog {
                     .addComponent(jPanelKundenAnlegen, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButtonMehrereGros)
+                .addGap(106, 106, 106))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -452,7 +469,9 @@ public class JDialogGTIN extends javax.swing.JDialog {
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonMehrereGros)
+                .addGap(10, 10, 10)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2))
@@ -660,6 +679,12 @@ public class JDialogGTIN extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_jTableFaktorMouseClicked
 
+    private void jButtonMehrereGrosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonMehrereGrosActionPerformed
+        // TODO add your handling code here:
+        JDialogVerwendete dialogVerwendete = new JDialogVerwendete(this, true, verwendeteMengenstaffel);
+        dialogVerwendete.setVisible(true);
+    }//GEN-LAST:event_jButtonMehrereGrosActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -706,6 +731,7 @@ public class JDialogGTIN extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButtonMehrereGros;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;

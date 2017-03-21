@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package dao;
+package dasLieferdao;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -20,6 +20,11 @@ import model.Kund;
 import model.LieferKund;
 import model.LieferKundPrufer;
 import model.ParameterKund;
+import model.VerfugbareGroßen;
+import model.VerfugbareMengenstaffeln;
+import model.VerwendeteMengenstaffel;
+import model.VerwendetePreise;
+import model.VerwendeterGroßenzuschlag;
 
 /**
  *
@@ -315,6 +320,38 @@ public class JlieferDao implements JlieferDaoInterface {
     }
 
     @Override
+    public List<VerfugbareMengenstaffeln> getListVerfugmeng(String indice, String kdNum, String artNum, String barbNum, String groesse) {
+        List<VerfugbareMengenstaffeln> verfugbareMengenstaffelns = new ArrayList<>();
+        String proc = "CALL GTIN_Preisermittlung ( '"+indice+"', '"+kdNum+"', '"+artNum+"', '"+barbNum+"', '"+groesse+"')";
+            
+        Connection conProdukt;
+        try {
+            conProdukt = DriverManager.getConnection(dburlProdukt);
+            CallableStatement cs = conProdukt.prepareCall(proc);
+            try (ResultSet rs = cs.executeQuery()) {
+                while (rs.next()) {
+                 VerfugbareMengenstaffeln mengenstaffeln = new VerfugbareMengenstaffeln();
+                 mengenstaffeln.setStufe(rs.getString("Stufe"));
+                 mengenstaffeln.setTyp(rs.getString("Typ"));
+                 mengenstaffeln.setMenge1(rs.getString("Menge1"));
+                 mengenstaffeln.setMenge2(rs.getString("Menge2"));
+                 mengenstaffeln.setMenge3(rs.getString("Menge3"));
+                 mengenstaffeln.setMenge4(rs.getString("Menge4"));
+                 verfugbareMengenstaffelns.add(mengenstaffeln);
+                }
+                rs.close();
+                cs.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return verfugbareMengenstaffelns;
+
+    }
+
+    @Override
     public String getMeldung(String vorgangNummer, String meldungNummer) {
         String ret = "";
         try {
@@ -357,6 +394,71 @@ public class JlieferDao implements JlieferDaoInterface {
         return ret;    
     }
 
+    @Override
+    public VerwendeteMengenstaffel getVerMengen(String indice, String kdNum, String artNum, String barbNum, String groesse,String posGridId) {
+    VerwendeteMengenstaffel verwendeteMengenstaffel = new VerwendeteMengenstaffel();
+        VerwendetePreise verwendetePreise = new VerwendetePreise();
+        VerwendeterGroßenzuschlag verwendeterGroßenzuschlag = new VerwendeterGroßenzuschlag();
+    
+   try {
+            //String proc = "SELECT GTIN_Stammsatz_anlegen_aendern ( '0', '1701000', '13', 'EL', ';001;002;061O;072;091;111C;111D;', '', '2230531' )";
+            String proc = "CALL GTIN_Preisermittlung ( '"+indice+"', '"+kdNum+"', '"+artNum+"', '"+barbNum+"', '"+groesse+"')";
+            
+            Connection conProdukt = DriverManager.getConnection(dburlProdukt);
+            Statement s = conProdukt.createStatement();
+            try (ResultSet rs = s.executeQuery(proc)) {
+                while (rs.next()) {
+                  verwendeteMengenstaffel.setKundNummer(rs.getString("s_Kd_Nr"));
+                  verwendeteMengenstaffel.setStufe(rs.getString("s_Stufe"));
+                  verwendeteMengenstaffel.setTyp(rs.getString("s_Typ"));
+                  verwendeteMengenstaffel.setStaffelNr(rs.getString("s_Staffel_Nr"));
+                  verwendeteMengenstaffel.setMenge1(rs.getString("s_Menge_1"));
+                  verwendeteMengenstaffel.setMenge2(rs.getString("s_Menge_2"));
+                  verwendeteMengenstaffel.setMenge3(rs.getString("s_Menge_3"));
+                  verwendeteMengenstaffel.setMenge4(rs.getString("s_Menge_4"));
+                  verwendeteMengenstaffel.setMengeBetzeug(rs.getString("s_Mng_Bezug_GP"));
+                  verwendeteMengenstaffel.setAnderung1(rs.getString("s_Aenderung_1"));
+                  verwendeteMengenstaffel.setAnderung2(rs.getString("s_Aenderung_2"));
+                  verwendeteMengenstaffel.setAnderung3(rs.getString("s_Aenderung_3"));
+                  verwendeteMengenstaffel.setAnderung4(rs.getString("s_Aenderung_4"));
+                  verwendetePreise.setBasisPreis(rs.getString("s_Basispreis_1"));
+                  verwendetePreise.setVarianten(getPreisvariante(posGridId));
+                  verwendeteMengenstaffel.setVerwendetePreise(verwendetePreise);
+                  verwendeterGroßenzuschlag.setKundNummer(rs.getString("z_Kd_Nr"));
+                  verwendeterGroßenzuschlag.setWgZuchlag(rs.getString("s_warengruppe_GZ"));
+                  verwendeteMengenstaffel.setVerwendeterGroßenzuschlag(verwendeterGroßenzuschlag);
+                  }
+                rs.close();
+                s.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    return verwendeteMengenstaffel;
+    }
+
+    private String getPreisvariante(String posGridId){
+        String varPreis = "";
+        try {
+            //String proc = "SELECT GTIN_Stammsatz_anlegen_aendern ( '0', '1701000', '13', 'EL', ';001;002;061O;072;091;111C;111D;', '', '2230531' )";
+            String proc = "SELECT GTIN_Preisermittlung_Varianten_GrPosID ( '"+posGridId+"')";
+            
+            Connection conProdukt = DriverManager.getConnection(dburlProdukt);
+            Statement s = conProdukt.createStatement();
+            try (ResultSet rs = s.executeQuery(proc)) {
+                while (rs.next()) {
+                    varPreis = rs.getString(1);
+                }
+                rs.close();
+                s.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return varPreis;
+    }
     @Override
     public String gtinStammsatzAnderung(String indicator, String ArtNr, String FarbNr, String Gross, String Varianten, String GTIN, String PosGrID) {
      String ret = "";

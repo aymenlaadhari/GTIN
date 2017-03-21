@@ -5,8 +5,8 @@
  */
 package dasLieferDialog;
 
-import dao.JlieferDao;
-import dao.JlieferDaoInterface;
+import dasLieferdao.JlieferDao;
+import dasLieferdao.JlieferDaoInterface;
 import model.LieferKundPrufer;
 
 /**
