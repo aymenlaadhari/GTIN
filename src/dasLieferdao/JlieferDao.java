@@ -20,6 +20,7 @@ import model.Kund;
 import model.LieferKund;
 import model.LieferKundPrufer;
 import model.ParameterKund;
+import model.Varianten;
 import model.VerfugbareGroßen;
 import model.VerfugbareMengenstaffeln;
 import model.VerwendeteMengenstaffel;
@@ -352,6 +353,44 @@ public class JlieferDao implements JlieferDaoInterface {
     }
 
     @Override
+    public List<VerfugbareGroßen> getListverfugGroesse(String indice, String kdNum, String artNum, String barbNum, String groesse) {
+        List<VerfugbareGroßen> verfugbareGroßens = new ArrayList<>();
+        String proc = "CALL GTIN_Preisermittlung ( '"+indice+"', '"+kdNum+"', '"+artNum+"', '"+barbNum+"', '"+groesse+"')";
+            
+        Connection conProdukt;
+        try {
+            conProdukt = DriverManager.getConnection(dburlProdukt);
+            CallableStatement cs = conProdukt.prepareCall(proc);
+            try (ResultSet rs = cs.executeQuery()) {
+                while (rs.next()) {
+                 VerfugbareGroßen verfugbareGroßen = new VerfugbareGroßen();
+                 verfugbareGroßen.setGp1(rs.getString("GP1"));
+                 verfugbareGroßen.setGp2(rs.getString("GP2"));
+                 verfugbareGroßen.setGp3(rs.getString("GP3"));
+                 verfugbareGroßen.setGp4(rs.getString("GP4"));
+                 verfugbareGroßen.setGroesse(rs.getString("Groesse"));
+                 verfugbareGroßen.setGz(rs.getString("GZ"));
+                 verfugbareGroßen.setKd1(rs.getString("Kd_1"));
+                 verfugbareGroßen.setKdArtNum(rs.getString("Kd-Art-Nr"));
+                 verfugbareGroßen.setKdFarbe(rs.getString("Kd-Farbe"));
+                 verfugbareGroßen.setKdGrosse(rs.getString("Kd-Größe"));
+                 verfugbareGroßen.setKdVariante(rs.getString("Kd-Variante"));
+                 verfugbareGroßen.setSort(rs.getString("Sort"));
+                 verfugbareGroßen.setStaffelNum(rs.getString("Staffel_Nr"));
+                 verfugbareGroßens.add(verfugbareGroßen);
+                }
+                rs.close();
+                cs.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        System.out.println("verfugbareGroßens lengh: "+verfugbareGroßens.size());
+    return verfugbareGroßens;
+    }
+
+    @Override
     public String getMeldung(String vorgangNummer, String meldungNummer) {
         String ret = "";
         try {
@@ -427,6 +466,7 @@ public class JlieferDao implements JlieferDaoInterface {
                   verwendeterGroßenzuschlag.setKundNummer(rs.getString("z_Kd_Nr"));
                   verwendeterGroßenzuschlag.setWgZuchlag(rs.getString("s_warengruppe_GZ"));
                   verwendeteMengenstaffel.setVerwendeterGroßenzuschlag(verwendeterGroßenzuschlag);
+                  verwendeteMengenstaffel.setVariantens(getListVarianten(posGridId));
                   }
                 rs.close();
                 s.close();
@@ -458,6 +498,34 @@ public class JlieferDao implements JlieferDaoInterface {
             Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         return varPreis;
+    }
+    private List<Varianten> getListVarianten(String posGridId){
+        List<Varianten> variantens = new ArrayList<>();
+        String proc = "CALL GTIN_Varianten_Position_Liste ( '"+posGridId+"')";
+            
+        Connection conProdukt;
+        try {
+            conProdukt = DriverManager.getConnection(dburlProdukt);
+            CallableStatement cs = conProdukt.prepareCall(proc);
+            try (ResultSet rs = cs.executeQuery()) {
+                while (rs.next()) {
+                 Varianten varianten = new Varianten();
+                 varianten.setAufpreis(rs.getString("Aufpreis"));
+                 varianten.setBezeichung(rs.getString("Bezeichnung"));
+                 varianten.setNummer(rs.getString("Nr"));
+                 
+                 variantens.add(varianten);
+                }
+                rs.close();
+                cs.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return variantens;
+
     }
     @Override
     public String gtinStammsatzAnderung(String indicator, String ArtNr, String FarbNr, String Gross, String Varianten, String GTIN, String PosGrID) {

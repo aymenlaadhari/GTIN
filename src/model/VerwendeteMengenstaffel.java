@@ -5,6 +5,8 @@
  */
 package model;
 
+import java.util.List;
+
 /**
  *
  * @author aladhari
@@ -13,6 +15,15 @@ public class VerwendeteMengenstaffel extends Mengenstaffel{
     private String kundNummer,mengeBetzeug,anderung1,anderung2,anderung3,anderung4;
     private VerwendetePreise verwendetePreise;
     private VerwendeterGroßenzuschlag verwendeterGroßenzuschlag;
+    private List<Varianten> variantens;
+
+    public List<Varianten> getVariantens() {
+        return variantens;
+    }
+
+    public void setVariantens(List<Varianten> variantens) {
+        this.variantens = variantens;
+    }
 
     public VerwendetePreise getVerwendetePreise() {
         return verwendetePreise;

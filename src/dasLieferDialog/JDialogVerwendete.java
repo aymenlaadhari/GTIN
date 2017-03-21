@@ -5,7 +5,13 @@
  */
 package dasLieferDialog;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JDialog;
+import javax.swing.table.DefaultTableModel;
+import model.Varianten;
+import model.VerfugbareGroßen;
+import model.VerfugbareMengenstaffeln;
 import model.VerwendeteMengenstaffel;
 
 /**
@@ -13,16 +19,24 @@ import model.VerwendeteMengenstaffel;
  * @author aladhari
  */
 public class JDialogVerwendete extends javax.swing.JDialog {
-
+private final Object[] rowData = new Object[7];
+private final Object[] rowDataVarianten = new Object[3];
+private final Object[] rowDataVerGroesse = new Object[13];
+private final DefaultTableModel tableModel, tablemodelvarianten, tableModelGroessen;
     /**
      * Creates new form JDialogVerwendete
      * @param parent
      * @param modal
      * @param verwendeteMengenstaffel
+     * @param verfugbareMengenstaffelns
+     * @param verfugbareGroßens
      */
-    public JDialogVerwendete(JDialog parent, boolean modal, VerwendeteMengenstaffel verwendeteMengenstaffel) {
+    public JDialogVerwendete(JDialog parent, boolean modal, VerwendeteMengenstaffel verwendeteMengenstaffel,List<VerfugbareMengenstaffeln> verfugbareMengenstaffelns,List<VerfugbareGroßen> verfugbareGroßens) {
         super(parent, modal);
         initComponents();
+        tableModel = (DefaultTableModel) jTable1.getModel();
+        tablemodelvarianten = (DefaultTableModel) jTableVariaten.getModel();
+        tableModelGroessen = (DefaultTableModel) jTableverfugGroesse.getModel();
         jTextFieldAnderung1.setText(verwendeteMengenstaffel.getAnderung1());
         jTextFieldAnderung2.setText(verwendeteMengenstaffel.getAnderung2());
         jTextFieldAnderung3.setText(verwendeteMengenstaffel.getAnderung3());
@@ -40,8 +54,65 @@ public class JDialogVerwendete extends javax.swing.JDialog {
         jTextFieldVarianten.setText(verwendeteMengenstaffel.getVerwendetePreise().getVarianten());
         jTextFieldWGZ.setText(verwendeteMengenstaffel.getVerwendeterGroßenzuschlag().getWgZuchlag());
         jTextFieldbasisPreisVerw.setText(verwendeteMengenstaffel.getVerwendetePreise().getBasisPreis());
+        tableModel.setRowCount(0);
+        tablemodelvarianten.setRowCount(0);
+        tableModelGroessen.setRowCount(0);
+        populateJtableMengen(verfugbareMengenstaffelns);
+        populateJtablevarianten(verwendeteMengenstaffel.getVariantens());
+        populateTableGroessen(verfugbareGroßens);
     }
 
+    private void populateJtableMengen(List<VerfugbareMengenstaffeln> verfugbareMengenstaffelns){
+        verfugbareMengenstaffelns.stream().forEach(cnsmr ->{
+            addTotableMengen(cnsmr);
+        });
+    }
+    private void addTotableMengen(VerfugbareMengenstaffeln verfugbareMengenstaffeln){
+        rowData[0] = verfugbareMengenstaffeln.getStufe();
+        rowData[1] = verfugbareMengenstaffeln.getTyp();
+        rowData[2] = verfugbareMengenstaffeln.getMenge1();
+        rowData[3] = verfugbareMengenstaffeln.getMenge2();
+        rowData[4] = verfugbareMengenstaffeln.getMenge3();
+        rowData[5] = verfugbareMengenstaffeln.getMenge4();
+        rowData[6] = verfugbareMengenstaffeln.getStaffelNr();
+        tableModel.addRow(rowData);
+        
+    }
+    
+    
+    private void populateJtablevarianten(List<Varianten> variantens){
+        variantens.stream().forEach(cnsmr->{
+            addTotableVarianten(cnsmr);
+        });
+    }
+    private void addTotableVarianten(Varianten varianten){
+        rowDataVarianten[0] = varianten.getNummer();
+        rowDataVarianten[1] = varianten.getBezeichung();
+        rowDataVarianten[2] = varianten.getAufpreis();
+        tablemodelvarianten.addRow(rowDataVarianten);
+    }
+    
+    private void populateTableGroessen(List<VerfugbareGroßen> verfugbareGroßens){
+        verfugbareGroßens.stream().forEach(cnsmr->{
+            addTotableGroessen(cnsmr);
+        });
+    }
+    private void addTotableGroessen(VerfugbareGroßen großen){
+        rowDataVerGroesse[0] = großen.getKdArtNum();
+        rowDataVerGroesse[1] = großen.getKdFarbe();
+        rowDataVerGroesse[2] = großen.getKdGrosse();
+        rowDataVerGroesse[3] = großen.getKdVariante();
+        rowDataVerGroesse[4] = großen.getSort();
+        rowDataVerGroesse[5] = großen.getGroesse();
+        rowDataVerGroesse[6] = großen.getKd1();
+        rowDataVerGroesse[7] = großen.getGz();
+        rowDataVerGroesse[8] = großen.getGp1();
+        rowDataVerGroesse[9] = großen.getGp2();
+        rowDataVerGroesse[10] = großen.getGp3();
+        rowDataVerGroesse[11] = großen.getGp4();
+        rowDataVerGroesse[12] = großen.getStaffelNum();
+        tableModelGroessen.addRow(rowDataVerGroesse);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -88,6 +159,15 @@ public class JDialogVerwendete extends javax.swing.JDialog {
         jTextFieldbasisPreisVerw = new javax.swing.JTextField();
         jLabel33 = new javax.swing.JLabel();
         jTextFieldVarianten = new javax.swing.JTextField();
+        jPanel1 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        jPanel2 = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTableVariaten = new javax.swing.JTable();
+        jPanel3 = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTableverfugGroesse = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -363,27 +443,131 @@ public class JDialogVerwendete extends javax.swing.JDialog {
                 .addContainerGap(20, Short.MAX_VALUE))
         );
 
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Verfügbare Mengenstaffeln", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION));
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
+            },
+            new String [] {
+                "Stufe", "Typ", "Menge1", "Menge2", "Menge3", "Menge4", "Staffel_Nr"
+            }
+        ));
+        jScrollPane1.setViewportView(jTable1);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 421, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(47, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Varianten", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION));
+
+        jTableVariaten.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
+            },
+            new String [] {
+                "Nr", "Bezeichnung", "Aufpreis"
+            }
+        ));
+        jScrollPane2.setViewportView(jTableVariaten);
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+
+        jTableverfugGroesse.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Kd-Art-Nr", "Kd-Farbe", "Kd-Größe", "Kd-Variante", "Sort", "Größe", "Kd_1", "GZ", "GP1", "GP2", "GP3", "GP4", "Staffel_Nr"
+            }
+        ));
+        jScrollPane3.setViewportView(jTableverfugGroesse);
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane3)
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(64, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap(50, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -424,7 +608,7 @@ public class JDialogVerwendete extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                JDialogVerwendete dialog = new JDialogVerwendete(new JDialog(), true, new VerwendeteMengenstaffel());
+                JDialogVerwendete dialog = new JDialogVerwendete(new JDialog(), true, new VerwendeteMengenstaffel(), new ArrayList<>(), new ArrayList<>());
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -454,9 +638,18 @@ public class JDialogVerwendete extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel31;
     private javax.swing.JLabel jLabel32;
     private javax.swing.JLabel jLabel33;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTableVariaten;
+    private javax.swing.JTable jTableverfugGroesse;
     private javax.swing.JTextField jTextFieldAnderung1;
     private javax.swing.JTextField jTextFieldAnderung2;
     private javax.swing.JTextField jTextFieldAnderung3;

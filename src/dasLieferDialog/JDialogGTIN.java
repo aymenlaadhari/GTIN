@@ -8,12 +8,14 @@ package dasLieferDialog;
 import dasLieferdao.JlieferDao;
 import dasLieferdao.JlieferDaoInterface;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import model.Faktor;
 import model.Kund;
 import model.LieferKundPrufer;
+import model.VerfugbareGroßen;
 import model.VerfugbareMengenstaffeln;
 import model.VerwendeteMengenstaffel;
 
@@ -32,6 +34,7 @@ public class JDialogGTIN extends javax.swing.JDialog {
     private Faktor localfaktor;
     private final VerwendeteMengenstaffel verwendeteMengenstaffel;
     private final List<VerfugbareMengenstaffeln> verfugbareMengenstaffelns;
+    private  List<VerfugbareGroßen> verfugbareGroßens;
     /**
      * Creates new form JDialogGTIN
      * @param parent
@@ -81,11 +84,12 @@ public class JDialogGTIN extends javax.swing.JDialog {
         String menge = jlieferDaoInterface.getListFaktor("000000", kundPruferFamak.getArtikel_Nr()).get(0).getMe();
         verwendeteMengenstaffel = jlieferDaoInterface.getVerMengen("1", kundPrufer.getKundNummer(), kundPruferFamak.getArtikel_Nr(), kundPruferFamak.getFarbeNummer(), kundPruferFamak.getGroesse(), kundPruferFamak.getPosGrId());
         verfugbareMengenstaffelns = jlieferDaoInterface.getListVerfugmeng("2", kundPrufer.getKundNummer(), kundPruferFamak.getArtikel_Nr(), kundPruferFamak.getFarbeNummer(), kundPruferFamak.getGroesse());
+        verfugbareGroßens = jlieferDaoInterface.getListverfugGroesse("0", kundPrufer.getKundNummer(), kundPruferFamak.getArtikel_Nr(), kundPruferFamak.getFarbeNummer(), kundPruferFamak.getGroesse());
         addToTable(localfaktor);
-        jTextFieldDastex.setText(menge);
-        
+        jTextFieldDastex.setText(menge);        
     }
 
+   
     private void addToTable(Faktor faktor){
         rowData[0] = faktor.getZehler();
         rowData[1] = faktor.getMe();
@@ -681,7 +685,7 @@ public class JDialogGTIN extends javax.swing.JDialog {
 
     private void jButtonMehrereGrosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonMehrereGrosActionPerformed
         // TODO add your handling code here:
-        JDialogVerwendete dialogVerwendete = new JDialogVerwendete(this, true, verwendeteMengenstaffel);
+        JDialogVerwendete dialogVerwendete = new JDialogVerwendete(this, true, verwendeteMengenstaffel,verfugbareMengenstaffelns, verfugbareGroßens);
         dialogVerwendete.setVisible(true);
     }//GEN-LAST:event_jButtonMehrereGrosActionPerformed
 
