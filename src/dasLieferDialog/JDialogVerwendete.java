@@ -5,14 +5,24 @@
  */
 package dasLieferDialog;
 
+import dasLieferdao.JlieferDao;
+import dasLieferdao.JlieferDaoInterface;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.AbstractAction;
 import javax.swing.JDialog;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import model.LieferKundPrufer;
+import model.Protokoll;
 import model.Varianten;
 import model.VerfugbareGroßen;
 import model.VerfugbareMengenstaffeln;
 import model.VerwendeteMengenstaffel;
+import util.TableCellListener;
 
 /**
  *
@@ -23,20 +33,35 @@ private final Object[] rowData = new Object[7];
 private final Object[] rowDataVarianten = new Object[3];
 private final Object[] rowDataVerGroesse = new Object[13];
 private final DefaultTableModel tableModel, tablemodelvarianten, tableModelGroessen;
+private final List<VerfugbareGroßen> verfugbareGroßens;
+private VerfugbareGroßen großen;
+private final LieferKundPrufer kundPruferFamakIn;
+private final JlieferDaoInterface jlieferDaoInterface;
+private final String preisVariante;
+private List<Protokoll> protokolls;
+private final ListSelectionModel listSelectionModel;
+private  TableCellListener tclGroesses, tclGroess;
     /**
      * Creates new form JDialogVerwendete
      * @param parent
      * @param modal
      * @param verwendeteMengenstaffel
      * @param verfugbareMengenstaffelns
-     * @param verfugbareGroßens
+     * @param kundPruferFamak
+     * @param dburlProdukt
+     * @param preisVar
+     
      */
-    public JDialogVerwendete(JDialog parent, boolean modal, VerwendeteMengenstaffel verwendeteMengenstaffel,List<VerfugbareMengenstaffeln> verfugbareMengenstaffelns,List<VerfugbareGroßen> verfugbareGroßens) {
+    public JDialogVerwendete(JDialog parent, boolean modal, VerwendeteMengenstaffel verwendeteMengenstaffel,List<VerfugbareMengenstaffeln> verfugbareMengenstaffelns,List<VerfugbareGroßen> verfugbareGroßensIn, LieferKundPrufer kundPruferFamak, String dburlProdukt, String preisVar) {
         super(parent, modal);
         initComponents();
         tableModel = (DefaultTableModel) jTable1.getModel();
         tablemodelvarianten = (DefaultTableModel) jTableVariaten.getModel();
         tableModelGroessen = (DefaultTableModel) jTableverfugGroesse.getModel();
+        this.verfugbareGroßens = verfugbareGroßensIn;
+        this.kundPruferFamakIn = kundPruferFamak;
+        this.preisVariante = preisVar;
+        protokolls = new ArrayList<>();
         jTextFieldAnderung1.setText(verwendeteMengenstaffel.getAnderung1());
         jTextFieldAnderung2.setText(verwendeteMengenstaffel.getAnderung2());
         jTextFieldAnderung3.setText(verwendeteMengenstaffel.getAnderung3());
@@ -59,7 +84,75 @@ private final DefaultTableModel tableModel, tablemodelvarianten, tableModelGroes
         tableModelGroessen.setRowCount(0);
         populateJtableMengen(verfugbareMengenstaffelns);
         populateJtablevarianten(verwendeteMengenstaffel.getVariantens());
-        populateTableGroessen(verfugbareGroßens);
+        populateTableGroessen(this.verfugbareGroßens);
+        jlieferDaoInterface = new JlieferDao(dburlProdukt);
+        listSelectionModel = jTableverfugGroesse.getSelectionModel();
+//        listSelectionModel.addListSelectionListener(new ListSelectionListener() {
+//            @Override
+//            public void valueChanged(ListSelectionEvent lse) {
+//                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//            }
+//        });
+        tclGroesses = new TableCellListener(jTableverfugGroesse, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            tclGroess = (TableCellListener) e.getSource();
+            switch (tclGroess.getColumn()){
+                case 0:
+                    verfugbareGroßens.get(tclGroess.getRow()).setKdArtNum(tclGroess.getNewValue().toString());
+                    break;
+                case 1:
+                    verfugbareGroßens.get(tclGroess.getRow()).setKdFarbe(tclGroess.getNewValue().toString());
+
+                    break;
+                case 2:
+                    verfugbareGroßens.get(tclGroess.getRow()).setKdGrosse(tclGroess.getNewValue().toString());
+
+                    break;
+                case 3:
+                    verfugbareGroßens.get(tclGroess.getRow()).setKdVariante(tclGroess.getNewValue().toString());
+
+                    break;
+                case 4:
+                    verfugbareGroßens.get(tclGroess.getRow()).setSort(tclGroess.getNewValue().toString());
+
+                    break;
+                case 5:
+                    verfugbareGroßens.get(tclGroess.getRow()).setGroesse(tclGroess.getNewValue().toString());
+
+                    break;
+                case 6:
+                    verfugbareGroßens.get(tclGroess.getRow()).setKd1(tclGroess.getNewValue().toString());
+
+                    break;
+                case 7:
+                    verfugbareGroßens.get(tclGroess.getRow()).setGz(tclGroess.getNewValue().toString());
+
+                    break;
+                case 8:
+                    verfugbareGroßens.get(tclGroess.getRow()).setGp1(tclGroess.getNewValue().toString());
+
+                    break;
+                case 9:
+                    verfugbareGroßens.get(tclGroess.getRow()).setGp2(tclGroess.getNewValue().toString());
+
+                    break;
+                case 10:
+                    verfugbareGroßens.get(tclGroess.getRow()).setGp3(tclGroess.getNewValue().toString());
+
+                    break;
+                case 11:
+                    verfugbareGroßens.get(tclGroess.getRow()).setGp4(tclGroess.getNewValue().toString());
+
+                    break;
+                case 12:
+                    verfugbareGroßens.get(tclGroess.getRow()).setStaffelNum(tclGroess.getNewValue().toString());
+
+                    break;
+                        
+            }
+            }
+        });
     }
 
     private void populateJtableMengen(List<VerfugbareMengenstaffeln> verfugbareMengenstaffelns){
@@ -78,7 +171,6 @@ private final DefaultTableModel tableModel, tablemodelvarianten, tableModelGroes
         tableModel.addRow(rowData);
         
     }
-    
     
     private void populateJtablevarianten(List<Varianten> variantens){
         variantens.stream().forEach(cnsmr->{
@@ -112,6 +204,37 @@ private final DefaultTableModel tableModel, tablemodelvarianten, tableModelGroes
         rowDataVerGroesse[11] = großen.getGp4();
         rowDataVerGroesse[12] = großen.getStaffelNum();
         tableModelGroessen.addRow(rowDataVerGroesse);
+    }
+    
+    private List<VerfugbareGroßen> getSelectedGrossen(){
+    List<VerfugbareGroßen> großens= new ArrayList<>();    
+    int[] selection;
+        selection = jTableverfugGroesse.getSelectedRows();
+        for (int i = 0; i < selection.length; i++){
+           VerfugbareGroßen verfugbareGroßen =  verfugbareGroßens.get(selection[i]);
+           großens.add(verfugbareGroßen);
+           
+        }
+        großens.stream().forEach(cnsmr->{
+            System.out.println("KD-farbe: "+cnsmr.getKdFarbe());
+        });
+        return großens;
+}
+    
+    private void insertIntoList(String origin, String artNum,String farbNum,String groesse, String varNum,String gtin,String posGridID,String grPreis,String varPreis,String meldung,String message){
+           Protokoll protokoll = new Protokoll();
+           protokoll.setOrigin(origin);
+           protokoll.setArtNummer(artNum);
+           protokoll.setFarbNummer(farbNum);
+           protokoll.setGroesse(groesse);
+           protokoll.setVarianten(varNum);
+           protokoll.setGtin(gtin);
+           protokoll.setPosgridID(posGridID);
+           protokoll.setNull1(grPreis);
+           protokoll.setNull2(varPreis);
+           protokoll.setMeldung(meldung);
+           protokoll.setMessage(message);
+           protokolls.add(protokoll);
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -168,6 +291,7 @@ private final DefaultTableModel tableModel, tablemodelvarianten, tableModelGroes
         jPanel3 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTableverfugGroesse = new javax.swing.JTable();
+        jButtonMarkierte = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -502,8 +626,9 @@ private final DefaultTableModel tableModel, tablemodelvarianten, tableModelGroes
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jTableverfugGroesse.setModel(new javax.swing.table.DefaultTableModel(
@@ -516,6 +641,13 @@ private final DefaultTableModel tableModel, tablemodelvarianten, tableModelGroes
         ));
         jScrollPane3.setViewportView(jTableverfugGroesse);
 
+        jButtonMarkierte.setText("Markierte Zeilen Verarbeiten");
+        jButtonMarkierte.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonMarkierteActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -524,13 +656,19 @@ private final DefaultTableModel tableModel, tablemodelvarianten, tableModelGroes
                 .addContainerGap()
                 .addComponent(jScrollPane3)
                 .addContainerGap())
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(221, 221, 221)
+                .addComponent(jButtonMarkierte)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(64, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jButtonMarkierte)
+                .addContainerGap(23, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -578,6 +716,48 @@ private final DefaultTableModel tableModel, tablemodelvarianten, tableModelGroes
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextFieldKundumMengActionPerformed
 
+    private void jButtonMarkierteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonMarkierteActionPerformed
+        // TODO add your handling code here:
+        protokolls.clear();
+        System.out.println("selectedGroessen: "+ getSelectedGrossen().size());
+        getSelectedGrossen().stream().forEach(cnsmr->{
+           String meldung1 = jlieferDaoInterface.gtinStammsatzAnderung("2", kundPruferFamakIn.getArtikel_Nr(), kundPruferFamakIn.getFarbeNummer(), cnsmr.getGroesse(), kundPruferFamakIn.getVarNummer(), "", kundPruferFamakIn.getPosGrId());
+            System.out.println(meldung1);
+           String message;
+           String indicator = meldung1;
+           if (meldung1.length() > 4) {
+             
+            if (meldung1.contains("-")) {
+                indicator = "E-";
+            } else {
+                indicator = "E";
+            }
+            message = jlieferDaoInterface.getMeldung("1", indicator);
+            insertIntoList("Dastex",kundPruferFamakIn.getArtikel_Nr(),kundPruferFamakIn.getFarbeNummer(),cnsmr.getGroesse(),kundPruferFamakIn.getVarNummer(),kundPruferFamakIn.getGtin(),kundPruferFamakIn.getPosGrId(),"","",meldung1,message);
+            } else
+           {
+            message = jlieferDaoInterface.getMeldung("1", indicator);
+            insertIntoList("Dastex",kundPruferFamakIn.getArtikel_Nr(),kundPruferFamakIn.getFarbeNummer(),cnsmr.getGroesse(),kundPruferFamakIn.getVarNummer(),kundPruferFamakIn.getGtin(),kundPruferFamakIn.getPosGrId(),"","",meldung1,message);
+
+           }
+           
+            if (meldung1.length()>4) {
+                System.out.println("In table:"+jTextFieldKundumMeng.getText()+"---"+cnsmr.getKdFarbe()+"---"+cnsmr.getKdGrosse()+"---"+cnsmr.getKdVariante());
+                String meldung2 = jlieferDaoInterface.anlegenAndern("0",jTextFieldKundumMeng.getText() , cnsmr.getKdArtNum(), cnsmr.getKdFarbe(), cnsmr.getKdGrosse(), cnsmr.getKdVariante(), meldung1, kundPruferFamakIn.getPosGrId(), cnsmr.getGp1(), preisVariante);
+                message = jlieferDaoInterface.getMeldung("2", meldung2);
+                insertIntoList(jTextFieldKundNumGros.getText(),cnsmr.getKdArtNum(),cnsmr.getKdFarbe(),cnsmr.getGroesse(),cnsmr.getKdVariante(),kundPruferFamakIn.getGtin(),kundPruferFamakIn.getPosGrId(),cnsmr.getGp1(),preisVariante,meldung1,message);
+
+            }
+ 
+        });
+        
+        JDialogProtokoll dialogProtokoll = new JDialogProtokoll(this, true, protokolls);
+        dialogProtokoll.setVisible(true);
+        
+        //jlieferDaoInterface.gtinStammsatzAnderung("0", kundPruferFamakIn.getArtikel_Nr(), kundPruferFamakIn.getFarbeNummer(), getSelectedGrossen().get(0).getGroesse(), kundPruferFamakIn.getVariante(), kundPruferFamakIn.getGtin(), kundPruferFamakIn.getPosGrId());
+        
+    }//GEN-LAST:event_jButtonMarkierteActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -607,8 +787,9 @@ private final DefaultTableModel tableModel, tablemodelvarianten, tableModelGroes
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
-                JDialogVerwendete dialog = new JDialogVerwendete(new JDialog(), true, new VerwendeteMengenstaffel(), new ArrayList<>(), new ArrayList<>());
+                JDialogVerwendete dialog = new JDialogVerwendete(new JDialog(), true, new VerwendeteMengenstaffel(), new ArrayList<>(), new ArrayList<>(), new LieferKundPrufer(),"","");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -621,6 +802,7 @@ private final DefaultTableModel tableModel, tablemodelvarianten, tableModelGroes
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonMarkierte;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;

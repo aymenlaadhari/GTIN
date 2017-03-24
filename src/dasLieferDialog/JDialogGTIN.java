@@ -34,7 +34,7 @@ public class JDialogGTIN extends javax.swing.JDialog {
     private Faktor localfaktor;
     private final VerwendeteMengenstaffel verwendeteMengenstaffel;
     private final List<VerfugbareMengenstaffeln> verfugbareMengenstaffelns;
-    private  List<VerfugbareGroßen> verfugbareGroßens;
+    private final  List<VerfugbareGroßen> verfugbareGroßens;
     /**
      * Creates new form JDialogGTIN
      * @param parent
@@ -155,6 +155,11 @@ public class JDialogGTIN extends javax.swing.JDialog {
         jButtonMehrereGros = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("GTIN und Kundendaten anlegen/ändern");
+        setBackground(new java.awt.Color(102, 255, 102));
+        setForeground(new java.awt.Color(0, 255, 102));
+        setIconImage(null);
+        setIconImages(null);
 
         jPanelKundenAnlegen.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Kunden Daten", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.DEFAULT_POSITION));
 
@@ -685,7 +690,7 @@ public class JDialogGTIN extends javax.swing.JDialog {
 
     private void jButtonMehrereGrosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonMehrereGrosActionPerformed
         // TODO add your handling code here:
-        JDialogVerwendete dialogVerwendete = new JDialogVerwendete(this, true, verwendeteMengenstaffel,verfugbareMengenstaffelns, verfugbareGroßens);
+        JDialogVerwendete dialogVerwendete = new JDialogVerwendete(this, true, verwendeteMengenstaffel,verfugbareMengenstaffelns, verfugbareGroßens,kundPruferFamak, dbUrl, jTextFieldPreisVarianten.getText().replace(",", "."));
         dialogVerwendete.setVisible(true);
     }//GEN-LAST:event_jButtonMehrereGrosActionPerformed
 

@@ -46,7 +46,9 @@ public class JlieferDao implements JlieferDaoInterface {
     public String anlegenAndern(String indicator, String kundNummer, String kundArtNummer, String kundfarbe, String kundGroesse, String variante, String gtin, String posGrId, String grundPreis, String varPreis) {
     String ret = "";
         try {
-            //String proc = "SELECT GTIN_Stammsatz_anlegen_aendern ( '0', '1701000', '13', 'EL', ';001;002;061O;072;091;111C;111D;', '', '2230531' )";
+            System.out.println("in dao: '"+indicator+"', '"+kundNummer+"', '"+kundArtNummer+"', '"+kundfarbe+"', '"+kundGroesse+"', '"+variante);
+           // String proc = "SELECT GTIN_Stammsatz_anlegen_aendern ( '0', '1040', '13', 'EL', ';001;002;061O;072;091;111C;111D;', '', '2230531' )";
+            //String proc = "SELECT GTIN_Kunde_KdArtNr_anlegen_aendern( '0', '104008', 'null', 'null', 'null', null, '"+gtin+"', '"+posGrId+"', '"+grundPreis+"', '"+varPreis+"' )";
             String proc = "SELECT GTIN_Kunde_KdArtNr_anlegen_aendern( '"+indicator+"', '"+kundNummer+"', '"+kundArtNummer+"', '"+kundfarbe+"', '"+kundGroesse+"', '"+variante+"', '"+gtin+"', '"+posGrId+"', '"+grundPreis+"', '"+varPreis+"' )";
             
             Connection conProdukt = DriverManager.getConnection(dburlProdukt);
@@ -364,19 +366,19 @@ public class JlieferDao implements JlieferDaoInterface {
             try (ResultSet rs = cs.executeQuery()) {
                 while (rs.next()) {
                  VerfugbareGroßen verfugbareGroßen = new VerfugbareGroßen();
-                 verfugbareGroßen.setGp1(rs.getString("GP1"));
-                 verfugbareGroßen.setGp2(rs.getString("GP2"));
-                 verfugbareGroßen.setGp3(rs.getString("GP3"));
-                 verfugbareGroßen.setGp4(rs.getString("GP4"));
-                 verfugbareGroßen.setGroesse(rs.getString("Groesse"));
-                 verfugbareGroßen.setGz(rs.getString("GZ"));
-                 verfugbareGroßen.setKd1(rs.getString("Kd_1"));
-                 verfugbareGroßen.setKdArtNum(rs.getString("Kd-Art-Nr"));
-                 verfugbareGroßen.setKdFarbe(rs.getString("Kd-Farbe"));
-                 verfugbareGroßen.setKdGrosse(rs.getString("Kd-Größe"));
-                 verfugbareGroßen.setKdVariante(rs.getString("Kd-Variante"));
-                 verfugbareGroßen.setSort(rs.getString("Sort"));
-                 verfugbareGroßen.setStaffelNum(rs.getString("Staffel_Nr"));
+                 verfugbareGroßen.setGp1(rs.getString("GP1")!= null ? rs.getString("GP1") : "");
+                 verfugbareGroßen.setGp2(rs.getString("GP2")!= null ? rs.getString("GP2") : "");
+                 verfugbareGroßen.setGp3(rs.getString("GP3")!= null ? rs.getString("GP3") : "");
+                 verfugbareGroßen.setGp4(rs.getString("GP4")!= null ? rs.getString("GP4") : "");
+                 verfugbareGroßen.setGroesse(rs.getString("Groesse")!= null ? rs.getString("Groesse") : "");
+                 verfugbareGroßen.setGz(rs.getString("GZ")!= null ? rs.getString("GZ") : "");
+                 verfugbareGroßen.setKd1(rs.getString("Kd_1")!= null ? rs.getString("Kd_1") : "");
+                 verfugbareGroßen.setKdArtNum(rs.getString("Kd-Art-Nr")!= null ? rs.getString("Kd-Art-Nr") : "");
+                 verfugbareGroßen.setKdFarbe(rs.getString("Kd-Farbe")!= null ? rs.getString("Kd-Farbe") : "");
+                 verfugbareGroßen.setKdGrosse(rs.getString("Kd-Größe")!= null ? rs.getString("Kd-Größe") : "");
+                 verfugbareGroßen.setKdVariante(rs.getString("Kd-Variante")!= null ? rs.getString("Kd-Variante") : "");
+                 verfugbareGroßen.setSort(rs.getString("Sort")!= null ? rs.getString("Sort") : "");
+                 verfugbareGroßen.setStaffelNum(rs.getString("Staffel_Nr")!= null ? rs.getString("Staffel_Nr") : "");
                  verfugbareGroßens.add(verfugbareGroßen);
                 }
                 rs.close();
@@ -531,7 +533,6 @@ public class JlieferDao implements JlieferDaoInterface {
     public String gtinStammsatzAnderung(String indicator, String ArtNr, String FarbNr, String Gross, String Varianten, String GTIN, String PosGrID) {
      String ret = "";
         try {
-            //String proc = "SELECT GTIN_Stammsatz_anlegen_aendern ( '0', '1701000', '13', 'EL', ';001;002;061O;072;091;111C;111D;', '', '2230531' )";
             String proc = "SELECT GTIN_Stammsatz_anlegen_aendern ( '"+indicator+"', '"+ArtNr+"', '"+FarbNr+"', '"+Gross+"', '"+Varianten+"', '"+GTIN+"', '"+PosGrID+"' )";
             
             Connection conProdukt = DriverManager.getConnection(dburlProdukt);
