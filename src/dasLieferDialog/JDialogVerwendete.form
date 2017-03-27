@@ -40,7 +40,7 @@
                       </Group>
                   </Group>
               </Group>
-              <EmptySpace pref="50" max="32767" attributes="0"/>
+              <EmptySpace pref="38" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -553,13 +553,13 @@
               <Properties>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                   <Table columnCount="7" rowCount="4">
-                    <Column editable="true" title="Stufe" type="java.lang.Object"/>
-                    <Column editable="true" title="Typ" type="java.lang.Object"/>
-                    <Column editable="true" title="Menge1" type="java.lang.Object"/>
-                    <Column editable="true" title="Menge2" type="java.lang.Object"/>
-                    <Column editable="true" title="Menge3" type="java.lang.Object"/>
-                    <Column editable="true" title="Menge4" type="java.lang.Object"/>
-                    <Column editable="true" title="Staffel_Nr" type="java.lang.Object"/>
+                    <Column editable="false" title="Stufe" type="java.lang.Object"/>
+                    <Column editable="false" title="Typ" type="java.lang.Object"/>
+                    <Column editable="false" title="Menge1" type="java.lang.Object"/>
+                    <Column editable="false" title="Menge2" type="java.lang.Object"/>
+                    <Column editable="false" title="Menge3" type="java.lang.Object"/>
+                    <Column editable="false" title="Menge4" type="java.lang.Object"/>
+                    <Column editable="false" title="Staffel_Nr" type="java.lang.Object"/>
                   </Table>
                 </Property>
                 <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -651,9 +651,9 @@
               <Properties>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                   <Table columnCount="3" rowCount="4">
-                    <Column editable="true" title="Nr" type="java.lang.Object"/>
-                    <Column editable="true" title="Bezeichnung" type="java.lang.Object"/>
-                    <Column editable="true" title="Aufpreis" type="java.lang.Object"/>
+                    <Column editable="false" title="Nr" type="java.lang.Object"/>
+                    <Column editable="false" title="Bezeichnung" type="java.lang.Object"/>
+                    <Column editable="false" title="Aufpreis" type="java.lang.Object"/>
                   </Table>
                 </Property>
                 <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -685,17 +685,24 @@
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPanel" name="jPanel3">
+      <Properties>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+            <TitledBorder justification="1" title="Verf&#xfc;gbare Gr&#xf6;&#xdf;en"/>
+          </Border>
+        </Property>
+      </Properties>
 
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jScrollPane3" max="32767" attributes="0"/>
+                  <Component id="jScrollPane3" pref="929" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="-2" pref="221" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="363" max="-2" attributes="0"/>
                   <Component id="jButtonMarkierte" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
@@ -708,7 +715,7 @@
                   <Component id="jScrollPane3" min="-2" pref="206" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="jButtonMarkierte" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="23" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

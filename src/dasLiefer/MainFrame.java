@@ -973,7 +973,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("tab1", jPanel3);
+        jTabbedPane1.addTab("Daten Eintragen", jPanel3);
 
         jTablePrufer.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1078,7 +1078,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGap(48, 48, 48))
         );
 
-        jTabbedPane1.addTab("tab2", jPanel4);
+        jTabbedPane1.addTab("GTIN überprüfen", jPanel4);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

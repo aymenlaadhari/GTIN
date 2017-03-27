@@ -43,8 +43,8 @@
         <Container class="javax.swing.JPanel" name="jPanel3">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="tab1">
-                <Property name="tabTitle" type="java.lang.String" value="tab1"/>
+              <JTabbedPaneConstraints tabName="Daten Eintragen">
+                <Property name="tabTitle" type="java.lang.String" value="Daten Eintragen"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>
@@ -545,8 +545,8 @@
         <Container class="javax.swing.JPanel" name="jPanel4">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="tab2">
-                <Property name="tabTitle" type="java.lang.String" value="tab2"/>
+              <JTabbedPaneConstraints tabName="GTIN &#xfc;berpr&#xfc;fen">
+                <Property name="tabTitle" type="java.lang.String" value="GTIN &#xfc;berpr&#xfc;fen"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>
