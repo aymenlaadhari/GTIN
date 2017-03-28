@@ -10,6 +10,7 @@ package model;
  * @author aladhari
  */
 public class LieferKund {
+    
     private String posiNummer="",Kd_Pos_activ="", Pos_Zaehler="", Artikel_Nr="", Farbe="", Groesse="", Variante="", Menge="", Preis="", Kommission="",lagerNum="";
 
     public String getKd_Pos_activ() {
@@ -99,6 +100,9 @@ public class LieferKund {
     public void setPosiNummer(String posiNummer) {
         this.posiNummer = posiNummer;
     }
-    
-    
+
+    @Override
+    public String toString() {
+        return "LieferKund{" + "posiNummer=" + posiNummer + ", Kd_Pos_activ=" + Kd_Pos_activ + ", Pos_Zaehler=" + Pos_Zaehler + ", Artikel_Nr=" + Artikel_Nr + ", Farbe=" + Farbe + ", Groesse=" + Groesse + ", Variante=" + Variante + ", Menge=" + Menge + ", Preis=" + Preis + ", Kommission=" + Kommission + ", lagerNum=" + lagerNum + '}';
+    }
 }

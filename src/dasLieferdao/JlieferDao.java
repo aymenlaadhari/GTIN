@@ -67,13 +67,11 @@ public class JlieferDao implements JlieferDaoInterface {
         return ret;     
     }
 
-    
-
     @Override
-    public String erfassungManuelzuweisen(String indice, String id, String posGridId, String position) {
+    public String erfassungAbschliessen(String id, String posGrosId) {
         String ret = "";
         try {
-            String proc = "SELECT GTIN_Erfassungsdaten_manuell_zuweisen('" + indice + "','" + id + "','" + posGridId + "','" + position + "')";
+            String proc = "SELECT GTIN_Erfassungsdaten_manuell_abschliessen('" + id + "','" + posGrosId + "')";
             Connection conProdukt = DriverManager.getConnection(dburlProdukt);
             Statement s = conProdukt.createStatement();
             try (ResultSet rs = s.executeQuery(proc)) {
@@ -88,6 +86,35 @@ public class JlieferDao implements JlieferDaoInterface {
             Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         return ret;
+    }
+
+    
+
+    @Override
+    public String erfassungManuelzuweisen(String indice, String id, String posGridId, String status) {
+        //System.out.println(indice + "','" + id + "','" + posGridId + "','" + status );
+        String ret = "";
+        try {
+            String proc = "SELECT GTIN_Erfassungsdaten_manuell_zuweisen('" + indice + "','" + id + "','" + posGridId + "','" + status + "')";
+            Connection conProdukt = DriverManager.getConnection(dburlProdukt);
+            Statement s = conProdukt.createStatement();
+            try (ResultSet rs = s.executeQuery(proc)) {
+                while (rs.next()) {
+                    ret = rs.getString(1);
+                }
+                rs.close();
+                s.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return ret;
+    }
+
+    @Override
+    public String erfassungVerarbeiten() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -316,7 +343,7 @@ public class JlieferDao implements JlieferDaoInterface {
                     liefPrufer.setPosiNummer(rs.getString("Kd_Pos_Nr") != null ? rs.getString("Kd_Pos_Nr") : "");
                     liefPrufer.setKundenArtikelNummer(rs.getString("Kd_Artikel_Nr") != null ? rs.getString("Kd_Artikel_Nr") : "");
                     liefPrufer.setFarbe(rs.getString("Kd_Farbe") != null ? rs.getString("Kd_Farbe") : "");
-                    liefPrufer.setGroesse(rs.getString("Kd_Groesse") != null ? rs.getString("Kd_Groesse") : "");
+                    liefPrufer.setKdgroesse(rs.getString("Kd_Groesse") != null ? rs.getString("Kd_Groesse") : "");
                     liefPrufer.setVariante(rs.getString("Kd_Variante") != null ? rs.getString("Kd_Variante") : "");
                     liefPrufer.setMenge(rs.getString("Kd_Menge") != null ? rs.getString("Kd_Menge") : "");
                     liefPrufer.setPreis(rs.getString("Kd_Preis") != null ? rs.getString("Kd_Preis") : "");

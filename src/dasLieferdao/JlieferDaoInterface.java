@@ -40,5 +40,7 @@ public interface JlieferDaoInterface
     public VerwendeteMengenstaffel getVerMengen(String indice,String kdNum,String artNum,String barbNum,String groesse, String posGridId);
     public List<VerfugbareMengenstaffeln> getListVerfugmeng(String indice,String kdNum,String artNum,String barbNum,String groesse);
     public List<VerfugbareGroßen> getListverfugGroesse(String indice,String kdNum,String artNum,String barbNum,String groesse);
-    public String erfassungManuelzuweisen(String indice, String id, String posGridId,String position);
+    public String erfassungManuelzuweisen(String indice, String id, String posGridId,String status);
+    public String erfassungAbschliessen(String id, String posGrosId);
+    public String erfassungVerarbeiten();
    }

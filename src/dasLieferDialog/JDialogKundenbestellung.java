@@ -27,10 +27,11 @@ public class JDialogKundenbestellung extends javax.swing.JDialog {
     public JDialogKundenbestellung(java.awt.Frame parent, boolean modal,LieferKundPrufer kundPrufer, String dbUrl) {
         super(parent, modal);
         initComponents();
+        System.out.println(kundPrufer.toString());
         jTextFieldposNr.setText(kundPrufer.getPosiNummer());
-        jTextFieldArtNummer.setText(kundPrufer.getArtikel_Nr());
+        jTextFieldArtNummer.setText(kundPrufer.getKundenArtikelNummer());
         jTextFieldFarbe.setText(kundPrufer.getFarbe());
-        jTextFieldGroesse.setText(kundPrufer.getGroesse());
+        jTextFieldGroesse.setText(kundPrufer.getKdgroesse());
         jTextFieldVariante.setText(kundPrufer.getVariante());
         jTextFieldMenge.setText(kundPrufer.getMenge());
         jTextFieldPreis.setText(kundPrufer.getPreis());
@@ -103,6 +104,11 @@ public class JDialogKundenbestellung extends javax.swing.JDialog {
         });
 
         jButton2.setText("Abbrechen");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -227,7 +233,14 @@ public class JDialogKundenbestellung extends javax.swing.JDialog {
     private void jButtonUbernehmenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUbernehmenActionPerformed
         // TODO add your handling code here:
         success=jlieferDaoInterface.updateTablePrufen(jTextFieldId.getText(), jTextFieldposNr.getText(), jTextFieldArtNummer.getText(), jTextFieldFarbe.getText(), jTextFieldGroesse.getText(), jTextFieldVariante.getText(), jTextFieldMenge.getText(), jTextFieldPreis.getText(), jTextFieldKommission.getText());
+        System.out.println(success);
+        dispose();
     }//GEN-LAST:event_jButtonUbernehmenActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        dispose();
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments

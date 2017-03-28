@@ -41,7 +41,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
@@ -83,18 +82,15 @@ public class MainFrame extends javax.swing.JFrame {
      */
     public MainFrame() {
         initComponents();
-//        JScrollPane jScrollPane = new JScrollPane(jTablePrufer, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-//        this.add(jScrollPane);
+
         initilize();
         loadPropertie("installation");
         initializeDataBase();
         tableModel = (DefaultTableModel) jTable.getModel();
         tableModelPrufer = (DefaultTableModel) jTablePrufer.getModel();
         tableModelPrufer.setRowCount(0);
-        
         jTablePrufer.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         jTablePrufer.setPreferredScrollableViewportSize(Toolkit.getDefaultToolkit().getScreenSize());
-        
         kundNummerComp = new JTextFieldAutoCompletion(jTextFieldKdNr, nummers);
         kundNummerComp.setDataCompletion(nummers);
         dlgProgress = new JDialog(this, "Bitte warten...", true);//true means that the dialog created is modal
@@ -109,34 +105,11 @@ public class MainFrame extends javax.swing.JFrame {
         dlgProgress.setLocationRelativeTo(getParent());
         
         popupMenu = new JPopupMenu();
-        JMenuItem menuItemAdd = new JMenuItem("GTIN prüfen");
-        //JMenuItem menuItemRemove = new JMenuItem("Remove Current Row");  
+        JMenuItem menuItemAdd = new JMenuItem("GTIN prüfen"); 
 
         menuItemAdd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                kundPrufer= new LieferKundPrufer();
-                kundPruferFamak= new LieferKundPrufer();
-
-                int[] rows = jTablePrufer.getSelectedRows();
-                if (!"".equals(liefPrufers.get(rows[0]).getPosGrId())) {
-                    kundPruferFamak = liefPrufers.get(rows[0]);
-                   // System.out.println(rows[0] + "kund famak ok and the posGridIT is : " + kundPruferFamak.getPosGrId());
-                } else {
-                    kundPrufer = liefPrufers.get(rows[0]);
-                    //System.out.println(rows[0] + "kund prufer ok and the posGridIT is : " + kundPrufer.getPosGrId());
-                }
-
-                if (!"".equals(liefPrufers.get(rows[1]).getPosGrId())) {
-                    kundPruferFamak = liefPrufers.get(rows[1]);
-                   // System.out.println(rows[1] + "kund famak ok and the posGridIT is : " + kundPruferFamak.getPosGrId());
-                } else {
-                    kundPrufer = liefPrufers.get(rows[1]);
-                   // System.out.println(rows[1] + "kund prufer ok and the posGridIT is : " + kundPrufer.getPosGrId());
-                }
-//                kundPruferFamak = liefPrufers.get(rows[0]);
-//                kundPrufer = liefPrufers.get(rows[1]);
-
                 String preisVariante = jlieferDaoInterface.getPreisVariante(kundPruferFamak.getPosGrId());
                 //System.out.println("posGridID:"+kundPruferFamak.getPosGrId()+"and the preisVariante is: "+preisVariante);
                 //System.out.println("1"+"/"+kundPrufer.getKundenArtikelNummer()+"/"+ kundPrufer.getFarbeNummer()+"/"+kundPrufer.getGroesse()+"/"+kundPrufer.getVarNummer()+"/"+kundPrufer.getGtin()+"/"+kundPrufer.getPosGrId());
@@ -146,6 +119,27 @@ public class MainFrame extends javax.swing.JFrame {
         });
         popupMenu.add(menuItemAdd);
         ctrlPressed = false;
+    }
+    
+    private void selecteItems()
+    {
+        kundPrufer= new LieferKundPrufer();
+                kundPruferFamak= new LieferKundPrufer();
+
+                int[] rows = jTablePrufer.getSelectedRows();
+                if (!"".equals(liefPrufers.get(rows[0]).getPosGrId())) {
+                    kundPruferFamak = liefPrufers.get(rows[0]);
+                   
+                } else {
+                    kundPrufer = liefPrufers.get(rows[0]);
+                }
+
+                if (!"".equals(liefPrufers.get(rows[1]).getPosGrId())) {
+                    kundPruferFamak = liefPrufers.get(rows[1]);
+                   
+                } else {
+                    kundPrufer = liefPrufers.get(rows[1]);
+                }
     }
     private void initializeDataBase() {
         dbUrl = "jdbc:sqlanywhere:uid=" + systemPropertie.getProperty("uid")
@@ -473,12 +467,38 @@ public class MainFrame extends javax.swing.JFrame {
         sw.execute();
         dlgProgress.setVisible(true);
     }
-    private void populateJtablePrufung(List<LieferKundPrufer> kundPrufers){
-        kundPrufers.stream().forEach((cnsmr)->
-        {
-           addToPrufungTable(cnsmr);
-           tableModelPrufer.addRow(rowDataPrufung);
-        });
+    private void populateJtablePrufung(){
+        tableModelPrufer.setRowCount(0);
+        
+        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+        SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>(){
+            @Override
+            protected Void doInBackground() throws Exception {
+            try {
+            liefPrufers = jlieferDaoInterface.getListPrufers(format.format(jXDatePickerBisDatum.getDate()));
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null,
+                "Error getting DATA  "+jlieferDaoInterface.getException()+","+e.getMessage()+", date or database error",
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+        }   
+            return null;
+            }
+            
+            @Override
+            protected void done() {
+                dlgProgress.dispose();
+                //populateJtablePrufung(liefPrufers);
+                liefPrufers.stream().forEach((cnsmr)
+                        -> {
+                    addToPrufungTable(cnsmr);
+                    tableModelPrufer.addRow(rowDataPrufung);
+                });
+            }
+        };
+        sw.execute();
+        dlgProgress.setVisible(true);
+       
     }
     private void addToPrufungTable(LieferKundPrufer liefPrufer) {
         rowDataPrufung[0] = liefPrufer.getZeile();
@@ -492,7 +512,7 @@ public class MainFrame extends javax.swing.JFrame {
         rowDataPrufung[8] = liefPrufer.getPosiNummer();
         rowDataPrufung[9] = liefPrufer.getKundenArtikelNummer();
         rowDataPrufung[10] = liefPrufer.getFarbe();
-        rowDataPrufung[11] = liefPrufer.getGroesse();
+        rowDataPrufung[11] = liefPrufer.getKdgroesse();
         rowDataPrufung[12] = liefPrufer.getVariante();
         rowDataPrufung[13] = liefPrufer.getMenge();
         rowDataPrufung[14] = liefPrufer.getPreis();
@@ -526,10 +546,54 @@ public class MainFrame extends javax.swing.JFrame {
                 jTablePrufer.setSelectionBackground(Color.decode("#00AF33"));
             }
         }
-        
+        selecteItems();
 
     }
    
+    private void erfassungManuelle(){
+        //System.out.println("0"+ kundPrufer.getId()+";"+ kundPruferFamak.getPosGrId()+";"+ kundPrufer.getStatus());
+        String meldung3=  jlieferDaoInterface.erfassungManuelzuweisen("0", kundPrufer.getId(), kundPruferFamak.getPosGrId(), kundPrufer.getStatus());
+        String message = jlieferDaoInterface.getMeldung("3", meldung3);
+        System.out.println(message);
+        String[] parts3 = message.split("--");
+                        String part1 = parts3[0]; // 004
+                        String part2 = parts3[1]; // 034556
+                        JOptionPane.showMessageDialog(null,
+                                part1,
+                                part2,
+                                JOptionPane.WARNING_MESSAGE);
+    }
+    
+    private void erfassungManuelleteilmenge(){
+        //System.out.println("0"+ kundPrufer.getId()+";"+ kundPruferFamak.getPosGrId()+";"+ kundPrufer.getStatus());
+        String meldung3=  jlieferDaoInterface.erfassungManuelzuweisen("1", kundPrufer.getId(), kundPruferFamak.getPosGrId(), kundPrufer.getStatus());
+        String message = jlieferDaoInterface.getMeldung("3", meldung3);
+        System.out.println(message);
+        String[] parts3 = message.split("--");
+                        String part1 = parts3[0]; // 004
+                        String part2 = parts3[1]; // 034556
+                        JOptionPane.showMessageDialog(null,
+                                part1,
+                                part2,
+                                JOptionPane.WARNING_MESSAGE);
+    } 
+    
+    private void erfassungAbschliesen(){
+        String meldung3=  jlieferDaoInterface.erfassungAbschliessen(kundPrufer.getId(), kundPruferFamak.getPosGrId());
+        String message = jlieferDaoInterface.getMeldung("4", meldung3);
+        System.out.println(message);
+        String[] parts3 = message.split("--");
+                        String part1 = parts3[0]; // 004
+                        String part2 = parts3[1]; // 034556
+                        JOptionPane.showMessageDialog(null,
+                                part1,
+                                part2,
+                                JOptionPane.WARNING_MESSAGE);
+    }
+    
+    private void erfassungVerarbeiten(){
+        jlieferDaoInterface.erfassungVerarbeiten();
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -585,6 +649,10 @@ public class MainFrame extends javax.swing.JFrame {
         jButtonLaden = new javax.swing.JButton();
         jXDatePickerBisDatum = new org.jdesktop.swingx.JXDatePicker();
         jLabel16 = new javax.swing.JLabel();
+        jPanel6 = new javax.swing.JPanel();
+        jButtonManZu = new javax.swing.JButton();
+        jButtonteilManZu = new javax.swing.JButton();
+        jButtonAbOZu = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -939,7 +1007,7 @@ public class MainFrame extends javax.swing.JFrame {
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(36, 36, 36)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(103, Short.MAX_VALUE))
+                .addContainerGap(131, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -990,6 +1058,11 @@ public class MainFrame extends javax.swing.JFrame {
         jScrollPane2.setViewportView(jTablePrufer);
 
         jButtonVerarbeiten.setText("Änderungen verarbeiten");
+        jButtonVerarbeiten.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonVerarbeitenActionPerformed(evt);
+            }
+        });
 
         jButtonLaden.setText("Daten Laden");
         jButtonLaden.addActionListener(new java.awt.event.ActionListener() {
@@ -1036,6 +1109,57 @@ public class MainFrame extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Manuelle Verarbeitung", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.DEFAULT_POSITION));
+
+        jButtonManZu.setText("Manuell zuweisen");
+        jButtonManZu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonManZuActionPerformed(evt);
+            }
+        });
+
+        jButtonteilManZu.setText("Teilmenge manuell zuweisen");
+        jButtonteilManZu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonteilManZuActionPerformed(evt);
+            }
+        });
+
+        jButtonAbOZu.setText("Abschließen ohne Zuweisung");
+        jButtonAbOZu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAbOZuActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addGap(21, 21, 21)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButtonteilManZu, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
+                    .addComponent(jButtonManZu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jButtonAbOZu)
+                .addContainerGap(42, Short.MAX_VALUE))
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jButtonManZu)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButtonteilManZu))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addGap(30, 30, 30)
+                        .addComponent(jButtonAbOZu)))
+                .addContainerGap(32, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -1046,15 +1170,19 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(333, 333, 333)
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(502, Short.MAX_VALUE))
+                .addGap(81, 81, 81)
+                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addGap(44, 44, 44)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE)
                 .addGap(33, 33, 33)
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(48, 48, 48))
         );
 
@@ -1078,34 +1206,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void jButtonLadenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLadenActionPerformed
         // TODO add your handling code here:
-        tableModelPrufer.setRowCount(0);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
-        SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>(){
-            @Override
-            protected Void doInBackground() throws Exception {
-            try {
-            liefPrufers = jlieferDaoInterface.getListPrufers(format.format(jXDatePickerBisDatum.getDate()));
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null,
-                "Error getting DATA  "+jlieferDaoInterface.getException()+","+e.getMessage(),
-                "Error",
-                JOptionPane.ERROR_MESSAGE);
-        }   
-            return null;
-            }
-
-            @Override
-            protected void done() {
-                dlgProgress.dispose();
-                populateJtablePrufung(liefPrufers);
-            }
-            
-            
-        };
-        sw.execute();
-        dlgProgress.setVisible(true);
-
-        
+        populateJtablePrufung();
     }//GEN-LAST:event_jButtonLadenActionPerformed
 
     private void jTablePruferKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTablePruferKeyPressed
@@ -1116,13 +1217,7 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jTablePruferKeyPressed
 
     private void jTablePruferMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTablePruferMouseReleased
-        // TODO add your handling code here:
-        //         int r = jTablePrufer.rowAtPoint(evt.getPoint());
-        //        if (r >= 0 && r < jTablePrufer.getRowCount()) {
-            //            jTablePrufer.setRowSelectionInterval(r, r);
-            //        } else {
-            //            jTablePrufer.clearSelection();
-            //        }
+        
         int rowindex = jTablePrufer.getSelectedRow();
         if (rowindex < 0)
         return;
@@ -1134,14 +1229,20 @@ public class MainFrame extends javax.swing.JFrame {
     private void jTablePruferMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTablePruferMouseClicked
         // TODO add your handling code here:
         if (tableModelPrufer.getRowCount()!=0) {
-
+             
             if (evt.getClickCount() == 2){
+                if (!liefPrufers.get(jTablePrufer.getSelectedRow()).getId().isEmpty()) {
                 JDialogKundenbestellung dialogKundenbestellung = new JDialogKundenbestellung(this, true,liefPrufers.get(jTablePrufer.getSelectedRow()), dbUrl);
-                dialogKundenbestellung.setVisible(true);
+                dialogKundenbestellung.setVisible(true); 
+                    populateJtablePrufung();
+                }
+                
             }else if (evt.getButton() == MouseEvent.BUTTON3) {
                 //System.out.println("right button");
+            }else{
+              selectInTheTable();    
             }
-            selectInTheTable();
+            
         }
     }//GEN-LAST:event_jTablePruferMouseClicked
 
@@ -1414,6 +1515,26 @@ public class MainFrame extends javax.swing.JFrame {
             jTextFieldKdBestNr.requestFocus();
         }
     }//GEN-LAST:event_jTextFieldKdNrKeyPressed
+
+    private void jButtonVerarbeitenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVerarbeitenActionPerformed
+        // TODO add your handling code here:
+       erfassungVerarbeiten();
+    }//GEN-LAST:event_jButtonVerarbeitenActionPerformed
+
+    private void jButtonManZuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonManZuActionPerformed
+        // TODO add your handling code here:
+        erfassungManuelle();
+    }//GEN-LAST:event_jButtonManZuActionPerformed
+
+    private void jButtonteilManZuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonteilManZuActionPerformed
+        // TODO add your handling code here:
+        erfassungManuelleteilmenge();
+    }//GEN-LAST:event_jButtonteilManZuActionPerformed
+
+    private void jButtonAbOZuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAbOZuActionPerformed
+        // TODO add your handling code here:
+        erfassungAbschliesen();
+    }//GEN-LAST:event_jButtonAbOZuActionPerformed
    
     /**
      * @param args the command line arguments
@@ -1452,10 +1573,13 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonAbOZu;
     private javax.swing.JButton jButtonAdd;
     private javax.swing.JButton jButtonLaden;
+    private javax.swing.JButton jButtonManZu;
     private javax.swing.JButton jButtonSaveInDb;
     private javax.swing.JButton jButtonVerarbeiten;
+    private javax.swing.JButton jButtonteilManZu;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1477,6 +1601,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
