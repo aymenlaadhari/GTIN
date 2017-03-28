@@ -67,6 +67,29 @@ public class JlieferDao implements JlieferDaoInterface {
         return ret;     
     }
 
+    
+
+    @Override
+    public String erfassungManuelzuweisen(String indice, String id, String posGridId, String position) {
+        String ret = "";
+        try {
+            String proc = "SELECT GTIN_Erfassungsdaten_manuell_zuweisen('" + indice + "','" + id + "','" + posGridId + "','" + position + "')";
+            Connection conProdukt = DriverManager.getConnection(dburlProdukt);
+            Statement s = conProdukt.createStatement();
+            try (ResultSet rs = s.executeQuery(proc)) {
+                while (rs.next()) {
+                    ret = rs.getString(1);
+                }
+                rs.close();
+                s.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return ret;
+    }
+
     @Override
     public String getException() {
         return exceptionRecord;
@@ -196,6 +219,9 @@ public class JlieferDao implements JlieferDaoInterface {
     @Override
     public List<LieferKundPrufer> getListGtinAnderung(String KdNr, String KdArtNr, String KdFarbe, String KdGroße, String KdVariante, String GTIN, String grundPreis,String varPreis) {
     List<LieferKundPrufer> listGtinAnderung = new ArrayList<>();
+    
+        System.out.println("getListGtinAnderung parameter: " + KdNr + "','" + KdArtNr + "','" + KdFarbe + "','" + KdGroße + "','" + KdVariante + "','" + GTIN + "','" + grundPreis + "','" + varPreis);
+        
         String procName = "{CALL GTIN_Kunde_KdArtNr_Liste ('" + KdNr + "','" + KdArtNr + "','" + KdFarbe + "','" + KdGroße + "','" + KdVariante + "','" + GTIN + "','" + grundPreis + "','" + varPreis + "')}";
         Connection conProdukt;
         try {

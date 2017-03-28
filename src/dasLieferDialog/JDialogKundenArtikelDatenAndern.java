@@ -38,7 +38,7 @@ public class JDialogKundenArtikelDatenAndern extends javax.swing.JDialog {
      * @param preisGrossBasis
      * @param preisVarianten
      */
-    public JDialogKundenArtikelDatenAndern(javax.swing.JDialog parent, boolean modal, List<LieferKundPrufer> listGtinAnderung,LieferKundPrufer kundPruferFamamk, LieferKundPrufer kundPrufer,String dbUrl, String gtinParam,String preisGrossBasis,String preisVarianten) {
+    public JDialogKundenArtikelDatenAndern(javax.swing.JDialog parent, boolean modal, List<LieferKundPrufer> listGtinAnderung,LieferKundPrufer kundPruferFamamk, LieferKundPrufer kundPrufer,String dbUrl, String gtinParam,String preisGrossBasis,String preisVarianten, String message) {
         super(parent, modal);
         initComponents();
         this.listGtinAnderung = listGtinAnderung;
@@ -51,6 +51,7 @@ public class JDialogKundenArtikelDatenAndern extends javax.swing.JDialog {
         this.gtinParam = gtinParam;
         this.preisGrossBasis = preisGrossBasis.replace(",", ".");
         this.preisVarianten = preisVarianten.replace(",", ".");
+        jLabelText.setText(message);
         
     }
     
@@ -88,6 +89,8 @@ public class JDialogKundenArtikelDatenAndern extends javax.swing.JDialog {
         jTable1 = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jPanelText = new javax.swing.JPanel();
+        jLabelText = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Kunden-Artikel-daten ändern");
@@ -119,6 +122,23 @@ public class JDialogKundenArtikelDatenAndern extends javax.swing.JDialog {
             }
         });
 
+        javax.swing.GroupLayout jPanelTextLayout = new javax.swing.GroupLayout(jPanelText);
+        jPanelText.setLayout(jPanelTextLayout);
+        jPanelTextLayout.setHorizontalGroup(
+            jPanelTextLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelTextLayout.createSequentialGroup()
+                .addGap(29, 29, 29)
+                .addComponent(jLabelText, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(61, Short.MAX_VALUE))
+        );
+        jPanelTextLayout.setVerticalGroup(
+            jPanelTextLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelTextLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabelText, javax.swing.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -130,11 +150,17 @@ public class JDialogKundenArtikelDatenAndern extends javax.swing.JDialog {
                 .addGap(53, 53, 53)
                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(101, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanelText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(24, 24, 24))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(78, Short.MAX_VALUE)
+                .addContainerGap(15, Short.MAX_VALUE)
+                .addComponent(jPanelText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -198,8 +224,9 @@ public class JDialogKundenArtikelDatenAndern extends javax.swing.JDialog {
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
-                JDialogKundenArtikelDatenAndern dialog = new JDialogKundenArtikelDatenAndern(new JDialog(), true, new ArrayList<>(),new LieferKundPrufer(), new LieferKundPrufer(),"", "","","");
+                JDialogKundenArtikelDatenAndern dialog = new JDialogKundenArtikelDatenAndern(new JDialog(), true, new ArrayList<>(),new LieferKundPrufer(), new LieferKundPrufer(),"", "","","","");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -214,6 +241,8 @@ public class JDialogKundenArtikelDatenAndern extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JLabel jLabelText;
+    private javax.swing.JPanel jPanelText;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables

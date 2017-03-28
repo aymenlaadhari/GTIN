@@ -8,6 +8,7 @@ package dasLieferDialog;
 import dasLieferdao.JlieferDao;
 import dasLieferdao.JlieferDaoInterface;
 import java.awt.event.ActionEvent;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.AbstractAction;
@@ -27,35 +28,40 @@ import util.TableCellListener;
  * @author aladhari
  */
 public class JDialogVerwendete extends javax.swing.JDialog {
-private final Object[] rowData = new Object[7];
-private final Object[] rowDataVarianten = new Object[3];
-private final Object[] rowDataVerGroesse = new Object[13];
-private final DefaultTableModel tableModel, tablemodelvarianten, tableModelGroessen;
-private final List<VerfugbareGroßen> verfugbareGroßens;
-private VerfugbareGroßen großen;
-private final LieferKundPrufer kundPruferFamakIn;
-private final JlieferDaoInterface jlieferDaoInterface;
-private final String preisVariante;
-private final List<Protokoll> protokolls;
-private final ListSelectionModel listSelectionModel;
-private  TableCellListener tclGroesses, tclGroess;
+
+    private final Object[] rowData = new Object[7];
+    private final Object[] rowDataVarianten = new Object[3];
+    private final Object[] rowDataVerGroesse = new Object[13];
+    private final DefaultTableModel tableModel, tablemodelvarianten, tableModelGroessen;
+    private List<VerfugbareGroßen> verfugbareGroßens;
+    private VerfugbareGroßen großen;
+    private final LieferKundPrufer kundPruferFamakIn;
+    private final JlieferDaoInterface jlieferDaoInterface;
+    private final String preisVariante;
+    private final List<Protokoll> protokolls;
+    private final ListSelectionModel listSelectionModel;
+    private TableCellListener tclGroesses, tclGroess;
+
     /**
      * Creates new form JDialogVerwendete
+     *
      * @param parent
      * @param modal
      * @param verwendeteMengenstaffel
      * @param verfugbareMengenstaffelns
+     * @param verfugbareGroßensIn
      * @param kundPruferFamak
      * @param dburlProdukt
      * @param preisVar
-     
+     *
      */
-    public JDialogVerwendete(JDialog parent, boolean modal, VerwendeteMengenstaffel verwendeteMengenstaffel,List<VerfugbareMengenstaffeln> verfugbareMengenstaffelns,List<VerfugbareGroßen> verfugbareGroßensIn, LieferKundPrufer kundPruferFamak, String dburlProdukt, String preisVar) {
+    public JDialogVerwendete(JDialog parent, boolean modal, VerwendeteMengenstaffel verwendeteMengenstaffel, List<VerfugbareMengenstaffeln> verfugbareMengenstaffelns, List<VerfugbareGroßen> verfugbareGroßensIn, LieferKundPrufer kundPruferFamak, String dburlProdukt, String preisVar) {
         super(parent, modal);
         initComponents();
         tableModel = (DefaultTableModel) jTable1.getModel();
         tablemodelvarianten = (DefaultTableModel) jTableVariaten.getModel();
         tableModelGroessen = (DefaultTableModel) jTableverfugGroesse.getModel();
+        this.verfugbareGroßens = new ArrayList<>();
         this.verfugbareGroßens = verfugbareGroßensIn;
         this.kundPruferFamakIn = kundPruferFamak;
         this.preisVariante = preisVar;
@@ -85,80 +91,75 @@ private  TableCellListener tclGroesses, tclGroess;
         populateTableGroessen(this.verfugbareGroßens);
         jlieferDaoInterface = new JlieferDao(dburlProdukt);
         listSelectionModel = jTableverfugGroesse.getSelectionModel();
-//        listSelectionModel.addListSelectionListener(new ListSelectionListener() {
-//            @Override
-//            public void valueChanged(ListSelectionEvent lse) {
-//                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//            }
-//        });
         tclGroesses = new TableCellListener(jTableverfugGroesse, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            tclGroess = (TableCellListener) e.getSource();
-            switch (tclGroess.getColumn()){
-                case 0:
-                    verfugbareGroßens.get(tclGroess.getRow()).setKdArtNum(tclGroess.getNewValue().toString());
-                    break;
-                case 1:
-                    verfugbareGroßens.get(tclGroess.getRow()).setKdFarbe(tclGroess.getNewValue().toString());
+                tclGroess = (TableCellListener) e.getSource();
+                switch (tclGroess.getColumn()) {
+                    case 0:
+                        verfugbareGroßens.get(tclGroess.getRow()).setKdArtNum(tclGroess.getNewValue().toString());
+                        break;
+                    case 1:
+                        verfugbareGroßens.get(tclGroess.getRow()).setKdFarbe(tclGroess.getNewValue().toString());
 
-                    break;
-                case 2:
-                    verfugbareGroßens.get(tclGroess.getRow()).setKdGrosse(tclGroess.getNewValue().toString());
+                        break;
+                    case 2:
+                        verfugbareGroßens.get(tclGroess.getRow()).setKdGrosse(tclGroess.getNewValue().toString());
 
-                    break;
-                case 3:
-                    verfugbareGroßens.get(tclGroess.getRow()).setKdVariante(tclGroess.getNewValue().toString());
+                        break;
+                    case 3:
+                        verfugbareGroßens.get(tclGroess.getRow()).setKdVariante(tclGroess.getNewValue().toString());
 
-                    break;
-                case 4:
-                    verfugbareGroßens.get(tclGroess.getRow()).setSort(tclGroess.getNewValue().toString());
+                        break;
+                    case 4:
+                        verfugbareGroßens.get(tclGroess.getRow()).setSort(tclGroess.getNewValue().toString());
 
-                    break;
-                case 5:
-                    verfugbareGroßens.get(tclGroess.getRow()).setGroesse(tclGroess.getNewValue().toString());
+                        break;
+                    case 5:
+                        verfugbareGroßens.get(tclGroess.getRow()).setGroesse(tclGroess.getNewValue().toString());
 
-                    break;
-                case 6:
-                    verfugbareGroßens.get(tclGroess.getRow()).setKd1(tclGroess.getNewValue().toString());
+                        break;
+                    case 6:
+                        verfugbareGroßens.get(tclGroess.getRow()).setKd1(tclGroess.getNewValue().toString());
 
-                    break;
-                case 7:
-                    verfugbareGroßens.get(tclGroess.getRow()).setGz(tclGroess.getNewValue().toString());
+                        break;
+                    case 7:
+                        verfugbareGroßens.get(tclGroess.getRow()).setGz(tclGroess.getNewValue().toString());
 
-                    break;
-                case 8:
-                    verfugbareGroßens.get(tclGroess.getRow()).setGp1(tclGroess.getNewValue().toString());
+                        break;
+                    case 8:
+                        verfugbareGroßens.get(tclGroess.getRow()).setGp1(tclGroess.getNewValue().toString());
 
-                    break;
-                case 9:
-                    verfugbareGroßens.get(tclGroess.getRow()).setGp2(tclGroess.getNewValue().toString());
+                        break;
+                    case 9:
+                        verfugbareGroßens.get(tclGroess.getRow()).setGp2(tclGroess.getNewValue().toString());
 
-                    break;
-                case 10:
-                    verfugbareGroßens.get(tclGroess.getRow()).setGp3(tclGroess.getNewValue().toString());
+                        break;
+                    case 10:
+                        verfugbareGroßens.get(tclGroess.getRow()).setGp3(tclGroess.getNewValue().toString());
 
-                    break;
-                case 11:
-                    verfugbareGroßens.get(tclGroess.getRow()).setGp4(tclGroess.getNewValue().toString());
+                        break;
+                    case 11:
+                        verfugbareGroßens.get(tclGroess.getRow()).setGp4(tclGroess.getNewValue().toString());
 
-                    break;
-                case 12:
-                    verfugbareGroßens.get(tclGroess.getRow()).setStaffelNum(tclGroess.getNewValue().toString());
+                        break;
+                    case 12:
+                        verfugbareGroßens.get(tclGroess.getRow()).setStaffelNum(tclGroess.getNewValue().toString());
 
-                    break;
-                        
-            }
+                        break;
+
+                }
             }
         });
     }
 
-    private void populateJtableMengen(List<VerfugbareMengenstaffeln> verfugbareMengenstaffelns){
-        verfugbareMengenstaffelns.stream().forEach(cnsmr ->{
+    private void populateJtableMengen(List<VerfugbareMengenstaffeln> verfugbareMengenstaffelns) {
+        verfugbareMengenstaffelns.stream().forEach(cnsmr -> {
             addTotableMengen(cnsmr);
         });
     }
-    private void addTotableMengen(VerfugbareMengenstaffeln verfugbareMengenstaffeln){
+
+    private void addTotableMengen(VerfugbareMengenstaffeln verfugbareMengenstaffeln) {
         rowData[0] = verfugbareMengenstaffeln.getStufe();
         rowData[1] = verfugbareMengenstaffeln.getTyp();
         rowData[2] = verfugbareMengenstaffeln.getMenge1();
@@ -167,27 +168,30 @@ private  TableCellListener tclGroesses, tclGroess;
         rowData[5] = verfugbareMengenstaffeln.getMenge4();
         rowData[6] = verfugbareMengenstaffeln.getStaffelNr();
         tableModel.addRow(rowData);
-        
+
     }
-    
-    private void populateJtablevarianten(List<Varianten> variantens){
-        variantens.stream().forEach(cnsmr->{
+
+    private void populateJtablevarianten(List<Varianten> variantens) {
+        variantens.stream().forEach(cnsmr -> {
             addTotableVarianten(cnsmr);
         });
     }
-    private void addTotableVarianten(Varianten varianten){
+
+    private void addTotableVarianten(Varianten varianten) {
         rowDataVarianten[0] = varianten.getNummer();
         rowDataVarianten[1] = varianten.getBezeichung();
         rowDataVarianten[2] = varianten.getAufpreis();
         tablemodelvarianten.addRow(rowDataVarianten);
     }
-    
-    private void populateTableGroessen(List<VerfugbareGroßen> verfugbareGroßens){
-        verfugbareGroßens.stream().forEach(cnsmr->{
+
+    private void populateTableGroessen(List<VerfugbareGroßen> verfugbareGroßens) {
+        tableModelGroessen.setRowCount(0);
+        verfugbareGroßens.stream().forEach(cnsmr -> {
             addTotableGroessen(cnsmr);
         });
     }
-    private void addTotableGroessen(VerfugbareGroßen großen){
+
+    private void addTotableGroessen(VerfugbareGroßen großen) {
         rowDataVerGroesse[0] = großen.getKdArtNum();
         rowDataVerGroesse[1] = großen.getKdFarbe();
         rowDataVerGroesse[2] = großen.getKdGrosse();
@@ -203,37 +207,38 @@ private  TableCellListener tclGroesses, tclGroess;
         rowDataVerGroesse[12] = großen.getStaffelNum();
         tableModelGroessen.addRow(rowDataVerGroesse);
     }
-    
-    private List<VerfugbareGroßen> getSelectedGrossen(){
-    List<VerfugbareGroßen> großens= new ArrayList<>();    
-    int[] selection;
+
+    private List<VerfugbareGroßen> getSelectedGrossen() {
+        List<VerfugbareGroßen> großens = new ArrayList<>();
+        int[] selection;
         selection = jTableverfugGroesse.getSelectedRows();
-        for (int i = 0; i < selection.length; i++){
-           VerfugbareGroßen verfugbareGroßen =  verfugbareGroßens.get(selection[i]);
-           großens.add(verfugbareGroßen);
-           
+        for (int i = 0; i < selection.length; i++) {
+            VerfugbareGroßen verfugbareGroßen = verfugbareGroßens.get(selection[i]);
+            großens.add(verfugbareGroßen);
+
         }
-        großens.stream().forEach(cnsmr->{
-            System.out.println("KD-farbe: "+cnsmr.getKdFarbe());
+        großens.stream().forEach(cnsmr -> {
+            System.out.println("KD-farbe: " + cnsmr.getKdFarbe());
         });
         return großens;
-}
-    
-    private void insertIntoList(String origin, String artNum,String farbNum,String groesse, String varNum,String gtin,String posGridID,String grPreis,String varPreis,String meldung,String message){
-           Protokoll protokoll = new Protokoll();
-           protokoll.setOrigin(origin);
-           protokoll.setArtNummer(artNum);
-           protokoll.setFarbNummer(farbNum);
-           protokoll.setGroesse(groesse);
-           protokoll.setVarianten(varNum);
-           protokoll.setGtin(gtin);
-           protokoll.setPosgridID(posGridID);
-           protokoll.setNull1(grPreis);
-           protokoll.setNull2(varPreis);
-           protokoll.setMeldung(meldung);
-           protokoll.setMessage(message);
-           protokolls.add(protokoll);
     }
+
+    private void insertIntoList(String origin, String artNum, String farbNum, String groesse, String varNum, String gtin, String posGridID, String grPreis, String varPreis, String meldung, String message) {
+        Protokoll protokoll = new Protokoll();
+        protokoll.setOrigin(origin);
+        protokoll.setArtNummer(artNum);
+        protokoll.setFarbNummer(farbNum);
+        protokoll.setGroesse(groesse);
+        protokoll.setVarianten(varNum);
+        protokoll.setGtin(gtin);
+        protokoll.setPosgridID(posGridID);
+        protokoll.setNull1(grPreis);
+        protokoll.setNull2(varPreis);
+        protokoll.setMeldung(meldung);
+        protokoll.setMessage(message);
+        protokolls.add(protokoll);
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -290,6 +295,7 @@ private  TableCellListener tclGroesses, tclGroess;
         jScrollPane3 = new javax.swing.JScrollPane();
         jTableverfugGroesse = new javax.swing.JTable();
         jButtonMarkierte = new javax.swing.JButton();
+        jButtonGroessenberechnen = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -530,12 +536,10 @@ private  TableCellListener tclGroesses, tclGroess;
 
         jLabel32.setText("Basispreis:");
 
-        jTextFieldbasisPreisVerw.setEditable(false);
         jTextFieldbasisPreisVerw.setText(" ");
 
         jLabel33.setText("Varianten:");
 
-        jTextFieldVarianten.setEditable(false);
         jTextFieldVarianten.setText(" ");
 
         javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
@@ -687,6 +691,13 @@ private  TableCellListener tclGroesses, tclGroess;
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jButtonGroessenberechnen.setText("Größen-Preise berechnen");
+        jButtonGroessenberechnen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonGroessenberechnenActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -703,7 +714,8 @@ private  TableCellListener tclGroesses, tclGroess;
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButtonGroessenberechnen))))
                 .addContainerGap(38, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -720,7 +732,9 @@ private  TableCellListener tclGroesses, tclGroess;
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonGroessenberechnen)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -735,44 +749,63 @@ private  TableCellListener tclGroesses, tclGroess;
     private void jButtonMarkierteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonMarkierteActionPerformed
         // TODO add your handling code here:
         protokolls.clear();
-        System.out.println("selectedGroessen: "+ getSelectedGrossen().size());
-        getSelectedGrossen().stream().forEach(cnsmr->{
-           String meldung1 = jlieferDaoInterface.gtinStammsatzAnderung("2", kundPruferFamakIn.getArtikel_Nr(), kundPruferFamakIn.getFarbeNummer(), cnsmr.getGroesse(), kundPruferFamakIn.getVarNummer(), "", kundPruferFamakIn.getPosGrId());
+        System.out.println("selectedGroessen: " + getSelectedGrossen().size());
+        getSelectedGrossen().stream().forEach(cnsmr -> {
+            String meldung1 = jlieferDaoInterface.gtinStammsatzAnderung("2", kundPruferFamakIn.getArtikel_Nr(), kundPruferFamakIn.getFarbeNummer(), cnsmr.getGroesse(), kundPruferFamakIn.getVarNummer(), "", kundPruferFamakIn.getPosGrId());
             System.out.println(meldung1);
-           String message;
-           String indicator = meldung1;
-           if (meldung1.length() > 4) {
-             
-            if (meldung1.contains("-")) {
-                indicator = "E-";
+            String message;
+            String indicator = meldung1;
+            if (meldung1.length() > 4) {
+
+                if (meldung1.contains("-")) {
+                    indicator = "E-";
+                } else {
+                    indicator = "E";
+                }
+                message = jlieferDaoInterface.getMeldung("1", indicator);
+                insertIntoList("Dastex", kundPruferFamakIn.getArtikel_Nr(), kundPruferFamakIn.getFarbeNummer(), cnsmr.getGroesse(), kundPruferFamakIn.getVarNummer(), kundPruferFamakIn.getGtin(), kundPruferFamakIn.getPosGrId(), "", "", meldung1, message);
             } else {
-                indicator = "E";
-            }
-            message = jlieferDaoInterface.getMeldung("1", indicator);
-            insertIntoList("Dastex",kundPruferFamakIn.getArtikel_Nr(),kundPruferFamakIn.getFarbeNummer(),cnsmr.getGroesse(),kundPruferFamakIn.getVarNummer(),kundPruferFamakIn.getGtin(),kundPruferFamakIn.getPosGrId(),"","",meldung1,message);
-            } else
-           {
-            message = jlieferDaoInterface.getMeldung("1", indicator);
-            insertIntoList("Dastex",kundPruferFamakIn.getArtikel_Nr(),kundPruferFamakIn.getFarbeNummer(),cnsmr.getGroesse(),kundPruferFamakIn.getVarNummer(),kundPruferFamakIn.getGtin(),kundPruferFamakIn.getPosGrId(),"","",meldung1,message);
+                message = jlieferDaoInterface.getMeldung("1", indicator);
+                insertIntoList("Dastex", kundPruferFamakIn.getArtikel_Nr(), kundPruferFamakIn.getFarbeNummer(), cnsmr.getGroesse(), kundPruferFamakIn.getVarNummer(), kundPruferFamakIn.getGtin(), kundPruferFamakIn.getPosGrId(), "", "", meldung1, message);
 
-           }
-           
-            if (meldung1.length()>4) {
-                System.out.println("In table:"+jTextFieldKundumMeng.getText()+"---"+cnsmr.getKdFarbe()+"---"+cnsmr.getKdGrosse()+"---"+cnsmr.getKdVariante());
-                String meldung2 = jlieferDaoInterface.anlegenAndern("0",jTextFieldKundumMeng.getText() , cnsmr.getKdArtNum(), cnsmr.getKdFarbe(), cnsmr.getKdGrosse(), cnsmr.getKdVariante(), meldung1, kundPruferFamakIn.getPosGrId(), cnsmr.getGp1(), preisVariante);
+            }
+
+            if (meldung1.length() > 4) {
+                System.out.println("In table:" + jTextFieldKundumMeng.getText() + "---" + cnsmr.getKdFarbe() + "---" + cnsmr.getKdGrosse() + "---" + cnsmr.getKdVariante());
+                String meldung2 = jlieferDaoInterface.anlegenAndern("0", kundPruferFamakIn.getKundNummer(), cnsmr.getKdArtNum(), cnsmr.getKdFarbe(), cnsmr.getKdGrosse(), cnsmr.getKdVariante(), meldung1, kundPruferFamakIn.getPosGrId(), cnsmr.getGp1(), preisVariante);
                 message = jlieferDaoInterface.getMeldung("2", meldung2);
-                insertIntoList(jTextFieldKundNumGros.getText(),cnsmr.getKdArtNum(),cnsmr.getKdFarbe(),cnsmr.getGroesse(),cnsmr.getKdVariante(),kundPruferFamakIn.getGtin(),kundPruferFamakIn.getPosGrId(),cnsmr.getGp1(),preisVariante,meldung1,message);
+                insertIntoList(jTextFieldKundNumGros.getText(), cnsmr.getKdArtNum(), cnsmr.getKdFarbe(), cnsmr.getGroesse(), cnsmr.getKdVariante(), kundPruferFamakIn.getGtin(), kundPruferFamakIn.getPosGrId(), cnsmr.getGp1(), preisVariante, meldung1, message);
 
             }
- 
+
         });
-        
+
         JDialogProtokoll dialogProtokoll = new JDialogProtokoll(this, true, protokolls);
         dialogProtokoll.setVisible(true);
-        
+
         //jlieferDaoInterface.gtinStammsatzAnderung("0", kundPruferFamakIn.getArtikel_Nr(), kundPruferFamakIn.getFarbeNummer(), getSelectedGrossen().get(0).getGroesse(), kundPruferFamakIn.getVariante(), kundPruferFamakIn.getGtin(), kundPruferFamakIn.getPosGrId());
-        
+
     }//GEN-LAST:event_jButtonMarkierteActionPerformed
+
+    private void jButtonGroessenberechnenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGroessenberechnenActionPerformed
+        // TODO add your handling code here:
+        double basisPreis = Double.valueOf(jTextFieldbasisPreisVerw.getText());
+        DecimalFormat df = new DecimalFormat("#.00");
+
+        verfugbareGroßens.stream().forEach(cnsmr -> {
+            if (cnsmr.getGz().isEmpty()) {
+                cnsmr.setGz("0");
+            }
+            double gz = Double.parseDouble(cnsmr.getGz());
+            String step1 = df.format(basisPreis * (100 + gz) / 100).replace(",", ".");
+            String step2 = df.format((100 + Double.parseDouble(jTextFieldAnderung1.getText())) / 100).replace(",", ".");
+            //System.out.println("step1: "+step1+"; step2: "+step2);
+            double result = Double.parseDouble(step1) * Double.parseDouble(step2) + Double.parseDouble(jTextFieldVarianten.getText());
+            System.out.println("result: " + df.format(result));
+            cnsmr.setGp1(df.format(result).replace(",", "."));
+        });
+        populateTableGroessen(verfugbareGroßens);
+    }//GEN-LAST:event_jButtonGroessenberechnenActionPerformed
 
     /**
      * @param args the command line arguments
@@ -805,7 +838,7 @@ private  TableCellListener tclGroesses, tclGroess;
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                JDialogVerwendete dialog = new JDialogVerwendete(new JDialog(), true, new VerwendeteMengenstaffel(), new ArrayList<>(), new ArrayList<>(), new LieferKundPrufer(),"","");
+                JDialogVerwendete dialog = new JDialogVerwendete(new JDialog(), true, new VerwendeteMengenstaffel(), new ArrayList<>(), new ArrayList<>(), new LieferKundPrufer(), "", "");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -818,6 +851,7 @@ private  TableCellListener tclGroesses, tclGroess;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonGroessenberechnen;
     private javax.swing.JButton jButtonMarkierte;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;

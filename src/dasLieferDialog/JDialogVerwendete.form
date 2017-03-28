@@ -27,7 +27,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" max="-2" attributes="0">
                   <Component id="jPanel3" max="32767" attributes="0"/>
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="jPanel7" alignment="0" max="32767" attributes="0"/>
                           <Component id="jPanel8" alignment="0" max="32767" attributes="0"/>
@@ -37,6 +37,7 @@
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="jPanel1" max="32767" attributes="0"/>
                           <Component id="jPanel2" max="32767" attributes="0"/>
+                          <Component id="jButtonGroessenberechnen" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -61,7 +62,9 @@
                   </Group>
                   <Component id="jPanel2" max="32767" attributes="0"/>
               </Group>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jButtonGroessenberechnen" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
@@ -495,7 +498,6 @@
         </Component>
         <Component class="javax.swing.JTextField" name="jTextFieldbasisPreisVerw">
           <Properties>
-            <Property name="editable" type="boolean" value="false"/>
             <Property name="text" type="java.lang.String" value=" "/>
           </Properties>
         </Component>
@@ -506,7 +508,6 @@
         </Component>
         <Component class="javax.swing.JTextField" name="jTextFieldVarianten">
           <Properties>
-            <Property name="editable" type="boolean" value="false"/>
             <Property name="text" type="java.lang.String" value=" "/>
           </Properties>
         </Component>
@@ -833,5 +834,13 @@
         </Component>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JButton" name="jButtonGroessenberechnen">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Gr&#xf6;&#xdf;en-Preise berechnen"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonGroessenberechnenActionPerformed"/>
+      </Events>
+    </Component>
   </SubComponents>
 </Form>

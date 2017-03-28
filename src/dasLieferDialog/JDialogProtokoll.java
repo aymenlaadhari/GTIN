@@ -5,9 +5,11 @@
  */
 package dasLieferDialog;
 
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JDialog;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import model.Protokoll;
 
@@ -32,6 +34,8 @@ public class JDialogProtokoll extends javax.swing.JDialog {
         initComponents();
         this.protokolls = protokolls;
         tableModel = (DefaultTableModel) jTable1.getModel();
+        jTable1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        jTable1.setPreferredScrollableViewportSize(Toolkit.getDefaultToolkit().getScreenSize());
         populatetaleProtokoll(protokolls);
     }
     private void populatetaleProtokoll(List<Protokoll> protokolls)

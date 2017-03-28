@@ -5,17 +5,13 @@
  */
 package dasLieferDialog;
 
-import dasLieferdao.JlieferDao;
-import dasLieferdao.JlieferDaoInterface;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
+
+
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.AbstractAction;
 import javax.swing.JDialog;
 import javax.swing.table.DefaultTableModel;
 import model.Faktor;
-import util.TableCellListener;
 
 /**
  *
@@ -25,7 +21,6 @@ public class JDialogListFaktor extends javax.swing.JDialog {
 
     private final String dbUrl ;
     private String meldung5;
-   // private final JlieferDaoInterface jlieferDaoInterface;
     private final DefaultTableModel tableModel;
     private final Object[] rowData = new Object[5];
     //private final TableCellListener tclFaktor;
@@ -49,36 +44,7 @@ public class JDialogListFaktor extends javax.swing.JDialog {
         tableModel = (DefaultTableModel) jTableFaktor.getModel();
         tableModel.setRowCount(0);
         this.faktorsGlobal = faktors;
-        populateJtable(faktorsGlobal);
-//        jlieferDaoInterface = new JlieferDao(dbUrl);
-//        tclFaktor = new TableCellListener(jTableFaktor, new AbstractAction() {
-//            @Override
-//            public void actionPerformed(ActionEvent ae) {
-//                switch (tclFaktor.getColumn()) {
-//                    case 2:
-//                        faktorsGlobal.get(tclFaktor.getRow()).setFaktor(tclFaktor.getNewValue().toString());
-//
-//                        break;
-//
-//                    case 3:
-//                        faktorsGlobal.get(tclFaktor.getRow()).setRunde(tclFaktor.getNewValue().toString());
-//
-//                        break;
-//                        
-//                    case 4:
-//                        faktorsGlobal.get(tclFaktor.getRow()).setNks(tclFaktor.getNewValue().toString());
-//
-//                        break;
-//                }
-//                jTableFaktor.setSelectionBackground(Color.decode("#ffb3b3"));
-//                
-//                meldung5 = jlieferDaoInterface.updateFaktor("0", kdNummer, artNummer, faktorsGlobal.get(tclFaktor.getRow()).getFaktor(), faktorsGlobal.get(tclFaktor.getRow()).getRunde(), faktorsGlobal.get(tclFaktor.getRow()).getNks());
-//                System.out.println("meldung5: "+meldung5);
-//                String message = jlieferDaoInterface.getMeldung("5", meldung5);
-//                System.out.println("message: "+message);
-//            }
-//        });
-//        
+        populateJtable(faktorsGlobal);       
     }
 
     private void addToTable(Faktor faktor) {
@@ -104,18 +70,9 @@ public class JDialogListFaktor extends javax.swing.JDialog {
         this.faktorsGlobal = faktorsGlobal;
     }
 
-//    private void initialiseSelectedFaktor(int position) {
-//        selectFaktor = faktorsGlobal.get(position);
-//    }
-
     public Faktor getSelectedFaktor() {
         return selectedFaktor;
     }
-
-   
-    
-    
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

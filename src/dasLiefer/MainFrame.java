@@ -13,6 +13,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.HeadlessException;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -40,6 +41,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
@@ -81,12 +83,18 @@ public class MainFrame extends javax.swing.JFrame {
      */
     public MainFrame() {
         initComponents();
+//        JScrollPane jScrollPane = new JScrollPane(jTablePrufer, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+//        this.add(jScrollPane);
         initilize();
         loadPropertie("installation");
         initializeDataBase();
         tableModel = (DefaultTableModel) jTable.getModel();
         tableModelPrufer = (DefaultTableModel) jTablePrufer.getModel();
         tableModelPrufer.setRowCount(0);
+        
+        jTablePrufer.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        jTablePrufer.setPreferredScrollableViewportSize(Toolkit.getDefaultToolkit().getScreenSize());
+        
         kundNummerComp = new JTextFieldAutoCompletion(jTextFieldKdNr, nummers);
         kundNummerComp.setDataCompletion(nummers);
         dlgProgress = new JDialog(this, "Bitte warten...", true);//true means that the dialog created is modal
@@ -519,35 +527,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
         }
         
-//        if (ctrlPressed) {
-//            
-//            int[] rows = jTablePrufer.getSelectedRows();
-//            int posfamak= rows[0];
-//                if (liefPrufers.get(rows[0]).getPosGrId() != null) {
-//                    kundPruferFamak = liefPrufers.get(rows[0]);
-//                    posfamak = rows[0];
-//                   // System.out.println(rows[0] + "kund famak ok and the posGridIT is : " + kundPruferFamak.getPosGrId());
-//                }
-//
-//                if (liefPrufers.get(rows[1]).getPosGrId() != null) {
-//                    kundPruferFamak = liefPrufers.get(rows[1]);
-//                    posfamak = rows[1];
-//                   // System.out.println(rows[1] + "kund famak ok and the posGridIT is : " + kundPruferFamak.getPosGrId());
-//                }
-//                
-//                jTablePrufer.setRowSelectionInterval(posfamak, posfamak);
-//                
-//                ctrlPressed= false;
-//            
-//        }
 
-//        int[] rows = jTablePrufer.getSelectedRows();
-//        for (int i = 0; i < rows.length; i++) {
-//            //Artikel artikel = selectedArtikels.get(rows[i] - i);
-//            //tableModelSelectedArtikel.removeRow(rows[i] - i);
-//            // selectedArtikels.remove(artikel);
-//            System.out.println(rows[i]);
-//        }
     }
    
     /**
@@ -1100,16 +1080,32 @@ public class MainFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         tableModelPrufer.setRowCount(0);
         SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
-        try {
+        SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>(){
+            @Override
+            protected Void doInBackground() throws Exception {
+            try {
             liefPrufers = jlieferDaoInterface.getListPrufers(format.format(jXDatePickerBisDatum.getDate()));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,
                 "Error getting DATA  "+jlieferDaoInterface.getException()+","+e.getMessage(),
                 "Error",
                 JOptionPane.ERROR_MESSAGE);
-        }
+        }   
+            return null;
+            }
 
-        populateJtablePrufung(liefPrufers);
+            @Override
+            protected void done() {
+                dlgProgress.dispose();
+                populateJtablePrufung(liefPrufers);
+            }
+            
+            
+        };
+        sw.execute();
+        dlgProgress.setVisible(true);
+
+        
     }//GEN-LAST:event_jButtonLadenActionPerformed
 
     private void jTablePruferKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTablePruferKeyPressed

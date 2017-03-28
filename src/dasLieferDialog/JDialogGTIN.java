@@ -8,7 +8,6 @@ package dasLieferDialog;
 import dasLieferdao.JlieferDao;
 import dasLieferdao.JlieferDaoInterface;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -578,9 +577,10 @@ public class JDialogGTIN extends javax.swing.JDialog {
                     kundPrufer.setFarbe(jTextFieldFarbe.getText());
                     kundPrufer.setGroesse(jTextFieldGroesse.getText());
                     kundPrufer.setVarNummer(jTextFieldVariante.getText());
-                    List<LieferKundPrufer> listGtinAnderung = jlieferDaoInterface.getListGtinAnderung(kundPrufer.getKundNummer(), kundPrufer.getKundenArtikelNummer(), jTextFieldFarbe.getText(), jTextFieldGroesse.getText(), kundPrufer.getVariante(), gtinParam, jTextFieldPreisGrossBasis.getText(), jTextFieldPreisVarianten.getText());
+                   // kljdf
+                    List<LieferKundPrufer> listGtinAnderung = jlieferDaoInterface.getListGtinAnderung(kundPrufer.getKundNummer(), kundPrufer.getKundenArtikelNummer(), jTextFieldFarbe.getText(), jTextFieldGroesse.getText(), kundPrufer.getVariante(), gtinParam, preisGrossBasis, preisVarianten);
 
-                    JDialogKundenArtikelDatenAndern artikelDatenAndern = new JDialogKundenArtikelDatenAndern(this, true, listGtinAnderung, kundPruferFamak, kundPrufer, this.dbUrl, gtinParam, jTextFieldPreisGrossBasis.getText(), jTextFieldPreisVarianten.getText());
+                    JDialogKundenArtikelDatenAndern artikelDatenAndern = new JDialogKundenArtikelDatenAndern(this, true, listGtinAnderung, kundPruferFamak, kundPrufer, this.dbUrl, gtinParam, jTextFieldPreisGrossBasis.getText(), jTextFieldPreisVarianten.getText(),message2);
                     artikelDatenAndern.setVisible(true);
                     //meldung = artikelDatenAndern.getMeldung();
                     break;
