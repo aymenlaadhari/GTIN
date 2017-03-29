@@ -88,7 +88,6 @@ public class JDialogGTIN extends javax.swing.JDialog {
         jTextFieldDastex.setText(menge);        
     }
 
-   
     private void addToTable(Faktor faktor){
         rowData[0] = faktor.getZehler();
         rowData[1] = faktor.getMe();
@@ -690,7 +689,7 @@ public class JDialogGTIN extends javax.swing.JDialog {
 
     private void jButtonMehrereGrosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonMehrereGrosActionPerformed
         // TODO add your handling code here:
-        JDialogVerwendete dialogVerwendete = new JDialogVerwendete(this, true, verwendeteMengenstaffel,verfugbareMengenstaffelns, verfugbareGroßens,kundPruferFamak, dbUrl, jTextFieldPreisVarianten.getText().replace(",", "."));
+        JDialogVerwendete dialogVerwendete = new JDialogVerwendete(this, true, verwendeteMengenstaffel,verfugbareMengenstaffelns, verfugbareGroßens,kundPruferFamak, dbUrl, jTextFieldPreisVarianten.getText().replace(",", "."),kundPrufer.getKundNummer());
         dialogVerwendete.setVisible(true);
     }//GEN-LAST:event_jButtonMehrereGrosActionPerformed
 

@@ -41,6 +41,7 @@ public class JDialogVerwendete extends javax.swing.JDialog {
     private final List<Protokoll> protokolls;
     private final ListSelectionModel listSelectionModel;
     private TableCellListener tclGroesses, tclGroess;
+    private final String kundNum;
 
     /**
      * Creates new form JDialogVerwendete
@@ -53,9 +54,10 @@ public class JDialogVerwendete extends javax.swing.JDialog {
      * @param kundPruferFamak
      * @param dburlProdukt
      * @param preisVar
+     * @param kundNummer
      *
      */
-    public JDialogVerwendete(JDialog parent, boolean modal, VerwendeteMengenstaffel verwendeteMengenstaffel, List<VerfugbareMengenstaffeln> verfugbareMengenstaffelns, List<VerfugbareGroßen> verfugbareGroßensIn, LieferKundPrufer kundPruferFamak, String dburlProdukt, String preisVar) {
+    public JDialogVerwendete(JDialog parent, boolean modal, VerwendeteMengenstaffel verwendeteMengenstaffel, List<VerfugbareMengenstaffeln> verfugbareMengenstaffelns, List<VerfugbareGroßen> verfugbareGroßensIn, LieferKundPrufer kundPruferFamak, String dburlProdukt, String preisVar, String kundNummer) {
         super(parent, modal);
         initComponents();
         tableModel = (DefaultTableModel) jTable1.getModel();
@@ -66,12 +68,15 @@ public class JDialogVerwendete extends javax.swing.JDialog {
         this.kundPruferFamakIn = kundPruferFamak;
         this.preisVariante = preisVar;
         protokolls = new ArrayList<>();
+        this.kundNum = kundNummer;
         jTextFieldAnderung1.setText(verwendeteMengenstaffel.getAnderung1());
         jTextFieldAnderung2.setText(verwendeteMengenstaffel.getAnderung2());
         jTextFieldAnderung3.setText(verwendeteMengenstaffel.getAnderung3());
         jTextFieldAnderung4.setText(verwendeteMengenstaffel.getAnderung4());
-        jTextFieldKundNumGros.setText(verwendeteMengenstaffel.getVerwendeterGroßenzuschlag().getKundNummer());
-        jTextFieldKundumMeng.setText(verwendeteMengenstaffel.getKundNummer());
+       // jTextFieldKundNumGros.setText(verwendeteMengenstaffel.getVerwendeterGroßenzuschlag().getKundNummer());
+        jTextFieldKundNumGros.setText(kundNum);
+        //jTextFieldKundumMeng.setText(verwendeteMengenstaffel.getKundNummer());
+        jTextFieldKundumMeng.setText(kundNum);
         jTextFieldMenge1.setText(verwendeteMengenstaffel.getMenge1());
         jTextFieldMenge2.setText(verwendeteMengenstaffel.getMenge2());
         jTextFieldMenge3.setText(verwendeteMengenstaffel.getMenge3());
@@ -80,9 +85,9 @@ public class JDialogVerwendete extends javax.swing.JDialog {
         jTextFieldStafNr.setText(verwendeteMengenstaffel.getStaffelNr());
         jTextFieldStuf.setText(verwendeteMengenstaffel.getStufe());
         jTextFieldTyp.setText(verwendeteMengenstaffel.getTyp());
-        jTextFieldVarianten.setText(verwendeteMengenstaffel.getVerwendetePreise().getVarianten());
+        jTextFieldVarianten.setText(verwendeteMengenstaffel.getVerwendetePreise().getVarianten().replace(".", ","));
         jTextFieldWGZ.setText(verwendeteMengenstaffel.getVerwendeterGroßenzuschlag().getWgZuchlag());
-        jTextFieldbasisPreisVerw.setText(verwendeteMengenstaffel.getVerwendetePreise().getBasisPreis());
+        jTextFieldbasisPreisVerw.setText(verwendeteMengenstaffel.getVerwendetePreise().getBasisPreis().replace(".", ","));
         tableModel.setRowCount(0);
         tablemodelvarianten.setRowCount(0);
         tableModelGroessen.setRowCount(0);
@@ -152,7 +157,7 @@ public class JDialogVerwendete extends javax.swing.JDialog {
             }
         });
     }
-
+    
     private void populateJtableMengen(List<VerfugbareMengenstaffeln> verfugbareMengenstaffelns) {
         verfugbareMengenstaffelns.stream().forEach(cnsmr -> {
             addTotableMengen(cnsmr);
@@ -215,7 +220,6 @@ public class JDialogVerwendete extends javax.swing.JDialog {
         for (int i = 0; i < selection.length; i++) {
             VerfugbareGroßen verfugbareGroßen = verfugbareGroßens.get(selection[i]);
             großens.add(verfugbareGroßen);
-
         }
         großens.stream().forEach(cnsmr -> {
             System.out.println("KD-farbe: " + cnsmr.getKdFarbe());
@@ -771,10 +775,10 @@ public class JDialogVerwendete extends javax.swing.JDialog {
             }
 
             if (meldung1.length() > 4) {
-                System.out.println("In table:" + jTextFieldKundumMeng.getText() + "---" + cnsmr.getKdFarbe() + "---" + cnsmr.getKdGrosse() + "---" + cnsmr.getKdVariante());
+                //System.out.println("In table:" + jTextFieldKundumMeng.getText() + "---" + cnsmr.getKdFarbe() + "---" + cnsmr.getKdGrosse() + "---" + cnsmr.getKdVariante());
                 String meldung2 = jlieferDaoInterface.anlegenAndern("0", kundPruferFamakIn.getKundNummer(), cnsmr.getKdArtNum(), cnsmr.getKdFarbe(), cnsmr.getKdGrosse(), cnsmr.getKdVariante(), meldung1, kundPruferFamakIn.getPosGrId(), cnsmr.getGp1(), preisVariante);
                 message = jlieferDaoInterface.getMeldung("2", meldung2);
-                insertIntoList(jTextFieldKundNumGros.getText(), cnsmr.getKdArtNum(), cnsmr.getKdFarbe(), cnsmr.getGroesse(), cnsmr.getKdVariante(), kundPruferFamakIn.getGtin(), kundPruferFamakIn.getPosGrId(), cnsmr.getGp1(), preisVariante, meldung1, message);
+                insertIntoList(kundNum, cnsmr.getKdArtNum(), cnsmr.getKdFarbe(), cnsmr.getGroesse(), cnsmr.getKdVariante(), kundPruferFamakIn.getGtin(), kundPruferFamakIn.getPosGrId(), cnsmr.getGp1(), preisVariante, meldung1, message);
 
             }
 
@@ -789,8 +793,8 @@ public class JDialogVerwendete extends javax.swing.JDialog {
 
     private void jButtonGroessenberechnenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGroessenberechnenActionPerformed
         // TODO add your handling code here:
-        double basisPreis = Double.valueOf(jTextFieldbasisPreisVerw.getText());
-        DecimalFormat df = new DecimalFormat("#.00");
+        double basisPreis = Double.valueOf(jTextFieldbasisPreisVerw.getText().replace(",", "."));
+        DecimalFormat df = new DecimalFormat("0.00");
 
         verfugbareGroßens.stream().forEach(cnsmr -> {
             if (cnsmr.getGz().isEmpty()) {
@@ -800,10 +804,10 @@ public class JDialogVerwendete extends javax.swing.JDialog {
             String step1 = df.format(basisPreis * (100 + gz) / 100).replace(",", ".");
             String step2 = df.format((100 + Double.parseDouble(jTextFieldAnderung1.getText())) / 100).replace(",", ".");
             //System.out.println("step1: "+step1+"; step2: "+step2);
-            double result = Double.parseDouble(step1) * Double.parseDouble(step2) + Double.parseDouble(jTextFieldVarianten.getText());
+            double result = Double.parseDouble(step1) * Double.parseDouble(step2);
             System.out.println("result: " + df.format(result));
             cnsmr.setGp1(df.format(result).replace(",", "."));
-        });
+        }); 
         populateTableGroessen(verfugbareGroßens);
     }//GEN-LAST:event_jButtonGroessenberechnenActionPerformed
 
@@ -838,7 +842,7 @@ public class JDialogVerwendete extends javax.swing.JDialog {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                JDialogVerwendete dialog = new JDialogVerwendete(new JDialog(), true, new VerwendeteMengenstaffel(), new ArrayList<>(), new ArrayList<>(), new LieferKundPrufer(), "", "");
+                JDialogVerwendete dialog = new JDialogVerwendete(new JDialog(), true, new VerwendeteMengenstaffel(), new ArrayList<>(), new ArrayList<>(), new LieferKundPrufer(), "", "","");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

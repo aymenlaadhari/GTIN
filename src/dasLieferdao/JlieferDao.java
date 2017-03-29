@@ -503,6 +503,7 @@ public class JlieferDao implements JlieferDaoInterface {
             try (ResultSet rs = s.executeQuery(proc)) {
                 while (rs.next()) {
                   verwendeteMengenstaffel.setKundNummer(rs.getString("s_Kd_Nr"));
+                    System.out.println(verwendeteMengenstaffel.getKundNummer());
                   verwendeteMengenstaffel.setStufe(rs.getString("s_Stufe"));
                   verwendeteMengenstaffel.setTyp(rs.getString("s_Typ"));
                   verwendeteMengenstaffel.setStaffelNr(rs.getString("s_Staffel_Nr"));
