@@ -42,5 +42,5 @@ public interface JlieferDaoInterface
     public List<VerfugbareGroßen> getListverfugGroesse(String indice,String posGridId);
     public String erfassungManuelzuweisen(String indice, String id, String posGridId,String status);
     public String erfassungAbschliessen(String id, String posGrosId);
-    public String erfassungVerarbeiten();
+    public boolean erfassungVerarbeiten();
    }

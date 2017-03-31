@@ -592,7 +592,17 @@ public class MainFrame extends javax.swing.JFrame {
     }
     
     private void erfassungVerarbeiten(){
-        jlieferDaoInterface.erfassungVerarbeiten();
+        //System.out.println(jlieferDaoInterface.erfassungVerarbeiten());
+        if (jlieferDaoInterface.erfassungVerarbeiten()) {
+            JOptionPane.showMessageDialog(null,
+                "Erledigt",
+                "Information",
+                JOptionPane.INFORMATION_MESSAGE);
+        }else
+            JOptionPane.showMessageDialog(null,
+                "Fehler aufgetreten",
+                "Fehler",
+                JOptionPane.ERROR_MESSAGE);
     }
     /**
      * This method is called from within the constructor to initialize the form.

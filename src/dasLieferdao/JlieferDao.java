@@ -113,9 +113,28 @@ public class JlieferDao implements JlieferDaoInterface {
     }
 
     @Override
-    public String erfassungVerarbeiten() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    public boolean erfassungVerarbeiten() {
+        String ret = "";
+        try {
+            String proc = "CALL GTIN_Erfassungsdaten_verarbeiten('')";
+           
+            Connection conProdukt = DriverManager.getConnection(dburlProdukt);
+            Statement s = conProdukt.createStatement();
+            try (ResultSet rs = s.executeQuery(proc)) {
+                while (rs.next()) {
+                    ret = rs.getString(1);
+                }
+                rs.close();
+                s.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+          
+        }
+        return ret.equals("TRUE");
+            }
 
     @Override
     public String getException() {
