@@ -234,30 +234,30 @@ public class MainFrame extends javax.swing.JFrame {
             increment=1;
         }
         
-        if (parameterKund.getArtikel_Nr().equals("N")) {
+        if (!parameterKund.getArtikel_Nr().equals("J")) {
             jTextFieldKdArtNr.setEnabled(false);
         }
-        if (parameterKund.getFarbe().equals("N")) {
+        if (!parameterKund.getFarbe().equals("J")) {
 
             jTextFieldKdFarbe.setEnabled(false);
         }
-        if (parameterKund.getGroesse().equals("N")) {
+        if (!parameterKund.getGroesse().equals("J")) {
 
             jTextFieldKdGroesse.setEnabled(false);
         }
-        if (parameterKund.getVariante().equals("N")) {
+        if (!parameterKund.getVariante().equals("J")) {
 
             jTextFieldKdVariant.setEnabled(false);
         }
-        if (parameterKund.getMenge().equals("N")) {
+        if (!parameterKund.getMenge().equals("J")) {
 
             jTextFieldMenge.setEnabled(false);
         }
-        if (parameterKund.getPreis().equals("N")) {
+        if (!parameterKund.getPreis().equals("J")) {
 
             jTextFieldkdPreis.setEnabled(false);
         }
-        if (parameterKund.getKommission().equals("N")) {
+        if (!parameterKund.getKommission().equals("J")) {
 
             jTextFieldKommission.setEnabled(false);
         }

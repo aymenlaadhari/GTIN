@@ -376,9 +376,9 @@ public class JlieferDao implements JlieferDaoInterface {
     }
 
     @Override
-    public List<VerfugbareMengenstaffeln> getListVerfugmeng(String indice, String kdNum, String artNum, String barbNum, String groesse) {
+    public List<VerfugbareMengenstaffeln> getListVerfugmeng(String indice, String posGrossID) {
         List<VerfugbareMengenstaffeln> verfugbareMengenstaffelns = new ArrayList<>();
-        String proc = "CALL GTIN_Preisermittlung ( '"+indice+"', '"+kdNum+"', '"+artNum+"', '"+barbNum+"', '"+groesse+"')";
+        String proc = "CALL GTIN_Preisermittlung_Basisdaten_GrPosID ( '"+indice+"', '"+posGrossID+"')";
             
         Connection conProdukt;
         try {
@@ -408,9 +408,9 @@ public class JlieferDao implements JlieferDaoInterface {
     }
 
     @Override
-    public List<VerfugbareGroßen> getListverfugGroesse(String indice, String kdNum, String artNum, String barbNum, String groesse) {
+    public List<VerfugbareGroßen> getListverfugGroesse(String indice, String posGrosId) {
         List<VerfugbareGroßen> verfugbareGroßens = new ArrayList<>();
-        String proc = "CALL GTIN_Preisermittlung ( '"+indice+"', '"+kdNum+"', '"+artNum+"', '"+barbNum+"', '"+groesse+"')";
+        String proc = "CALL GTIN_Preisermittlung_Basisdaten_GrPosID ( '"+indice+"', '"+posGrosId+"')";
             
         Connection conProdukt;
         try {
@@ -489,14 +489,14 @@ public class JlieferDao implements JlieferDaoInterface {
     }
 
     @Override
-    public VerwendeteMengenstaffel getVerMengen(String indice, String kdNum, String artNum, String barbNum, String groesse,String posGridId) {
+    public VerwendeteMengenstaffel getVerMengen(String indice,String posGridId) {
     VerwendeteMengenstaffel verwendeteMengenstaffel = new VerwendeteMengenstaffel();
         VerwendetePreise verwendetePreise = new VerwendetePreise();
         VerwendeterGroßenzuschlag verwendeterGroßenzuschlag = new VerwendeterGroßenzuschlag();
     
    try {
             //String proc = "SELECT GTIN_Stammsatz_anlegen_aendern ( '0', '1701000', '13', 'EL', ';001;002;061O;072;091;111C;111D;', '', '2230531' )";
-            String proc = "CALL GTIN_Preisermittlung ( '"+indice+"', '"+kdNum+"', '"+artNum+"', '"+barbNum+"', '"+groesse+"')";
+            String proc = "CALL GTIN_Preisermittlung_Basisdaten_GrPosID ( '"+indice+"', '"+posGridId+"')";
             
             Connection conProdukt = DriverManager.getConnection(dburlProdukt);
             Statement s = conProdukt.createStatement();

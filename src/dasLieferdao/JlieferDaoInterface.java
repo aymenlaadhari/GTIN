@@ -37,9 +37,9 @@ public interface JlieferDaoInterface
     public List<LieferKundPrufer> getListGtinAnderung(String KdNr,String KdArtNr,String KdFarbe,String KdGroße,String KdVariante,String GTIN, String grundPreis,String varPreis);
     public List<Faktor> getListFaktor(String kundNummer, String artNummer);
     public String updateFaktor(String indice, String KdNr,String ArtikelNr,String Faktor,String runden,String NKS);
-    public VerwendeteMengenstaffel getVerMengen(String indice,String kdNum,String artNum,String barbNum,String groesse, String posGridId);
-    public List<VerfugbareMengenstaffeln> getListVerfugmeng(String indice,String kdNum,String artNum,String barbNum,String groesse);
-    public List<VerfugbareGroßen> getListverfugGroesse(String indice,String kdNum,String artNum,String barbNum,String groesse);
+    public VerwendeteMengenstaffel getVerMengen(String indice,String posGridId);
+    public List<VerfugbareMengenstaffeln> getListVerfugmeng(String indice,String posGridId);
+    public List<VerfugbareGroßen> getListverfugGroesse(String indice,String posGridId);
     public String erfassungManuelzuweisen(String indice, String id, String posGridId,String status);
     public String erfassungAbschliessen(String id, String posGrosId);
     public String erfassungVerarbeiten();

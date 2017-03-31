@@ -81,9 +81,9 @@ public class JDialogGTIN extends javax.swing.JDialog {
         faktors = jlieferDaoInterface.getListFaktor(kundPrufer.getKundNummer(), kundPruferFamak.getArtikel_Nr());
         localfaktor = faktors.get(0);
         String menge = jlieferDaoInterface.getListFaktor("000000", kundPruferFamak.getArtikel_Nr()).get(0).getMe();
-        verwendeteMengenstaffel = jlieferDaoInterface.getVerMengen("1", kundPrufer.getKundNummer(), kundPruferFamak.getArtikel_Nr(), kundPruferFamak.getFarbeNummer(), kundPruferFamak.getGroesse(), kundPruferFamak.getPosGrId());
-        verfugbareMengenstaffelns = jlieferDaoInterface.getListVerfugmeng("2", kundPrufer.getKundNummer(), kundPruferFamak.getArtikel_Nr(), kundPruferFamak.getFarbeNummer(), kundPruferFamak.getGroesse());
-        verfugbareGroßens = jlieferDaoInterface.getListverfugGroesse("0", kundPrufer.getKundNummer(), kundPruferFamak.getArtikel_Nr(), kundPruferFamak.getFarbeNummer(), kundPruferFamak.getGroesse());
+        verwendeteMengenstaffel = jlieferDaoInterface.getVerMengen("1",kundPruferFamak.getPosGrId());
+        verfugbareMengenstaffelns = jlieferDaoInterface.getListVerfugmeng("2",kundPruferFamak.getPosGrId());
+        verfugbareGroßens = jlieferDaoInterface.getListverfugGroesse("0",kundPruferFamak.getPosGrId());
         addToTable(localfaktor);
         jTextFieldDastex.setText(menge);        
     }
@@ -229,17 +229,17 @@ public class JDialogGTIN extends javax.swing.JDialog {
                         .addGroup(jPanelKundenAnlegenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel7)
                             .addComponent(jTextFieldPreisGrossBasis, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanelKundenAnlegenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jTextFieldPreisVarianten))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(30, 30, 30)
+                        .addGroup(jPanelKundenAnlegenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel8)
+                            .addComponent(jTextFieldPreisVarianten, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanelKundenAnlegenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jTextFieldPreisGesamt, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelKundenAnlegenLayout.createSequentialGroup()
                                 .addComponent(jLabel9)
                                 .addGap(9, 9, 9)))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(62, Short.MAX_VALUE))
         );
         jPanelKundenAnlegenLayout.setVerticalGroup(
             jPanelKundenAnlegenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -412,7 +412,7 @@ public class JDialogGTIN extends javax.swing.JDialog {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(11, 11, 11)
                         .addComponent(jLabel17)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 6, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(19, 19, 19)
@@ -452,9 +452,9 @@ public class JDialogGTIN extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addGap(85, 85, 85)
                 .addComponent(jButton1)
-                .addGap(32, 32, 32)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton2)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(56, 56, 56))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

@@ -776,10 +776,16 @@ public class JDialogVerwendete extends javax.swing.JDialog {
 
             if (meldung1.length() > 4) {
                 //System.out.println("In table:" + jTextFieldKundumMeng.getText() + "---" + cnsmr.getKdFarbe() + "---" + cnsmr.getKdGrosse() + "---" + cnsmr.getKdVariante());
-                String meldung2 = jlieferDaoInterface.anlegenAndern("0", kundPruferFamakIn.getKundNummer(), cnsmr.getKdArtNum(), cnsmr.getKdFarbe(), cnsmr.getKdGrosse(), cnsmr.getKdVariante(), meldung1, kundPruferFamakIn.getPosGrId(), cnsmr.getGp1(), preisVariante);
-                message = jlieferDaoInterface.getMeldung("2", meldung2);
-                insertIntoList(kundNum, cnsmr.getKdArtNum(), cnsmr.getKdFarbe(), cnsmr.getGroesse(), cnsmr.getKdVariante(), kundPruferFamakIn.getGtin(), kundPruferFamakIn.getPosGrId(), cnsmr.getGp1(), preisVariante, meldung1, message);
-
+                String meldung2 = jlieferDaoInterface.anlegenAndern("0", kundPruferFamakIn.getKundNummer(), cnsmr.getKdArtNum(), cnsmr.getKdFarbe(), cnsmr.getKdGrosse(), cnsmr.getKdVariante(), meldung1, kundPruferFamakIn.getPosGrId(), cnsmr.getGp1(), jTextFieldVarianten.getText().replace(",", "."));
+                String indicator1 = meldung2;
+                if (meldung2.length()>4) {
+                    
+                   indicator1 = "E";
+                   
+                }
+                message = jlieferDaoInterface.getMeldung("2", indicator1);
+                System.out.println("message kunden : "+message);
+                insertIntoList(kundNum, cnsmr.getKdArtNum(), cnsmr.getKdFarbe(), cnsmr.getGroesse(), cnsmr.getKdVariante(), kundPruferFamakIn.getGtin(), kundPruferFamakIn.getPosGrId(), cnsmr.getGp1(), jTextFieldVarianten.getText(), meldung1, message+";"+meldung2);
             }
 
         });
