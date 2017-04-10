@@ -20,6 +20,7 @@ import model.Kund;
 import model.LieferKund;
 import model.LieferKundPrufer;
 import model.ParameterKund;
+import model.VarPreis;
 import model.Varianten;
 import model.VerfugbareGroßen;
 import model.VerfugbareMengenstaffeln;
@@ -282,6 +283,8 @@ public class JlieferDao implements JlieferDaoInterface {
                     kund.setGroesse(rs.getString(4));
                     kund.setVarNummer(rs.getString(5));
                     kund.setGtin(rs.getString(1));
+                    kund.setPosGrPreis(rs.getString(6));
+                    kund.setGtinPreis(rs.getString(7));
                     listGtinAnderung.add(kund);
                     
                 }
@@ -395,6 +398,36 @@ public class JlieferDao implements JlieferDaoInterface {
     }
 
     @Override
+    public List<VarPreis> getListVarPreis(String kdNummer, String kdArtNummer, String kdFarbe, String kdGroesse, String kdVariante, String menge, String lagerNummer) {
+       List<VarPreis> varPreises = new ArrayList<>();
+        String proc = "CALL GTIN_Varianten_KdArtNr_Liste( '"+kdArtNummer+"', '"+kdArtNummer+"', '"+kdFarbe+"', '"+kdGroesse+"', '"+kdVariante+"', '"+menge+"', '"+lagerNummer+"')";
+            
+        Connection conProdukt;
+        try {
+            conProdukt = DriverManager.getConnection(dburlProdukt);
+            CallableStatement cs = conProdukt.prepareCall(proc);
+            try (ResultSet rs = cs.executeQuery()) {
+                while (rs.next()) {
+                 VarPreis varPreis = new VarPreis();
+                 varPreis.setZeile(rs.getString("Zeile"));
+                 varPreis.setVkPreis(rs.getString("VkPreis"));
+                 varPreis.setVarText(rs.getString("VarText"));
+                 varPreis.setVarNummer(rs.getString("VarNr"));
+                 varPreis.setKdPreis(rs.getString("KdPreis"));
+                 varPreises.add(varPreis);
+                }
+                rs.close();
+                cs.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return varPreises;
+    }
+
+    @Override
     public List<VerfugbareMengenstaffeln> getListVerfugmeng(String indice, String posGrossID) {
         List<VerfugbareMengenstaffeln> verfugbareMengenstaffelns = new ArrayList<>();
         String proc = "CALL GTIN_Preisermittlung_Basisdaten_GrPosID ( '"+indice+"', '"+posGrossID+"')";
@@ -485,6 +518,30 @@ public class JlieferDao implements JlieferDaoInterface {
         }
         return ret; 
         }
+
+    @Override
+    public String getMengenbezug(String kdNummer) {
+        String ret = "";
+        try (
+                // Connect to Sybase Database
+                Connection conProdukt = DriverManager.getConnection(dburlProdukt);
+                Statement statementPro = conProdukt.createStatement();
+                ResultSet rs = statementPro.executeQuery("SELECT Mng_Bezug_GP FROM GTIN_Preis_Parameter WHERE Kd_Nr = '" + kdNummer + "'");) {
+
+            while (rs.next()) {
+
+                ret = rs.getString(1);
+                System.out.println(ret);
+                rs.close();
+                statementPro.close();
+                conProdukt.close();
+
+            }
+        } catch (Exception e) {
+        }
+     
+        return ret;
+    }
 
     @Override
     public String getPreisVariante(String posGridID) {

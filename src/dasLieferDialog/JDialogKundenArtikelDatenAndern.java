@@ -21,7 +21,7 @@ import model.LieferKundPrufer;
 public class JDialogKundenArtikelDatenAndern extends javax.swing.JDialog {
     private List<LieferKundPrufer> listGtinAnderung;
     private final DefaultTableModel tableModel;
-    private final Object[] rowData = new Object[5];
+    private final Object[] rowData = new Object[7];
     private final JlieferDaoInterface daoInterface;
     private final LieferKundPrufer kundPruferFamamk, kundPrufer;
     private String preisGrossBasis, preisVarianten, gtinParam, meldung;
@@ -51,7 +51,10 @@ public class JDialogKundenArtikelDatenAndern extends javax.swing.JDialog {
         this.gtinParam = gtinParam;
         this.preisGrossBasis = preisGrossBasis.replace(",", ".");
         this.preisVarianten = preisVarianten.replace(",", ".");
-        jLabelText.setText(message);
+        jTextArea.setLineWrap(true);
+        jTextArea.setWrapStyleWord(true);
+        //jTextArea.setEnabled(false);
+        jTextArea.setText(message);
         
     }
     
@@ -69,6 +72,8 @@ public class JDialogKundenArtikelDatenAndern extends javax.swing.JDialog {
         rowData[2] = kundPrufer.getFarbeNummer();
         rowData[3] = kundPrufer.getGroesse();
         rowData[4] = kundPrufer.getVarNummer();
+        rowData[5] = kundPrufer.getPosGrPreis();
+        rowData[6] = kundPrufer.getGtinPreis();
         tableModel.addRow(rowData);
     }
 
@@ -90,20 +95,21 @@ public class JDialogKundenArtikelDatenAndern extends javax.swing.JDialog {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jPanelText = new javax.swing.JPanel();
-        jLabelText = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTextArea = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Kunden-Artikel-daten ändern");
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "GTIN", "Artk_Num", "Farb_Num", "Groesse", "var_Nummern"
+                "GTIN", "Artk_Num", "Farb_Num", "Groesse", "var_Nummern", "Gr_Preis", "var_Preis"
             }
         ));
         jScrollPane1.setViewportView(jTable1);
@@ -126,40 +132,43 @@ public class JDialogKundenArtikelDatenAndern extends javax.swing.JDialog {
         jPanelText.setLayout(jPanelTextLayout);
         jPanelTextLayout.setHorizontalGroup(
             jPanelTextLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelTextLayout.createSequentialGroup()
-                .addGap(29, 29, 29)
-                .addComponent(jLabelText, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(61, Short.MAX_VALUE))
+            .addGap(0, 45, Short.MAX_VALUE)
         );
         jPanelTextLayout.setVerticalGroup(
             jPanelTextLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelTextLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabelText, javax.swing.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE)
-                .addContainerGap())
+            .addGap(0, 96, Short.MAX_VALUE)
         );
+
+        jTextArea.setEditable(false);
+        jTextArea.setColumns(20);
+        jTextArea.setLineWrap(true);
+        jTextArea.setRows(5);
+        jScrollPane2.setViewportView(jTextArea);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addGap(69, 69, 69)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(53, 53, 53)
                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(101, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanelText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(24, 24, 24))
+                .addGap(47, 47, 47)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 318, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(40, 40, 40)
+                .addComponent(jPanelText, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(15, Short.MAX_VALUE)
-                .addComponent(jPanelText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanelText, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27)
@@ -241,9 +250,10 @@ public class JDialogKundenArtikelDatenAndern extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JLabel jLabelText;
     private javax.swing.JPanel jPanelText;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
+    private javax.swing.JTextArea jTextArea;
     // End of variables declaration//GEN-END:variables
 }

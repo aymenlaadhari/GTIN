@@ -12,6 +12,7 @@ import model.Kund;
 import model.LieferKund;
 import model.LieferKundPrufer;
 import model.ParameterKund;
+import model.VarPreis;
 import model.VerfugbareGroßen;
 import model.VerfugbareMengenstaffeln;
 import model.VerwendeteMengenstaffel;
@@ -43,4 +44,6 @@ public interface JlieferDaoInterface
     public String erfassungManuelzuweisen(String indice, String id, String posGridId,String status);
     public String erfassungAbschliessen(String id, String posGrosId);
     public boolean erfassungVerarbeiten();
+    public List<VarPreis> getListVarPreis(String kdNummer, String kdArtNummer, String kdFarbe, String kdGroesse, String kdVariante, String menge, String lagerNummer);
+    public String getMengenbezug(String kdNummer);
    }

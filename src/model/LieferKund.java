@@ -11,8 +11,17 @@ package model;
  */
 public class LieferKund {
     
-    private String posiNummer="",Kd_Pos_activ="", Pos_Zaehler="", Artikel_Nr="", Farbe="", Groesse="", Variante="", Menge="", Preis="", Kommission="",lagerNum="";
+    private String posiNummer="",Kd_Pos_activ="", Pos_Zaehler="", Artikel_Nr="", Farbe="", Groesse="", Variante="", Menge="", Preis="", Kommission="",lagerNum="", summe="0";
 
+    public String getSumme() {
+        return summe;
+    }
+
+    public void setSumme(String summe) {
+        this.summe = summe;
+    }
+
+    
     public String getKd_Pos_activ() {
         return Kd_Pos_activ;
     }

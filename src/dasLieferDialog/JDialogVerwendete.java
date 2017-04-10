@@ -13,8 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
+import model.Kund;
 import model.LieferKundPrufer;
 import model.Protokoll;
 import model.Varianten;
@@ -35,13 +37,13 @@ public class JDialogVerwendete extends javax.swing.JDialog {
     private final DefaultTableModel tableModel, tablemodelvarianten, tableModelGroessen;
     private List<VerfugbareGroßen> verfugbareGroßens;
     private VerfugbareGroßen großen;
-    private final LieferKundPrufer kundPruferFamakIn;
+    private final LieferKundPrufer kundPruferFamakIn,kundPrufer;
     private final JlieferDaoInterface jlieferDaoInterface;
     private final String preisVariante;
     private final List<Protokoll> protokolls;
     private final ListSelectionModel listSelectionModel;
     private TableCellListener tclGroesses, tclGroess;
-    private final String kundNum;
+    private final String kundNum, dbUrl;
 
     /**
      * Creates new form JDialogVerwendete
@@ -52,12 +54,13 @@ public class JDialogVerwendete extends javax.swing.JDialog {
      * @param verfugbareMengenstaffelns
      * @param verfugbareGroßensIn
      * @param kundPruferFamak
+     * @param kundPrufer
      * @param dburlProdukt
      * @param preisVar
      * @param kundNummer
      *
      */
-    public JDialogVerwendete(JDialog parent, boolean modal, VerwendeteMengenstaffel verwendeteMengenstaffel, List<VerfugbareMengenstaffeln> verfugbareMengenstaffelns, List<VerfugbareGroßen> verfugbareGroßensIn, LieferKundPrufer kundPruferFamak, String dburlProdukt, String preisVar, String kundNummer) {
+    public JDialogVerwendete(JDialog parent, boolean modal, VerwendeteMengenstaffel verwendeteMengenstaffel, List<VerfugbareMengenstaffeln> verfugbareMengenstaffelns, List<VerfugbareGroßen> verfugbareGroßensIn, LieferKundPrufer kundPruferFamak, LieferKundPrufer kundPrufer, String dburlProdukt, String preisVar, String kundNummer) {
         super(parent, modal);
         initComponents();
         tableModel = (DefaultTableModel) jTable1.getModel();
@@ -66,6 +69,7 @@ public class JDialogVerwendete extends javax.swing.JDialog {
         this.verfugbareGroßens = new ArrayList<>();
         this.verfugbareGroßens = verfugbareGroßensIn;
         this.kundPruferFamakIn = kundPruferFamak;
+        this.kundPrufer = kundPrufer;
         this.preisVariante = preisVar;
         protokolls = new ArrayList<>();
         this.kundNum = kundNummer;
@@ -94,7 +98,8 @@ public class JDialogVerwendete extends javax.swing.JDialog {
         populateJtableMengen(verfugbareMengenstaffelns);
         populateJtablevarianten(verwendeteMengenstaffel.getVariantens());
         populateTableGroessen(this.verfugbareGroßens);
-        jlieferDaoInterface = new JlieferDao(dburlProdukt);
+        dbUrl = dburlProdukt;
+        jlieferDaoInterface = new JlieferDao(dbUrl);
         listSelectionModel = jTableverfugGroesse.getSelectionModel();
         tclGroesses = new TableCellListener(jTableverfugGroesse, new AbstractAction() {
             @Override
@@ -221,9 +226,9 @@ public class JDialogVerwendete extends javax.swing.JDialog {
             VerfugbareGroßen verfugbareGroßen = verfugbareGroßens.get(selection[i]);
             großens.add(verfugbareGroßen);
         }
-        großens.stream().forEach(cnsmr -> {
-            System.out.println("KD-farbe: " + cnsmr.getKdFarbe());
-        });
+//        großens.stream().forEach(cnsmr -> {
+//            System.out.println("KD-farbe: " + cnsmr.getKdFarbe());
+//        });
         return großens;
     }
 
@@ -753,10 +758,9 @@ public class JDialogVerwendete extends javax.swing.JDialog {
     private void jButtonMarkierteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonMarkierteActionPerformed
         // TODO add your handling code here:
         protokolls.clear();
-        System.out.println("selectedGroessen: " + getSelectedGrossen().size());
+        //System.out.println("selectedGroessen: " + getSelectedGrossen().size());
         getSelectedGrossen().stream().forEach(cnsmr -> {
             String meldung1 = jlieferDaoInterface.gtinStammsatzAnderung("2", kundPruferFamakIn.getArtikel_Nr(), kundPruferFamakIn.getFarbeNummer(), cnsmr.getGroesse(), kundPruferFamakIn.getVarNummer(), "", kundPruferFamakIn.getPosGrId());
-            System.out.println(meldung1);
             String message;
             String indicator = meldung1;
             if (meldung1.length() > 4) {
@@ -773,21 +777,50 @@ public class JDialogVerwendete extends javax.swing.JDialog {
                 insertIntoList("Dastex", kundPruferFamakIn.getArtikel_Nr(), kundPruferFamakIn.getFarbeNummer(), cnsmr.getGroesse(), kundPruferFamakIn.getVarNummer(), kundPruferFamakIn.getGtin(), kundPruferFamakIn.getPosGrId(), "", "", meldung1, message);
 
             }
-
             if (meldung1.length() > 4) {
                 //System.out.println("In table:" + jTextFieldKundumMeng.getText() + "---" + cnsmr.getKdFarbe() + "---" + cnsmr.getKdGrosse() + "---" + cnsmr.getKdVariante());
                 String meldung2 = jlieferDaoInterface.anlegenAndern("0", kundPruferFamakIn.getKundNummer(), cnsmr.getKdArtNum(), cnsmr.getKdFarbe(), cnsmr.getKdGrosse(), cnsmr.getKdVariante(), meldung1, kundPruferFamakIn.getPosGrId(), cnsmr.getGp1(), jTextFieldVarianten.getText().replace(",", "."));
                 String indicator1 = meldung2;
+                
                 if (meldung2.length()>4) {
                     
                    indicator1 = "E";
-                   
                 }
-                message = jlieferDaoInterface.getMeldung("2", indicator1);
-                System.out.println("message kunden : "+message);
-                insertIntoList(kundNum, cnsmr.getKdArtNum(), cnsmr.getKdFarbe(), cnsmr.getGroesse(), cnsmr.getKdVariante(), kundPruferFamakIn.getGtin(), kundPruferFamakIn.getPosGrId(), cnsmr.getGp1(), jTextFieldVarianten.getText(), meldung1, message+";"+meldung2);
-            }
+                String message2 = jlieferDaoInterface.getMeldung("2", indicator1);
+                switch (meldung2) {
+                case "30":
+                    //System.out.println(kundPrufer.getKundNummer()+"-"+ kundPrufer.getKundenArtikelNummer()+"-"+ kundPrufer.getFarbe()+"-"+ kundPrufer.getGroesse()+"-"+ kundPrufer.getVariante()+"-"+gtinParam);
+                    kundPrufer.setFarbe(cnsmr.getKdFarbe());
+                    kundPrufer.setGroesse(cnsmr.getGroesse());
+                    kundPrufer.setVarNummer(cnsmr.getKdVariante());
+                   // kljdf
+                    List<LieferKundPrufer> listGtinAnderung = jlieferDaoInterface.getListGtinAnderung(kundPrufer.getKundNummer(), cnsmr.getKdArtNum(), cnsmr.getKdFarbe(), cnsmr.getGroesse(), kundPrufer.getVariante(), meldung1, cnsmr.getGp1(), jTextFieldVarianten.getText().replace(",", "."));
 
+                    JDialogKundenArtikelDatenAndern artikelDatenAndern = new JDialogKundenArtikelDatenAndern(this, true, listGtinAnderung, kundPruferFamakIn, kundPrufer, this.dbUrl, meldung1, cnsmr.getGp1(), jTextFieldVarianten.getText(),message2);
+                    artikelDatenAndern.setVisible(true);
+                    System.out.println("we are here");
+                    //meldung = artikelDatenAndern.getMeldung();
+                    
+                    break;
+                case "38":
+                    int reply = JOptionPane.showConfirmDialog(null, message2, "Actung", JOptionPane.YES_NO_OPTION);
+
+                    if (reply == JOptionPane.YES_OPTION) {
+                        String meldung3 = jlieferDaoInterface.anlegenAndern("1", kundPrufer.getKundNummer(), cnsmr.getKdArtNum(), cnsmr.getKdFarbe(), cnsmr.getGroesse(), cnsmr.getKdVariante(), meldung1, kundPruferFamakIn.getPosGrId(), cnsmr.getGp1(), jTextFieldVarianten.getText().replace(",", "."));
+                        String message3 = jlieferDaoInterface.getMeldung("2", meldung3);
+                        String[] parts3 = message3.split("--");
+                        String part1_3 = parts3[0]; // 004
+                        String part2_3 = parts3[1]; // 034556
+                        JOptionPane.showMessageDialog(null,
+                                part1_3,
+                                part2_3,
+                                JOptionPane.WARNING_MESSAGE);
+                    }
+                    break;
+                
+            }
+                insertIntoList(kundNum, cnsmr.getKdArtNum(), cnsmr.getKdFarbe(), cnsmr.getGroesse(), cnsmr.getKdVariante(), kundPruferFamakIn.getGtin(), kundPruferFamakIn.getPosGrId(), cnsmr.getGp1(), jTextFieldVarianten.getText(), meldung2, message2+";"+meldung2);
+            }
         });
 
         JDialogProtokoll dialogProtokoll = new JDialogProtokoll(this, true, protokolls);
@@ -811,7 +844,7 @@ public class JDialogVerwendete extends javax.swing.JDialog {
             String step2 = df.format((100 + Double.parseDouble(jTextFieldAnderung1.getText())) / 100).replace(",", ".");
             //System.out.println("step1: "+step1+"; step2: "+step2);
             double result = Double.parseDouble(step1) * Double.parseDouble(step2);
-            System.out.println("result: " + df.format(result));
+           
             cnsmr.setGp1(df.format(result).replace(",", "."));
         }); 
         populateTableGroessen(verfugbareGroßens);
@@ -848,7 +881,7 @@ public class JDialogVerwendete extends javax.swing.JDialog {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                JDialogVerwendete dialog = new JDialogVerwendete(new JDialog(), true, new VerwendeteMengenstaffel(), new ArrayList<>(), new ArrayList<>(), new LieferKundPrufer(), "", "","");
+                JDialogVerwendete dialog = new JDialogVerwendete(new JDialog(), true, new VerwendeteMengenstaffel(), new ArrayList<>(), new ArrayList<>(), new LieferKundPrufer(), new LieferKundPrufer(), "", "","");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

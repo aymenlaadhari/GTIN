@@ -498,7 +498,6 @@ public class JDialogGTIN extends javax.swing.JDialog {
         String meldung = jlieferDaoInterface.gtinStammsatzAnderung("0", jTextFieldArtNummerFamak.getText(), jTextFieldFarbNum.getText(), jTextFieldGroesseFamak.getText(), jTextFieldVariantenFamak.getText(), jTextFieldGTIN.getText(), jTextFieldPosGrID.getText());
         String indicator = "";
         String message;
-        System.out.println(meldung);
         if (meldung.length() > 4) {
             if (meldung.contains("-")) {
                 indicator = "E-";
@@ -507,7 +506,7 @@ public class JDialogGTIN extends javax.swing.JDialog {
             }
 
             message = jlieferDaoInterface.getMeldung("1", indicator);
-            System.out.println(message);
+            
         } else {
             message = jlieferDaoInterface.getMeldung("1", meldung);
         }
@@ -528,8 +527,7 @@ public class JDialogGTIN extends javax.swing.JDialog {
             JDialogGTINAndern dialogGTINAndern = new JDialogGTINAndern(this, true, kunds, part1, dbUrl, kundPruferFamak, kundPrufer, jTextFieldPreisGrossBasis.getText(), jTextFieldPreisVarianten.getText());
             dialogGTINAndern.setVisible(true);
             meldung = dialogGTINAndern.getMeldung();
-            System.out.println(meldung);
-            System.out.println("we are here");
+
 
         } else {
             JOptionPane.showMessageDialog(null,
@@ -554,13 +552,12 @@ public class JDialogGTIN extends javax.swing.JDialog {
             String meldung2 = jlieferDaoInterface.anlegenAndern("0", kundPrufer.getKundNummer(), kundPrufer.getKundenArtikelNummer(), jTextFieldFarbe.getText(), jTextFieldGroesse.getText(), kundPrufer.getVariante(), gtinParam, jTextFieldPosGrID.getText(), preisGrossBasis, preisVarianten);
             String indcator = "";
             message2 = jlieferDaoInterface.getMeldung("2", meldung2);
-            System.out.println("meldung2:" + meldung2);
             if (meldung2.length() > 4) {
                 indcator = "E";
                 message2 = jlieferDaoInterface.getMeldung("2", indcator);
             } else {
                 message2 = jlieferDaoInterface.getMeldung("2", meldung2);
-                System.out.println("message2:" + message2);
+                
             }
             String[] parts2 = message2.split("--");
             String part1_1; // 004
@@ -589,9 +586,6 @@ public class JDialogGTIN extends javax.swing.JDialog {
                     if (reply == JOptionPane.YES_OPTION) {
                         String meldung3 = jlieferDaoInterface.anlegenAndern("1", kundPrufer.getKundNummer(), kundPrufer.getKundenArtikelNummer(), jTextFieldFarbe.getText(), jTextFieldGroesse.getText(), jTextFieldVariante.getText(), gtinParam, jTextFieldPosGrID.getText(), preisGrossBasis, preisVarianten);
                         String message3 = jlieferDaoInterface.getMeldung("2", meldung3);
-                        System.out.println("meldung3:" + meldung3);
-                        System.out.println("message3:" + message3);
-
                         String[] parts3 = message3.split("--");
                         String part1_3 = parts3[0]; // 004
                         String part2_3 = parts3[1]; // 034556
@@ -689,7 +683,7 @@ public class JDialogGTIN extends javax.swing.JDialog {
 
     private void jButtonMehrereGrosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonMehrereGrosActionPerformed
         // TODO add your handling code here:
-        JDialogVerwendete dialogVerwendete = new JDialogVerwendete(this, true, verwendeteMengenstaffel,verfugbareMengenstaffelns, verfugbareGroßens,kundPruferFamak, dbUrl, jTextFieldPreisVarianten.getText().replace(",", "."),kundPrufer.getKundNummer());
+        JDialogVerwendete dialogVerwendete = new JDialogVerwendete(this, true, verwendeteMengenstaffel,verfugbareMengenstaffelns, verfugbareGroßens,kundPruferFamak,kundPrufer, dbUrl, jTextFieldPreisVarianten.getText().replace(",", "."),kundPrufer.getKundNummer());
         dialogVerwendete.setVisible(true);
     }//GEN-LAST:event_jButtonMehrereGrosActionPerformed
 
