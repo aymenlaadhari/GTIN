@@ -218,6 +218,9 @@ public class JlieferDao implements JlieferDaoInterface {
             Statement s = conProdukt.createStatement();
             try (ResultSet rs = s.executeQuery(proc)) {
                 while (rs.next()) {
+                    if (rs.getString(1) == null) {
+                       ret = ""; 
+                    }else
                     ret = rs.getString(1);
                 }
                 rs.close();
@@ -611,55 +614,7 @@ public class JlieferDao implements JlieferDaoInterface {
     return verwendeteMengenstaffel;
     }
 
-    private String getPreisvariante(String posGridId){
-        String varPreis = "";
-        try {
-            //String proc = "SELECT GTIN_Stammsatz_anlegen_aendern ( '0', '1701000', '13', 'EL', ';001;002;061O;072;091;111C;111D;', '', '2230531' )";
-            String proc = "SELECT GTIN_Preisermittlung_Varianten_GrPosID ( '"+posGridId+"')";
-            
-            Connection conProdukt = DriverManager.getConnection(dburlProdukt);
-            Statement s = conProdukt.createStatement();
-            try (ResultSet rs = s.executeQuery(proc)) {
-                while (rs.next()) {
-                    varPreis = rs.getString(1);
-                }
-                rs.close();
-                s.close();
-                conProdukt.close();
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return varPreis;
-    }
-    private List<Varianten> getListVarianten(String posGridId){
-        List<Varianten> variantens = new ArrayList<>();
-        String proc = "CALL GTIN_Varianten_Position_Liste ( '"+posGridId+"')";
-            
-        Connection conProdukt;
-        try {
-            conProdukt = DriverManager.getConnection(dburlProdukt);
-            CallableStatement cs = conProdukt.prepareCall(proc);
-            try (ResultSet rs = cs.executeQuery()) {
-                while (rs.next()) {
-                 Varianten varianten = new Varianten();
-                 varianten.setAufpreis(rs.getString("Aufpreis"));
-                 varianten.setBezeichung(rs.getString("Bezeichnung"));
-                 varianten.setNummer(rs.getString("Nr"));
-                 
-                 variantens.add(varianten);
-                }
-                rs.close();
-                cs.close();
-                conProdukt.close();
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return variantens;
-
-    }
+    
     @Override
     public String gtinStammsatzAnderung(String indicator, String ArtNr, String FarbNr, String Gross, String Varianten, String GTIN, String PosGrID) {
      String ret = "";
@@ -766,5 +721,55 @@ public class JlieferDao implements JlieferDaoInterface {
                 exceptionUpdate=ex.getMessage();
             } 
             return updated;
+    }
+
+    private String getPreisvariante(String posGridId){
+        String varPreis = "";
+        try {
+            //String proc = "SELECT GTIN_Stammsatz_anlegen_aendern ( '0', '1701000', '13', 'EL', ';001;002;061O;072;091;111C;111D;', '', '2230531' )";
+            String proc = "SELECT GTIN_Preisermittlung_Varianten_GrPosID ( '"+posGridId+"')";
+            
+            Connection conProdukt = DriverManager.getConnection(dburlProdukt);
+            Statement s = conProdukt.createStatement();
+            try (ResultSet rs = s.executeQuery(proc)) {
+                while (rs.next()) {
+                    varPreis = rs.getString(1);
+                }
+                rs.close();
+                s.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return varPreis;
+    }
+    private List<Varianten> getListVarianten(String posGridId){
+        List<Varianten> variantens = new ArrayList<>();
+        String proc = "CALL GTIN_Varianten_Position_Liste ( '"+posGridId+"')";
+            
+        Connection conProdukt;
+        try {
+            conProdukt = DriverManager.getConnection(dburlProdukt);
+            CallableStatement cs = conProdukt.prepareCall(proc);
+            try (ResultSet rs = cs.executeQuery()) {
+                while (rs.next()) {
+                 Varianten varianten = new Varianten();
+                 varianten.setAufpreis(rs.getString("Aufpreis"));
+                 varianten.setBezeichung(rs.getString("Bezeichnung"));
+                 varianten.setNummer(rs.getString("Nr"));
+                 
+                 variantens.add(varianten);
+                }
+                rs.close();
+                cs.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return variantens;
+
     }
 }
