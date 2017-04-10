@@ -400,8 +400,8 @@ public class JlieferDao implements JlieferDaoInterface {
     @Override
     public List<VarPreis> getListVarPreis(String kdNummer, String kdArtNummer, String kdFarbe, String kdGroesse, String kdVariante, String menge, String lagerNummer) {
        List<VarPreis> varPreises = new ArrayList<>();
-        String proc = "CALL GTIN_Varianten_KdArtNr_Liste( '"+kdArtNummer+"', '"+kdArtNummer+"', '"+kdFarbe+"', '"+kdGroesse+"', '"+kdVariante+"', '"+menge+"', '"+lagerNummer+"')";
-            
+        String proc = "CALL GTIN_Varianten_KdArtNr_Liste( '"+kdNummer+"', '"+kdArtNummer+"', '"+kdFarbe+"', '"+kdGroesse+"', '"+kdVariante+"', '"+menge+"', '"+lagerNummer+"')";
+        System.out.println(kdNummer+","+kdArtNummer+","+kdFarbe+","+kdGroesse+","+kdVariante+","+menge+","+lagerNummer);    
         Connection conProdukt;
         try {
             conProdukt = DriverManager.getConnection(dburlProdukt);
@@ -411,6 +411,7 @@ public class JlieferDao implements JlieferDaoInterface {
                  VarPreis varPreis = new VarPreis();
                  varPreis.setZeile(rs.getString("Zeile"));
                  varPreis.setVkPreis(rs.getString("VkPreis"));
+                   
                  varPreis.setVarText(rs.getString("VarText"));
                  varPreis.setVarNummer(rs.getString("VarNr"));
                  varPreis.setKdPreis(rs.getString("KdPreis"));

@@ -600,10 +600,10 @@ public class MainFrame extends javax.swing.JFrame {
         LieferKund lieferKund = liefkunds.get(selectedRow);
         List<VarPreis> varPreises;
         if (jTextFieldMengenBezeug.getText().equals("P")) {
-         varPreises = jlieferDaoInterface.getListVarPreis(jTextFieldKdNr.getText(), lieferKund.getArtikel_Nr(), lieferKund.getFarbe(), lieferKund.getSumme(), lieferKund.getVariante(), lieferKund.getMenge(), lieferKund.getLagerNum());
+         varPreises = jlieferDaoInterface.getListVarPreis(jTextFieldKdNr.getText(), lieferKund.getArtikel_Nr(), lieferKund.getFarbe(), lieferKund.getGroesse(), lieferKund.getVariante(),lieferKund.getSumme(), lieferKund.getLagerNum());
   
         }else{
-            varPreises = jlieferDaoInterface.getListVarPreis(jTextFieldKdNr.getText(), lieferKund.getArtikel_Nr(), lieferKund.getFarbe(), lieferKund.getMenge(), lieferKund.getVariante(), lieferKund.getMenge(), lieferKund.getLagerNum());
+            varPreises = jlieferDaoInterface.getListVarPreis(jTextFieldKdNr.getText(), lieferKund.getArtikel_Nr(), lieferKund.getFarbe(), lieferKund.getGroesse(), lieferKund.getVariante(), lieferKund.getMenge(), lieferKund.getLagerNum());
         }
             
                 
