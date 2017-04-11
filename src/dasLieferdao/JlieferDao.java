@@ -47,7 +47,7 @@ public class JlieferDao implements JlieferDaoInterface {
     public String anlegenAndern(String indicator, String kundNummer, String kundArtNummer, String kundfarbe, String kundGroesse, String variante, String gtin, String posGrId, String grundPreis, String varPreis) {
     String ret = "";
         try {
-            System.out.println("in dao: '"+indicator+"', '"+kundNummer+"', '"+kundArtNummer+"', '"+kundfarbe+"', '"+kundGroesse+"', '"+variante);
+            //System.out.println("in dao: '"+indicator+"', '"+kundNummer+"', '"+kundArtNummer+"', '"+kundfarbe+"', '"+kundGroesse+"', '"+variante);
            // String proc = "SELECT GTIN_Stammsatz_anlegen_aendern ( '0', '1040', '13', 'EL', ';001;002;061O;072;091;111C;111D;', '', '2230531' )";
             //String proc = "SELECT GTIN_Kunde_KdArtNr_anlegen_aendern( '0', '104008', 'null', 'null', 'null', null, '"+gtin+"', '"+posGrId+"', '"+grundPreis+"', '"+varPreis+"' )";
             String proc = "SELECT GTIN_Kunde_KdArtNr_anlegen_aendern( '"+indicator+"', '"+kundNummer+"', '"+kundArtNummer+"', '"+kundfarbe+"', '"+kundGroesse+"', '"+variante+"', '"+gtin+"', '"+posGrId+"', '"+grundPreis+"', '"+varPreis+"' )";
@@ -212,6 +212,7 @@ public class JlieferDao implements JlieferDaoInterface {
     @Override
     public String getLagerNr(String kdNr, String kdArtNr, String kdFarbe, String kdGroesse, String kdVariante) {
         String ret = "";
+        System.out.println("getLagerNr from dao: "+kdNr + "," + kdArtNr + "," + kdFarbe + "," + kdGroesse + "," + kdVariante);
         try {
             String proc = "SELECT GTIN_Kunden_Lagerartikel_pruefen('" + kdNr + "','" + kdArtNr + "','" + kdFarbe + "','" + kdGroesse + "','" + kdVariante + "')";
             Connection conProdukt = DriverManager.getConnection(dburlProdukt);
@@ -223,6 +224,7 @@ public class JlieferDao implements JlieferDaoInterface {
                     }else
                     ret = rs.getString(1);
                 }
+                System.out.println("lagerNummer from dao"+ret);
                 rs.close();
                 s.close();
                 conProdukt.close();
@@ -270,7 +272,7 @@ public class JlieferDao implements JlieferDaoInterface {
     public List<LieferKundPrufer> getListGtinAnderung(String KdNr, String KdArtNr, String KdFarbe, String KdGroße, String KdVariante, String GTIN, String grundPreis,String varPreis) {
     List<LieferKundPrufer> listGtinAnderung = new ArrayList<>();
     
-        System.out.println("getListGtinAnderung parameter: " + KdNr + "','" + KdArtNr + "','" + KdFarbe + "','" + KdGroße + "','" + KdVariante + "','" + GTIN + "','" + grundPreis + "','" + varPreis);
+        //System.out.println("getListGtinAnderung parameter: " + KdNr + "','" + KdArtNr + "','" + KdFarbe + "','" + KdGroße + "','" + KdVariante + "','" + GTIN + "','" + grundPreis + "','" + varPreis);
         
         String procName = "{CALL GTIN_Kunde_KdArtNr_Liste ('" + KdNr + "','" + KdArtNr + "','" + KdFarbe + "','" + KdGroße + "','" + KdVariante + "','" + GTIN + "','" + grundPreis + "','" + varPreis + "')}";
         Connection conProdukt;
@@ -497,7 +499,7 @@ public class JlieferDao implements JlieferDaoInterface {
         } catch (SQLException ex) {
             Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.out.println("verfugbareGroßens lengh: "+verfugbareGroßens.size());
+        //System.out.println("verfugbareGroßens lengh: "+verfugbareGroßens.size());
     return verfugbareGroßens;
     }
 
@@ -535,7 +537,7 @@ public class JlieferDao implements JlieferDaoInterface {
             while (rs.next()) {
 
                 ret = rs.getString(1);
-                System.out.println(ret);
+                //System.out.println(ret);
                 rs.close();
                 statementPro.close();
                 conProdukt.close();
@@ -583,7 +585,7 @@ public class JlieferDao implements JlieferDaoInterface {
             try (ResultSet rs = s.executeQuery(proc)) {
                 while (rs.next()) {
                   verwendeteMengenstaffel.setKundNummer(rs.getString("s_Kd_Nr"));
-                    System.out.println(verwendeteMengenstaffel.getKundNummer());
+                    //System.out.println(verwendeteMengenstaffel.getKundNummer());
                   verwendeteMengenstaffel.setStufe(rs.getString("s_Stufe"));
                   verwendeteMengenstaffel.setTyp(rs.getString("s_Typ"));
                   verwendeteMengenstaffel.setStaffelNr(rs.getString("s_Staffel_Nr"));

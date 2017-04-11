@@ -5,12 +5,15 @@
  */
 package dasLieferDialog;
 
+import java.awt.Component;
 import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JDialog;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
 import model.Protokoll;
 
 /**
@@ -25,6 +28,7 @@ public class JDialogProtokoll extends javax.swing.JDialog {
 
     /**
      * Creates new form JDialogProtokoll
+     *
      * @param parent
      * @param modal
      * @param protokolls
@@ -34,19 +38,22 @@ public class JDialogProtokoll extends javax.swing.JDialog {
         initComponents();
         this.protokolls = protokolls;
         tableModel = (DefaultTableModel) jTable1.getModel();
-        jTable1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
         jTable1.setPreferredScrollableViewportSize(Toolkit.getDefaultToolkit().getScreenSize());
         populatetaleProtokoll(protokolls);
+        resizeColumnWidth(jTable1);
+        jTable1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     }
-    private void populatetaleProtokoll(List<Protokoll> protokolls)
-    {
+
+    private void populatetaleProtokoll(List<Protokoll> protokolls) {
         tableModel.setRowCount(0);
-        protokolls.stream().forEach(cnsmr->{
+        protokolls.stream().forEach(cnsmr -> {
             addToTable(cnsmr);
         });
+
     }
-    private void addToTable(Protokoll protokoll)
-    {
+
+    private void addToTable(Protokoll protokoll) {
         rowDataProtokoll[0] = protokoll.getOrigin();
         rowDataProtokoll[1] = protokoll.getArtNummer();
         rowDataProtokoll[2] = protokoll.getFarbNummer();
@@ -59,7 +66,20 @@ public class JDialogProtokoll extends javax.swing.JDialog {
         rowDataProtokoll[9] = protokoll.getMeldung();
         rowDataProtokoll[10] = protokoll.getMessage();
         tableModel.addRow(rowDataProtokoll);
-        
+
+    }
+
+    private void resizeColumnWidth(JTable table) {
+        final TableColumnModel columnModel = table.getColumnModel();
+        for (int column = 0; column < table.getColumnCount(); column++) {
+            int width = 50; // Min width
+            for (int row = 0; row < table.getRowCount(); row++) {
+                TableCellRenderer renderer = table.getCellRenderer(row, column);
+                Component comp = table.prepareRenderer(renderer, row, column);
+                width = Math.max(comp.getPreferredSize().width + 1, width);
+            }
+            columnModel.getColumn(column).setPreferredWidth(width);
+        }
     }
 
     /**
