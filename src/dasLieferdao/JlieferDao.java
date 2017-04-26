@@ -34,6 +34,7 @@ import model.VerwendeterGroßenzuschlag;
  */
 public class JlieferDao implements JlieferDaoInterface {
     boolean recorded= true;
+    
     boolean updated=true;
     String exceptionRecord="";
     String exceptionUpdate="";
@@ -87,9 +88,7 @@ public class JlieferDao implements JlieferDaoInterface {
             Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         return ret;
-    }
-
-    
+    } 
 
     @Override
     public String erfassungManuelzuweisen(String indice, String id, String posGridId, String status) {
@@ -660,6 +659,46 @@ public class JlieferDao implements JlieferDaoInterface {
             Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         return ret;   
+    }
+
+    @Override
+    public List<String> updateInFamak(String kundnummer, String kdBest, String kdBesDate, String kundWunch,List<LieferKund> lieferKunds) {
+        
+        List<String> list = new ArrayList<>();
+        lieferKunds.stream().forEach((cnsmr) ->
+        {
+            String procName = "SELECT GTIN_Erfassungsdaten_in_Famak_schreiben( '" + kundnummer 
+                    + "', '" + kdBest + "', '" + kdBesDate + "', '" + kundWunch + "', '" + cnsmr.getPosiNummer()
+                    + "', '" + cnsmr.getArtikel_Nr() + "', '" + cnsmr.getFarbe() + "' , '" + cnsmr.getGroesse() 
+                    + "', '"+ cnsmr.getVariante() + "', '" + cnsmr.getMenge() + "', '"+ cnsmr.getSumme() + "', '" + cnsmr.getLagerNum() +"')";
+            Connection conProdukt;
+            try {
+                conProdukt = DriverManager.getConnection(dburlProdukt);
+                Statement s = conProdukt.createStatement();
+                try (ResultSet rs = s.executeQuery(procName)) {
+//                    if (kdBesDate==null) {
+//                       rs.setNull(3, java.sql.Types.DATE); 
+//                       rs.
+//                    }
+//                    if (kundWunch==null) {
+//                       cs.setNull(4, java.sql.Types.DATE); 
+//                    }
+                    while (rs.next()) {
+                    list.add(rs.getString(1));
+                    }
+                    
+                   rs.close();
+                   s.close();
+                   conProdukt.close();
+                }
+
+            } catch (SQLException ex) {
+                Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+                recorded= false;
+                exceptionRecord=ex.getMessage();
+            }
+        });
+        return list;
     }
 
     @Override
