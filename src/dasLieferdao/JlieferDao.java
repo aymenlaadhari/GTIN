@@ -671,6 +671,7 @@ public class JlieferDao implements JlieferDaoInterface {
                     + "', '" + kdBest + "', '" + kdBesDate + "', '" + kundWunch + "', '" + cnsmr.getPosiNummer()
                     + "', '" + cnsmr.getArtikel_Nr() + "', '" + cnsmr.getFarbe() + "' , '" + cnsmr.getGroesse() 
                     + "', '"+ cnsmr.getVariante() + "', '" + cnsmr.getMenge() + "', '"+ cnsmr.getSumme() + "', '" + cnsmr.getLagerNum() +"')";
+            System.out.println("position nummer: "+cnsmr.getPosiNummer());
             Connection conProdukt;
             try {
                 conProdukt = DriverManager.getConnection(dburlProdukt);

@@ -82,9 +82,7 @@ public class MainFrame extends javax.swing.JFrame {
     private boolean changed = false;
     private int count, increment, summe;
     private String suchen, ersetzen;
-
     private List<LieferKund> liefkunds;
-
     private List<LieferKundPrufer> liefPrufers;
     private final JDialog dlgProgress;
     private String dbUrl;
@@ -159,6 +157,7 @@ public class MainFrame extends javax.swing.JFrame {
         tclLieferKund = new TableCellListener(jTable, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                boolean changeArtnum = false, changeFarb= false,changeVar=false;
                 tclLiefKund = (TableCellListener) e.getSource();
                 switch (tclLiefKund.getColumn()) {
 
@@ -169,12 +168,13 @@ public class MainFrame extends javax.swing.JFrame {
                     case 1:
                         //selectedArtikel.getCombinations().get(tclPreis.getRow()).setGroessen(tclPreis.getNewValue().toString());
                         liefkunds.get(tclLiefKund.getRow()).setArtikel_Nr(tclLiefKund.getNewValue().toString());
+                        changeArtnum = true;
                         break;
 
                     case 2:
                         //selectedArtikel.getCombinations().get(tclPreis.getRow()).setGs(tclPreis.getNewValue().toString());
                         liefkunds.get(tclLiefKund.getRow()).setFarbe(tclLiefKund.getNewValue().toString());
-
+                        changeFarb = true;
                         break;
 
                     case 3:
@@ -186,7 +186,7 @@ public class MainFrame extends javax.swing.JFrame {
                     case 4:
                         //selectedArtikel.getCombinations().get(tclPreis.getRow()).setAb(tclPreis.getNewValue().toString());
                         liefkunds.get(tclLiefKund.getRow()).setVariante(tclLiefKund.getNewValue().toString());
-
+                        changeVar = true;
                         break;
 
                     case 5:
@@ -220,7 +220,7 @@ public class MainFrame extends javax.swing.JFrame {
                         break;
                 }
                 //populateJtablePreisListe();
-                refreshTableLiefKund(tclLiefKund.getRow());
+                refreshTableLiefKund(tclLiefKund.getRow(), changeArtnum,changeFarb,changeVar);
             }
         });
     }
@@ -455,7 +455,7 @@ public class MainFrame extends javax.swing.JFrame {
 
             rowDataMuster[0] = count++;
         }
-
+       
         rowDataMuster[1] = lieferKund.getArtikel_Nr();
         rowDataMuster[2] = lieferKund.getFarbe();
         rowDataMuster[3] = lieferKund.getGroesse();
@@ -465,7 +465,7 @@ public class MainFrame extends javax.swing.JFrame {
         rowDataMuster[7] = lieferKund.getKommission();
         rowDataMuster[8] = lieferKund.getLagerNum();
         rowDataMuster[9] = lieferKund.getSumme();
-
+        liefkunds.get(liefkunds.size()-1).setPosiNummer(String.valueOf(rowDataMuster[0]));
     }
 
     private void populateJtable() {
@@ -543,7 +543,7 @@ public class MainFrame extends javax.swing.JFrame {
         lieferKund.setSumme(String.valueOf(summe));
 
         addToTable(lieferKund);
-
+        
         tableModel.addRow(rowDataMuster);
 
         indexList.stream().forEach(cnsmr -> {
@@ -555,7 +555,7 @@ public class MainFrame extends javax.swing.JFrame {
         jTable.scrollRectToVisible(new Rectangle(jTable.getCellRect(jTable.getRowCount() - 1, 0, true)));
     }
 
-    private void refreshTableLiefKund(int position) {
+    private void refreshTableLiefKund(int position, boolean changeArtnum, boolean changeFarb, boolean changeVariante) {
         
         String kdArtNum = liefkunds.get(position).getArtikel_Nr();
         String kdFarbe = liefkunds.get(position).getFarbe();
@@ -566,7 +566,6 @@ public class MainFrame extends javax.swing.JFrame {
                 indexList.add(i);
             }
         }
-
         summe = 0;
         indexList.stream().forEach(cnsmr -> {
             String menge = liefkunds.get(cnsmr).getMenge();
@@ -575,7 +574,6 @@ public class MainFrame extends javax.swing.JFrame {
             } else {
                 summe = summe + 0;
             }
-
         });
 
         indexList.stream().forEach(cnsmr -> {
@@ -590,7 +588,7 @@ public class MainFrame extends javax.swing.JFrame {
             tableModel.addRow(rowDataMuster);
         });
     }
-
+    
     private void insertIntoDb() {
 
         SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
@@ -886,7 +884,7 @@ public class MainFrame extends javax.swing.JFrame {
                 width = Math.max(comp.getPreferredSize().width + 1, width);
             }
             
-            columnModel.getColumn(2).setPreferredWidth(232);
+            //columnModel.getColumn(2).setPreferredWidth(232);
             columnModel.getColumn(column).setPreferredWidth(width);
         }
     }
@@ -1356,16 +1354,17 @@ public class MainFrame extends javax.swing.JFrame {
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 442, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addComponent(jCheckBoxPreisSofort)
-                        .addGap(82, 82, 82)
-                        .addComponent(jLabel17)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTextFieldMengenBezeug, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(34, 34, 34))
+                .addContainerGap(194, Short.MAX_VALUE)
+                .addComponent(jCheckBoxPreisSofort)
+                .addGap(82, 82, 82)
+                .addComponent(jLabel17)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jTextFieldMengenBezeug, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(57, 57, 57))
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane3)
+                .addContainerGap())
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1393,7 +1392,7 @@ public class MainFrame extends javax.swing.JFrame {
                         .addGap(36, 36, 36)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
-                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, 484, Short.MAX_VALUE)
+                .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -1552,7 +1551,7 @@ public class MainFrame extends javax.swing.JFrame {
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1783, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1981, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(258, 258, 258)
@@ -1579,7 +1578,7 @@ public class MainFrame extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1996, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
