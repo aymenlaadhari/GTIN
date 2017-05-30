@@ -615,7 +615,6 @@ public class JlieferDao implements JlieferDaoInterface {
     return verwendeteMengenstaffel;
     }
 
-    
     @Override
     public String gtinStammsatzAnderung(String indicator, String ArtNr, String FarbNr, String Gross, String Varianten, String GTIN, String PosGrID) {
      String ret = "";
