@@ -38,6 +38,7 @@ public class JlieferDao implements JlieferDaoInterface {
     boolean updated=true;
     String exceptionRecord="";
     String exceptionUpdate="";
+    List<String> indexes = new ArrayList<>();
 
     private final String dburlProdukt;
     public JlieferDao(String dburlProdukt) {
@@ -140,6 +141,11 @@ public class JlieferDao implements JlieferDaoInterface {
     public String getException() {
         return exceptionRecord;
         }
+
+    @Override
+    public List<String> getIndexes() {
+    return indexes;
+            }
 
     @Override
     public List<String> getKundenNummers() {
@@ -702,17 +708,19 @@ public class JlieferDao implements JlieferDaoInterface {
     }
 
     @Override
-    public boolean updateTableGin(String kundnummer, String kdBest, String kdBesDate, String kundWunch, String erfasser, String erDatum, String kdPosActiv, List<LieferKund> lieferKunds) {
+    public boolean updateTableGin(String kundnummer, String kdBest, String kdBesDate, String kundWunch, String erfasser, String erDatum, String kdPosActiv, List<LieferKund> lieferKunds, String st, String ub, String id) {
        
         lieferKunds.stream().forEach((cnsmr) ->
         {
-            String procName = "{CALL GTIN_Erfassungsdaten_laden( '" + kundnummer 
+            String procName = "{CALL GTIN_Erfassungsdaten_speichern( '" + kundnummer 
                     + "', '" + kdBest + "', '" + kdBesDate + "', '" + kundWunch + "', '" + erfasser 
                     + "', '" + erDatum + "', '" + kdPosActiv + "' , '" + cnsmr.getPosiNummer() 
                     + "', '"+ cnsmr.getArtikel_Nr() + "', '" + cnsmr.getFarbe() + "', '" + cnsmr.getGroesse() 
                     + "', '"+ cnsmr.getVariante() + "', '" + cnsmr.getMenge() + "', '" + cnsmr.getPreis() 
-                    + "', '"+ cnsmr.getKommission() + "')}";
+                    + "', '"+ cnsmr.getKommission() + "', '"+ st + "', '"+ ub + "', '"+ id + "')}";
             Connection conProdukt;
+            if (cnsmr.getStatus().equals("0") && cnsmr.getUbergabe().equals("0")&& cnsmr.getId().equals("0")) {
+                
             try {
                 conProdukt = DriverManager.getConnection(dburlProdukt);
                 try (CallableStatement cs = conProdukt.prepareCall(procName)) {
@@ -730,13 +738,14 @@ public class JlieferDao implements JlieferDaoInterface {
                     cs.executeQuery();
                     cs.close();
                     conProdukt.close();
+                    indexes.add(cnsmr.getPosiNummer());
                 }
 
             } catch (SQLException ex) {
                 Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
                 recorded= false;
                 exceptionRecord=ex.getMessage();
-            }
+            }}
         });
         return recorded;
     }

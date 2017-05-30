@@ -28,7 +28,7 @@ public interface JlieferDaoInterface
     public ParameterKund getKundenParameter(String kundNummer);
     public String getLagerNr(String kdNr,String kdArtNr,String kdFarbe,String kdGroesse,String kdVariante);
     public String getException();
-    public boolean updateTableGin(String kundnummer, String kdBest, String kdBesDate,String kundWunch, String erfasser, String erDatum,String kdPosActiv, List<LieferKund> lieferKunds);
+    public boolean updateTableGin(String kundnummer, String kdBest, String kdBesDate,String kundWunch, String erfasser, String erDatum,String kdPosActiv, List<LieferKund> lieferKunds, String st, String ub, String id);
     public List<String> updateInFamak(String kundnummer, String kdBest, String kdBesDate,String kundWunch,List<LieferKund> lieferKunds);
     public boolean updateTablePrufen(String id, String posNr, String artikelNr, String aarbe, String groesse, String variante,String menge, String preis, String kommission);
     public String getPreisVariante(String posGridID);
@@ -47,4 +47,5 @@ public interface JlieferDaoInterface
     public boolean erfassungVerarbeiten();
     public List<VarPreis> getListVarPreis(String kdNummer, String kdArtNummer, String kdFarbe, String kdGroesse, String kdVariante, String menge, String lagerNummer);
     public String getMengenbezug(String kdNummer);
+    public List<String> getIndexes();
    }

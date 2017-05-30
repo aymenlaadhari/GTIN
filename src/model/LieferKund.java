@@ -11,7 +11,7 @@ package model;
  */
 public class LieferKund {
     
-    private String posiNummer="",Kd_Pos_activ="", Pos_Zaehler="", Artikel_Nr="", Farbe="", Groesse="", Variante="", Menge="", Preis="", Kommission="",lagerNum="", summe="0";
+    private String posiNummer="",Kd_Pos_activ="", Pos_Zaehler="", Artikel_Nr="", Farbe="", Groesse="", Variante="", Menge="", Preis="", Kommission="",lagerNum="", summe="0",status="0",ubergabe="0",id="0";
 
     public String getSumme() {
         return summe;
@@ -19,6 +19,30 @@ public class LieferKund {
 
     public void setSumme(String summe) {
         this.summe = summe;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getUbergabe() {
+        return ubergabe;
+    }
+
+    public void setUbergabe(String ubergabe) {
+        this.ubergabe = ubergabe;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     
