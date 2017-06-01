@@ -5,8 +5,6 @@
  */
 package dasLieferDialog;
 
-
-
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JDialog;
@@ -19,7 +17,7 @@ import model.Faktor;
  */
 public class JDialogListFaktor extends javax.swing.JDialog {
 
-    private final String dbUrl ;
+    private final String dbUrl;
     private String meldung5;
     private final DefaultTableModel tableModel;
     private final Object[] rowData = new Object[5];
@@ -44,7 +42,7 @@ public class JDialogListFaktor extends javax.swing.JDialog {
         tableModel = (DefaultTableModel) jTableFaktor.getModel();
         tableModel.setRowCount(0);
         this.faktorsGlobal = faktors;
-        populateJtable(faktorsGlobal);       
+        populateJtable(faktorsGlobal);
     }
 
     private void addToTable(Faktor faktor) {
@@ -73,6 +71,7 @@ public class JDialogListFaktor extends javax.swing.JDialog {
     public Faktor getSelectedFaktor() {
         return selectedFaktor;
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -159,7 +158,7 @@ public class JDialogListFaktor extends javax.swing.JDialog {
 
     private void jTableFaktorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableFaktorMouseClicked
         // TODO add your handling code here:
-        if (evt.getClickCount() == 2){
+        if (evt.getClickCount() == 2) {
             selectedFaktor = faktorsGlobal.get(jTableFaktor.getSelectedRow());
             dispose();
         }
@@ -201,7 +200,7 @@ public class JDialogListFaktor extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                JDialogListFaktor dialog = new JDialogListFaktor(new JDialog(), true, new ArrayList<>(),"","","");
+                JDialogListFaktor dialog = new JDialogListFaktor(new JDialog(), true, new ArrayList<>(), "", "", "");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

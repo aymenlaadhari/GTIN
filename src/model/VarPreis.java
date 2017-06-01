@@ -10,6 +10,7 @@ package model;
  * @author aladhari
  */
 public class VarPreis {
+
     private String zeile, varNummer, varText, kdPreis, vkPreis;
 
     public String getZeile() {
@@ -51,5 +52,5 @@ public class VarPreis {
     public void setVkPreis(String vkPreis) {
         this.vkPreis = vkPreis;
     }
-    
+
 }

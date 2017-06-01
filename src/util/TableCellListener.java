@@ -21,7 +21,7 @@ import java.beans.*;
  *
  *  The source of the Action is a TableCellListener instance.
  */
-public class TableCellListener implements PropertyChangeListener, Runnable{
+public class TableCellListener implements PropertyChangeListener, Runnable {
 
     private JTable table;
     private Action action;
@@ -40,11 +40,8 @@ public class TableCellListener implements PropertyChangeListener, Runnable{
         this.table = table;
         this.action = action;
         this.table.addPropertyChangeListener(this);
-       
 
     }
-    
-   
 
     /**
      * Create a TableCellListener with a copy of all the data relevant to the
@@ -62,8 +59,6 @@ public class TableCellListener implements PropertyChangeListener, Runnable{
         this.oldValue = oldValue;
         this.newValue = newValue;
     }
-
-  
 
     /**
      * Get the column that was last edited
@@ -168,8 +163,7 @@ public class TableCellListener implements PropertyChangeListener, Runnable{
                     ActionEvent.ACTION_PERFORMED,
                     "");
             action.actionPerformed(event);
-         
-           
+
         }
     }
 }

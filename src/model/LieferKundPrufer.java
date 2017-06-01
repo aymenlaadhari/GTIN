@@ -9,8 +9,9 @@ package model;
  *
  * @author aladhari
  */
-public class LieferKundPrufer extends LieferKund{
-    private String bestNummer="",zeile="", treffer="", kundNummer="",kdBestDatum="", kdWunchDatum="", erfasser="", erfassungsDatum="", kdPosAktiv="", status="", artikelId="", kundenArtikelNummer="", farbeNummer="",kdgroesse="", varNummer="", gtin="",zielMenge="", posGrId="", id="", lagerNummer="",gtinPreis="",posGrPreis="",kalkPreis="" ;
+public class LieferKundPrufer extends LieferKund {
+
+    private String bestNummer = "", zeile = "", treffer = "", kundNummer = "", kdBestDatum = "", kdWunchDatum = "", erfasser = "", erfassungsDatum = "", kdPosAktiv = "", status = "", artikelId = "", kundenArtikelNummer = "", farbeNummer = "", kdgroesse = "", varNummer = "", gtin = "", zielMenge = "", posGrId = "", id = "", lagerNummer = "", gtinPreis = "", posGrPreis = "", kalkPreis = "";
 
     public String getZeile() {
         return zeile;
@@ -100,8 +101,6 @@ public class LieferKundPrufer extends LieferKund{
         this.kundenArtikelNummer = kundenArtikelNummer;
     }
 
-   
-
     public String getFarbeNummer() {
         return farbeNummer;
     }
@@ -117,8 +116,6 @@ public class LieferKundPrufer extends LieferKund{
     public void setKdgroesse(String kdgroesse) {
         this.kdgroesse = kdgroesse;
     }
-
-    
 
     public String getVarNummer() {
         return varNummer;
@@ -204,5 +201,5 @@ public class LieferKundPrufer extends LieferKund{
     public String toString() {
         return "LieferKundPrufer{" + "bestNummer=" + bestNummer + ", zeile=" + zeile + ", treffer=" + treffer + ", kundNummer=" + kundNummer + ", kdBestDatum=" + kdBestDatum + ", kdWunchDatum=" + kdWunchDatum + ", erfasser=" + erfasser + ", erfassungsDatum=" + erfassungsDatum + ", kdPosAktiv=" + kdPosAktiv + ", status=" + status + ", artikelId=" + artikelId + ", kundenArtikelNummer=" + kundenArtikelNummer + ", farbeNummer=" + farbeNummer + ", kdgroesse=" + kdgroesse + ", varNummer=" + varNummer + ", gtin=" + gtin + ", zielMenge=" + zielMenge + ", posGrId=" + posGrId + ", id=" + id + ", lagerNummer=" + lagerNummer + ", gtinPreis=" + gtinPreis + ", posGrPreis=" + posGrPreis + ", kalkPreis=" + kalkPreis + '}';
     }
-    
+
 }

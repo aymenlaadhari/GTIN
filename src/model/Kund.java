@@ -10,7 +10,8 @@ package model;
  * @author aladhari
  */
 public class Kund {
-    private String kdNummer, kdFarbe, kdGrosse, kdvariante,kdName, kdArtNummer;
+
+    private String kdNummer, kdFarbe, kdGrosse, kdvariante, kdName, kdArtNummer;
 
     public String getKdArtNummer() {
         return kdArtNummer;
@@ -59,6 +60,5 @@ public class Kund {
     public void setKdName(String kdName) {
         this.kdName = kdName;
     }
-    
-    
+
 }

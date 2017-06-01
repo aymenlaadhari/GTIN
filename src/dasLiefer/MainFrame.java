@@ -157,7 +157,7 @@ public class MainFrame extends javax.swing.JFrame {
         tclLieferKund = new TableCellListener(jTable, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                boolean changeArtnum = false, changeFarb= false,changeVar=false;
+                boolean changeArtnum = false, changeFarb = false, changeVar = false;
                 tclLiefKund = (TableCellListener) e.getSource();
                 switch (tclLiefKund.getColumn()) {
 
@@ -220,7 +220,7 @@ public class MainFrame extends javax.swing.JFrame {
                         break;
                 }
                 //populateJtablePreisListe();
-                refreshTableLiefKund(tclLiefKund.getRow(), changeArtnum,changeFarb,changeVar);
+                refreshTableLiefKund(tclLiefKund.getRow(), changeArtnum, changeFarb, changeVar);
             }
         });
     }
@@ -455,7 +455,7 @@ public class MainFrame extends javax.swing.JFrame {
 
             rowDataMuster[0] = count++;
         }
-       
+
         rowDataMuster[1] = lieferKund.getArtikel_Nr();
         rowDataMuster[2] = lieferKund.getFarbe();
         rowDataMuster[3] = lieferKund.getGroesse();
@@ -468,7 +468,7 @@ public class MainFrame extends javax.swing.JFrame {
         rowDataMuster[10] = lieferKund.getStatus();
         rowDataMuster[11] = lieferKund.getUbergabe();
         rowDataMuster[12] = lieferKund.getId();
-        liefkunds.get(liefkunds.size()-1).setPosiNummer(String.valueOf(rowDataMuster[0]));
+        liefkunds.get(liefkunds.size() - 1).setPosiNummer(String.valueOf(rowDataMuster[0]));
     }
 
     private void populateJtable() {
@@ -546,7 +546,7 @@ public class MainFrame extends javax.swing.JFrame {
         lieferKund.setSumme(String.valueOf(summe));
 
         addToTable(lieferKund);
-        
+
         tableModel.addRow(rowDataMuster);
 
         indexList.stream().forEach(cnsmr -> {
@@ -558,16 +558,16 @@ public class MainFrame extends javax.swing.JFrame {
         jTable.scrollRectToVisible(new Rectangle(jTable.getCellRect(jTable.getRowCount() - 1, 0, true)));
     }
 
-    private void refrehTable()
-    {
-         tableModel.setRowCount(0);
+    private void refrehTable() {
+        tableModel.setRowCount(0);
         liefkunds.stream().forEach(cnsmr -> {
             addToTable(cnsmr);
             tableModel.addRow(rowDataMuster);
         });
     }
+
     private void refreshTableLiefKund(int position, boolean changeArtnum, boolean changeFarb, boolean changeVariante) {
-        
+
         String kdArtNum = liefkunds.get(position).getArtikel_Nr();
         String kdFarbe = liefkunds.get(position).getFarbe();
         String kdVariante = liefkunds.get(position).getVariante();
@@ -599,8 +599,8 @@ public class MainFrame extends javax.swing.JFrame {
             tableModel.addRow(rowDataMuster);
         });
     }
-    
-    private void insertIntoDb() {
+
+    private void insertIntoDb(String id) {
 
         SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
             boolean recorded;
@@ -626,8 +626,12 @@ public class MainFrame extends javax.swing.JFrame {
                 }
                 // TODO add your handling code here:
                 try {
-                    recorded = jlieferDaoInterface.updateTableGin(jTextFieldKdNr.getText(), jTextFieldKdBestNr.getText(), dateBest, wunchDat, jTextFieldErfasser.getText(), dateTod, jTextFieldKposAktiv.getText(), liefkunds, "","","");
+                     
+                     recorded = jlieferDaoInterface.updateTableGin(jTextFieldKdNr.getText(), jTextFieldKdBestNr.getText(), dateBest, wunchDat, jTextFieldErfasser.getText(), dateTod, jTextFieldKposAktiv.getText(), liefkunds, id);
 
+                  
+               
+                    
                 } catch (Exception ex) {
                     Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
 
@@ -641,17 +645,17 @@ public class MainFrame extends javax.swing.JFrame {
                 //JOptionPane.showMessageDialog(null, "Successeful recorded");
                 if (recorded) {
                     JOptionPane.showMessageDialog(null, "Successeful recorded");
-                    jlieferDaoInterface.getIndexes().forEach(cnsmr->{
-                    liefkunds.stream().forEach(liefKund->{
-                        if (liefKund.getPosiNummer().equals(cnsmr)) {
-                            liefKund.setStatus("1");
-                            liefKund.setUbergabe("1");
-                            liefKund.setId("1");
-                            
-                        }
+                    jlieferDaoInterface.getIndexes().forEach(cnsmr -> {
+                        liefkunds.stream().forEach(liefKund -> {
+                            if (liefKund.getPosiNummer().equals(cnsmr)) {
+                                liefKund.setStatus("1");
+                                liefKund.setUbergabe("1");
+                                liefKund.setId("1");
+
+                            }
+                        });
                     });
-                    });
-                    
+
                     refrehTable();
 
                 } else {
@@ -666,10 +670,11 @@ public class MainFrame extends javax.swing.JFrame {
         dlgProgress.setVisible(true);
     }
 
-    private void insertIntoFamak(){
+    private void insertIntoFamak() {
         SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
             //boolean recorded;
             List<String> list;
+
             @Override
             protected Void doInBackground() throws Exception {
 
@@ -691,7 +696,7 @@ public class MainFrame extends javax.swing.JFrame {
                 }
                 // TODO add your handling code here:
                 try {
-                    list = jlieferDaoInterface.updateInFamak(jTextFieldKdNr.getText(), jTextFieldKdBestNr.getText(), dateBest, wunchDat,liefkunds);
+                    list = jlieferDaoInterface.updateInFamak(jTextFieldKdNr.getText(), jTextFieldKdBestNr.getText(), dateBest, wunchDat, liefkunds);
 
                 } catch (Exception ex) {
                     Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -706,10 +711,9 @@ public class MainFrame extends javax.swing.JFrame {
                 list.stream().forEach(cnsmr -> {
                     System.out.println(cnsmr);
                 });
-                
-                
+
                 JOptionPane.showMessageDialog(null,
-                        new JScrollPane(new JList(list.toArray())),"Meldung von Famak",1);
+                        new JScrollPane(new JList(list.toArray())), "Meldung von Famak", 1);
 //                if (recorded) {
 //                    JOptionPane.showMessageDialog(null, "Successeful recorded");
 //
@@ -725,7 +729,7 @@ public class MainFrame extends javax.swing.JFrame {
         sw.execute();
         dlgProgress.setVisible(true);
     }
-    
+
     private void populateJtablePrufung() {
         tableModelPrufer.setRowCount(0);
 
@@ -906,7 +910,7 @@ public class MainFrame extends javax.swing.JFrame {
                 Component comp = table.prepareRenderer(renderer, row, column);
                 width = Math.max(comp.getPreferredSize().width + 1, width);
             }
-            
+
             //columnModel.getColumn(2).setPreferredWidth(232);
             columnModel.getColumn(column).setPreferredWidth(width);
         }
@@ -963,7 +967,7 @@ public class MainFrame extends javax.swing.JFrame {
         jButtonInFamak = new javax.swing.JButton();
         jLabel19 = new javax.swing.JLabel();
         jLabel22 = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
+        jButtonSpeichern1 = new javax.swing.JButton();
         jLabel23 = new javax.swing.JLabel();
         jButton3 = new javax.swing.JButton();
         jLabel24 = new javax.swing.JLabel();
@@ -1274,11 +1278,21 @@ public class MainFrame extends javax.swing.JFrame {
 
         jLabel22.setText("oder");
 
-        jButton2.setText("Speichern 1");
+        jButtonSpeichern1.setText("Speichern 1");
+        jButtonSpeichern1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSpeichern1ActionPerformed(evt);
+            }
+        });
 
         jLabel23.setText(">>");
 
         jButton3.setText("Speichern 2 (Prüfung)");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jLabel24.setText(">>");
 
@@ -1300,7 +1314,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel22)
                 .addGap(18, 18, 18)
-                .addComponent(jButton2)
+                .addComponent(jButtonSpeichern1)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel23)
                 .addGap(18, 18, 18)
@@ -1323,7 +1337,7 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(jButtonInFamak, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel19)
                     .addComponent(jLabel22)
-                    .addComponent(jButton2)
+                    .addComponent(jButtonSpeichern1)
                     .addComponent(jLabel23)
                     .addComponent(jButton3)
                     .addComponent(jLabel24)
@@ -1787,7 +1801,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void jButtonSaveInDbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveInDbActionPerformed
         // TODO add your handling code here:
-        insertIntoDb();
+        insertIntoDb("0");
     }//GEN-LAST:event_jButtonSaveInDbActionPerformed
 
     private void jButtonAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddActionPerformed
@@ -2086,13 +2100,23 @@ public class MainFrame extends javax.swing.JFrame {
 
         populateJtablePreisListe();
 
-
     }//GEN-LAST:event_jTableMouseClicked
 
     private void jButtonInFamakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonInFamakActionPerformed
         // TODO add your handling code here:
         insertIntoFamak();
     }//GEN-LAST:event_jButtonInFamakActionPerformed
+
+    private void jButtonSpeichern1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSpeichern1ActionPerformed
+        // TODO add your handling code here:
+        insertIntoDb("1");
+    }//GEN-LAST:event_jButtonSpeichern1ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        
+        insertIntoDb("2");
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -2132,7 +2156,6 @@ public class MainFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
@@ -2142,6 +2165,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JButton jButtonLaden;
     private javax.swing.JButton jButtonManZu;
     private javax.swing.JButton jButtonSaveInDb;
+    private javax.swing.JButton jButtonSpeichern1;
     private javax.swing.JButton jButtonVerarbeiten;
     private javax.swing.JButton jButtonteilManZu;
     private javax.swing.JCheckBox jCheckBoxPreisSofort;

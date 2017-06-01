@@ -26,10 +26,11 @@ public class JDialogGTINAndern extends javax.swing.JDialog {
     private final Object[] rowData = new Object[6];
     private final JlieferDaoInterface daoInterface;
     private final LieferKundPrufer kundPruferFamamk, kundPrufer;
-    private String preisGrossBasis, preisVarianten,dbUrl, meldung;
+    private String preisGrossBasis, preisVarianten, dbUrl, meldung;
 
     /**
      * Creates new form JDialogGTINAndern
+     *
      * @param parent
      * @param modal
      * @param meldung
@@ -39,10 +40,10 @@ public class JDialogGTINAndern extends javax.swing.JDialog {
      * @param kundPrufer
      * @param preisGrossBasis
      * @param preisVarianten
-
+     *
      */
-    public JDialogGTINAndern(javax.swing.JDialog parent, boolean modal,List<Kund> kunds, String meldung, String dbUrl, LieferKundPrufer kundPruferFamamk, LieferKundPrufer kundPrufer, String preisGrossBasis, String preisVarianten) {
-        super(parent,modal);
+    public JDialogGTINAndern(javax.swing.JDialog parent, boolean modal, List<Kund> kunds, String meldung, String dbUrl, LieferKundPrufer kundPruferFamamk, LieferKundPrufer kundPrufer, String preisGrossBasis, String preisVarianten) {
+        super(parent, modal);
         initComponents();
         tableModel = (DefaultTableModel) jTableKd.getModel();
         tableModel.setRowCount(0);
@@ -51,14 +52,13 @@ public class JDialogGTINAndern extends javax.swing.JDialog {
         this.kundPrufer = kundPrufer;
         this.preisGrossBasis = preisGrossBasis.replace(",", ".");
         this.preisVarianten = preisVarianten.replace(",", ".");
-        this.dbUrl= dbUrl;
+        this.dbUrl = dbUrl;
         jLabelMeldung.setText(meldung);
         populateJtable(kunds);
         daoInterface = new JlieferDao(this.dbUrl);
     }
 
-    private void addToTable(Kund kund)
-    {
+    private void addToTable(Kund kund) {
         rowData[0] = kund.getKdNummer();
         rowData[1] = kund.getKdArtNummer();
         rowData[2] = kund.getKdFarbe();
@@ -66,12 +66,11 @@ public class JDialogGTINAndern extends javax.swing.JDialog {
         rowData[4] = kund.getKdvariante();
         rowData[5] = kund.getKdName();
         //rowData[6] = lieferKund.getPreis();
-     tableModel.addRow(rowData);
+        tableModel.addRow(rowData);
     }
-    
-    private void populateJtable(List<Kund> kunds)
-    {
-        kunds.stream().forEach(cnsmr ->{
+
+    private void populateJtable(List<Kund> kunds) {
+        kunds.stream().forEach(cnsmr -> {
             addToTable(cnsmr);
         });
     }
@@ -80,9 +79,6 @@ public class JDialogGTINAndern extends javax.swing.JDialog {
         return meldung;
     }
 
-   
-    
-   
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -232,7 +228,6 @@ public class JDialogGTINAndern extends javax.swing.JDialog {
 //                            JOptionPane.WARNING_MESSAGE);
 //                    break;
 //            }
-
 //        } else {
 //            String[] parts = message.split("--");
 //            String part1 = parts[0]; // 004
@@ -279,7 +274,7 @@ public class JDialogGTINAndern extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                JDialogGTINAndern dialog = new JDialogGTINAndern(new JDialog(),true,new ArrayList<>(),"","",new LieferKundPrufer(),new LieferKundPrufer(),"","");
+                JDialogGTINAndern dialog = new JDialogGTINAndern(new JDialog(), true, new ArrayList<>(), "", "", new LieferKundPrufer(), new LieferKundPrufer(), "", "");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

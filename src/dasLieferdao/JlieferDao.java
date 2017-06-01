@@ -33,27 +33,28 @@ import model.VerwendeterGroßenzuschlag;
  * @author aladhari
  */
 public class JlieferDao implements JlieferDaoInterface {
-    boolean recorded= true;
-    
-    boolean updated=true;
-    String exceptionRecord="";
-    String exceptionUpdate="";
-    List<String> indexes = new ArrayList<>();
-
     private final String dburlProdukt;
+
+    String exceptionRecord = "";
+    String exceptionUpdate = "";
+    boolean verify, proceed=false;
+    List<String> indexes = new ArrayList<>();
+    boolean recorded = true;
+    boolean updated = true;
+
     public JlieferDao(String dburlProdukt) {
         this.dburlProdukt = dburlProdukt;
     }
 
     @Override
     public String anlegenAndern(String indicator, String kundNummer, String kundArtNummer, String kundfarbe, String kundGroesse, String variante, String gtin, String posGrId, String grundPreis, String varPreis) {
-    String ret = "";
+        String ret = "";
         try {
             //System.out.println("in dao: '"+indicator+"', '"+kundNummer+"', '"+kundArtNummer+"', '"+kundfarbe+"', '"+kundGroesse+"', '"+variante);
-           // String proc = "SELECT GTIN_Stammsatz_anlegen_aendern ( '0', '1040', '13', 'EL', ';001;002;061O;072;091;111C;111D;', '', '2230531' )";
+            // String proc = "SELECT GTIN_Stammsatz_anlegen_aendern ( '0', '1040', '13', 'EL', ';001;002;061O;072;091;111C;111D;', '', '2230531' )";
             //String proc = "SELECT GTIN_Kunde_KdArtNr_anlegen_aendern( '0', '104008', 'null', 'null', 'null', null, '"+gtin+"', '"+posGrId+"', '"+grundPreis+"', '"+varPreis+"' )";
-            String proc = "SELECT GTIN_Kunde_KdArtNr_anlegen_aendern( '"+indicator+"', '"+kundNummer+"', '"+kundArtNummer+"', '"+kundfarbe+"', '"+kundGroesse+"', '"+variante+"', '"+gtin+"', '"+posGrId+"', '"+grundPreis+"', '"+varPreis+"' )";
-            
+            String proc = "SELECT GTIN_Kunde_KdArtNr_anlegen_aendern( '" + indicator + "', '" + kundNummer + "', '" + kundArtNummer + "', '" + kundfarbe + "', '" + kundGroesse + "', '" + variante + "', '" + gtin + "', '" + posGrId + "', '" + grundPreis + "', '" + varPreis + "' )";
+
             Connection conProdukt = DriverManager.getConnection(dburlProdukt);
             Statement s = conProdukt.createStatement();
             try (ResultSet rs = s.executeQuery(proc)) {
@@ -67,7 +68,7 @@ public class JlieferDao implements JlieferDaoInterface {
         } catch (SQLException ex) {
             Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return ret;     
+        return ret;
     }
 
     @Override
@@ -89,7 +90,7 @@ public class JlieferDao implements JlieferDaoInterface {
             Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         return ret;
-    } 
+    }
 
     @Override
     public String erfassungManuelzuweisen(String indice, String id, String posGridId, String status) {
@@ -118,7 +119,7 @@ public class JlieferDao implements JlieferDaoInterface {
         String ret = "";
         try {
             String proc = "CALL GTIN_Erfassungsdaten_verarbeiten('')";
-           
+
             Connection conProdukt = DriverManager.getConnection(dburlProdukt);
             Statement s = conProdukt.createStatement();
             try (ResultSet rs = s.executeQuery(proc)) {
@@ -132,20 +133,20 @@ public class JlieferDao implements JlieferDaoInterface {
         } catch (SQLException ex) {
             Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
             return false;
-          
+
         }
         return ret.equals("TRUE");
-            }
+    }
 
     @Override
     public String getException() {
         return exceptionRecord;
-        }
+    }
 
     @Override
     public List<String> getIndexes() {
-    return indexes;
-            }
+        return indexes;
+    }
 
     @Override
     public List<String> getKundenNummers() {
@@ -183,27 +184,27 @@ public class JlieferDao implements JlieferDaoInterface {
             while (rs.next()) {
 
                 parameterKund.setArtikel_Nr(rs.getString("Artikel_Nr"));
-                
+
                 parameterKund.setErsetzen(rs.getString("Ersetzen"));
-                
+
                 parameterKund.setFarbe(rs.getString("Farbe"));
-               
+
                 parameterKund.setGroesse(rs.getString("Groesse"));
-                
+
                 parameterKund.setKd_Pos_activ(rs.getString("Kd_Pos_aktiv"));
-                
+
                 parameterKund.setKommission(rs.getString("Kommission"));
-                
+
                 parameterKund.setMenge(rs.getString("Menge"));
-                
+
                 parameterKund.setPos_Zaehler(rs.getString("Pos_Zaehler"));
-                
+
                 parameterKund.setPreis(rs.getString("Preis"));
-                
+
                 parameterKund.setSuchen(rs.getString("Suchen"));
-                
+
                 parameterKund.setVariante(rs.getString("Variante"));
-                
+
                 rs.close();
                 statementPro.close();
                 conProdukt.close();
@@ -217,7 +218,7 @@ public class JlieferDao implements JlieferDaoInterface {
     @Override
     public String getLagerNr(String kdNr, String kdArtNr, String kdFarbe, String kdGroesse, String kdVariante) {
         String ret = "";
-        System.out.println("getLagerNr from dao: "+kdNr + "," + kdArtNr + "," + kdFarbe + "," + kdGroesse + "," + kdVariante);
+        System.out.println("getLagerNr from dao: " + kdNr + "," + kdArtNr + "," + kdFarbe + "," + kdGroesse + "," + kdVariante);
         try {
             String proc = "SELECT GTIN_Kunden_Lagerartikel_pruefen('" + kdNr + "','" + kdArtNr + "','" + kdFarbe + "','" + kdGroesse + "','" + kdVariante + "')";
             Connection conProdukt = DriverManager.getConnection(dburlProdukt);
@@ -225,11 +226,12 @@ public class JlieferDao implements JlieferDaoInterface {
             try (ResultSet rs = s.executeQuery(proc)) {
                 while (rs.next()) {
                     if (rs.getString(1) == null) {
-                       ret = ""; 
-                    }else
-                    ret = rs.getString(1);
+                        ret = "";
+                    } else {
+                        ret = rs.getString(1);
+                    }
                 }
-                System.out.println("lagerNummer from dao"+ret);
+                System.out.println("lagerNummer from dao" + ret);
                 rs.close();
                 s.close();
                 conProdukt.close();
@@ -259,7 +261,7 @@ public class JlieferDao implements JlieferDaoInterface {
                         faktor.setFaktor(rs.getString(3) != null ? rs.getString(3) : "");
                         faktor.setRunde(rs.getString(4) != null ? rs.getString(4) : "");
                         faktor.setNks(rs.getString(5) != null ? rs.getString(5) : "");
-                      
+
                     }
                     listfaktor.add(faktor);
                 }
@@ -274,11 +276,10 @@ public class JlieferDao implements JlieferDaoInterface {
     }
 
     @Override
-    public List<LieferKundPrufer> getListGtinAnderung(String KdNr, String KdArtNr, String KdFarbe, String KdGroße, String KdVariante, String GTIN, String grundPreis,String varPreis) {
-    List<LieferKundPrufer> listGtinAnderung = new ArrayList<>();
-    
+    public List<LieferKundPrufer> getListGtinAnderung(String KdNr, String KdArtNr, String KdFarbe, String KdGroße, String KdVariante, String GTIN, String grundPreis, String varPreis) {
+        List<LieferKundPrufer> listGtinAnderung = new ArrayList<>();
+
         //System.out.println("getListGtinAnderung parameter: " + KdNr + "','" + KdArtNr + "','" + KdFarbe + "','" + KdGroße + "','" + KdVariante + "','" + GTIN + "','" + grundPreis + "','" + varPreis);
-        
         String procName = "{CALL GTIN_Kunde_KdArtNr_Liste ('" + KdNr + "','" + KdArtNr + "','" + KdFarbe + "','" + KdGroße + "','" + KdVariante + "','" + GTIN + "','" + grundPreis + "','" + varPreis + "')}";
         Connection conProdukt;
         try {
@@ -287,7 +288,7 @@ public class JlieferDao implements JlieferDaoInterface {
             try (ResultSet rs = cs.executeQuery()) {
                 while (rs.next()) {
                     LieferKundPrufer kund = new LieferKundPrufer();
-                    
+
                     kund.setKundenArtikelNummer(rs.getString(2));
                     kund.setFarbeNummer(rs.getString(3));
                     kund.setGroesse(rs.getString(4));
@@ -296,7 +297,7 @@ public class JlieferDao implements JlieferDaoInterface {
                     kund.setPosGrPreis(rs.getString(6));
                     kund.setGtinPreis(rs.getString(7));
                     listGtinAnderung.add(kund);
-                    
+
                 }
                 rs.close();
                 cs.close();
@@ -309,13 +310,13 @@ public class JlieferDao implements JlieferDaoInterface {
 //            System.out.println(cnsmr.getKdArtNummer());
 //    });
         return listGtinAnderung;
-        
+
     }
 
     @Override
     public List<Kund> getListKundGtin(String gtin) {
         List<Kund> kunds = new ArrayList<>();
-        String procName = "{CALL GTIN_Kunden_GTIN_Liste ('" +gtin+ "')}";
+        String procName = "{CALL GTIN_Kunden_GTIN_Liste ('" + gtin + "')}";
         Connection conProdukt;
         try {
             conProdukt = DriverManager.getConnection(dburlProdukt);
@@ -342,7 +343,7 @@ public class JlieferDao implements JlieferDaoInterface {
 //            System.out.println(cnsmr.getKdArtNummer());
 //    });
         return kunds;
-        
+
     }
 
     @Override
@@ -356,7 +357,7 @@ public class JlieferDao implements JlieferDaoInterface {
             try (ResultSet rs = cs.executeQuery()) {
                 while (rs.next()) {
                     LieferKundPrufer liefPrufer = new LieferKundPrufer();
-                    
+
 //                     if (rs.wasNull()) {
 //                        System.out.println("was NULL");
 //                    } else {
@@ -409,23 +410,23 @@ public class JlieferDao implements JlieferDaoInterface {
 
     @Override
     public List<VarPreis> getListVarPreis(String kdNummer, String kdArtNummer, String kdFarbe, String kdGroesse, String kdVariante, String menge, String lagerNummer) {
-       List<VarPreis> varPreises = new ArrayList<>();
-        String proc = "CALL GTIN_Varianten_KdArtNr_Liste( '"+kdNummer+"', '"+kdArtNummer+"', '"+kdFarbe+"', '"+kdGroesse+"', '"+kdVariante+"', '"+menge+"', '"+lagerNummer+"')";
-        System.out.println(kdNummer+","+kdArtNummer+","+kdFarbe+","+kdGroesse+","+kdVariante+","+menge+","+lagerNummer);    
+        List<VarPreis> varPreises = new ArrayList<>();
+        String proc = "CALL GTIN_Varianten_KdArtNr_Liste( '" + kdNummer + "', '" + kdArtNummer + "', '" + kdFarbe + "', '" + kdGroesse + "', '" + kdVariante + "', '" + menge + "', '" + lagerNummer + "')";
+        System.out.println(kdNummer + "," + kdArtNummer + "," + kdFarbe + "," + kdGroesse + "," + kdVariante + "," + menge + "," + lagerNummer);
         Connection conProdukt;
         try {
             conProdukt = DriverManager.getConnection(dburlProdukt);
             CallableStatement cs = conProdukt.prepareCall(proc);
             try (ResultSet rs = cs.executeQuery()) {
                 while (rs.next()) {
-                 VarPreis varPreis = new VarPreis();
-                 varPreis.setZeile(rs.getString("Zeile"));
-                 varPreis.setVkPreis(rs.getString("VkPreis"));
-                   
-                 varPreis.setVarText(rs.getString("VarText"));
-                 varPreis.setVarNummer(rs.getString("VarNr"));
-                 varPreis.setKdPreis(rs.getString("KdPreis"));
-                 varPreises.add(varPreis);
+                    VarPreis varPreis = new VarPreis();
+                    varPreis.setZeile(rs.getString("Zeile"));
+                    varPreis.setVkPreis(rs.getString("VkPreis"));
+
+                    varPreis.setVarText(rs.getString("VarText"));
+                    varPreis.setVarNummer(rs.getString("VarNr"));
+                    varPreis.setKdPreis(rs.getString("KdPreis"));
+                    varPreises.add(varPreis);
                 }
                 rs.close();
                 cs.close();
@@ -441,22 +442,22 @@ public class JlieferDao implements JlieferDaoInterface {
     @Override
     public List<VerfugbareMengenstaffeln> getListVerfugmeng(String indice, String posGrossID) {
         List<VerfugbareMengenstaffeln> verfugbareMengenstaffelns = new ArrayList<>();
-        String proc = "CALL GTIN_Preisermittlung_Basisdaten_GrPosID ( '"+indice+"', '"+posGrossID+"')";
-            
+        String proc = "CALL GTIN_Preisermittlung_Basisdaten_GrPosID ( '" + indice + "', '" + posGrossID + "')";
+
         Connection conProdukt;
         try {
             conProdukt = DriverManager.getConnection(dburlProdukt);
             CallableStatement cs = conProdukt.prepareCall(proc);
             try (ResultSet rs = cs.executeQuery()) {
                 while (rs.next()) {
-                 VerfugbareMengenstaffeln mengenstaffeln = new VerfugbareMengenstaffeln();
-                 mengenstaffeln.setStufe(rs.getString("Stufe"));
-                 mengenstaffeln.setTyp(rs.getString("Typ"));
-                 mengenstaffeln.setMenge1(rs.getString("Menge1"));
-                 mengenstaffeln.setMenge2(rs.getString("Menge2"));
-                 mengenstaffeln.setMenge3(rs.getString("Menge3"));
-                 mengenstaffeln.setMenge4(rs.getString("Menge4"));
-                 verfugbareMengenstaffelns.add(mengenstaffeln);
+                    VerfugbareMengenstaffeln mengenstaffeln = new VerfugbareMengenstaffeln();
+                    mengenstaffeln.setStufe(rs.getString("Stufe"));
+                    mengenstaffeln.setTyp(rs.getString("Typ"));
+                    mengenstaffeln.setMenge1(rs.getString("Menge1"));
+                    mengenstaffeln.setMenge2(rs.getString("Menge2"));
+                    mengenstaffeln.setMenge3(rs.getString("Menge3"));
+                    mengenstaffeln.setMenge4(rs.getString("Menge4"));
+                    verfugbareMengenstaffelns.add(mengenstaffeln);
                 }
                 rs.close();
                 cs.close();
@@ -473,29 +474,29 @@ public class JlieferDao implements JlieferDaoInterface {
     @Override
     public List<VerfugbareGroßen> getListverfugGroesse(String indice, String posGrosId) {
         List<VerfugbareGroßen> verfugbareGroßens = new ArrayList<>();
-        String proc = "CALL GTIN_Preisermittlung_Basisdaten_GrPosID ( '"+indice+"', '"+posGrosId+"')";
-            
+        String proc = "CALL GTIN_Preisermittlung_Basisdaten_GrPosID ( '" + indice + "', '" + posGrosId + "')";
+
         Connection conProdukt;
         try {
             conProdukt = DriverManager.getConnection(dburlProdukt);
             CallableStatement cs = conProdukt.prepareCall(proc);
             try (ResultSet rs = cs.executeQuery()) {
                 while (rs.next()) {
-                 VerfugbareGroßen verfugbareGroßen = new VerfugbareGroßen();
-                 verfugbareGroßen.setGp1(rs.getString("GP1")!= null ? rs.getString("GP1") : "");
-                 verfugbareGroßen.setGp2(rs.getString("GP2")!= null ? rs.getString("GP2") : "");
-                 verfugbareGroßen.setGp3(rs.getString("GP3")!= null ? rs.getString("GP3") : "");
-                 verfugbareGroßen.setGp4(rs.getString("GP4")!= null ? rs.getString("GP4") : "");
-                 verfugbareGroßen.setGroesse(rs.getString("Groesse")!= null ? rs.getString("Groesse") : "");
-                 verfugbareGroßen.setGz(rs.getString("GZ")!= null ? rs.getString("GZ") : "");
-                 verfugbareGroßen.setKd1(rs.getString("Kd_1")!= null ? rs.getString("Kd_1") : "");
-                 verfugbareGroßen.setKdArtNum(rs.getString("Kd-Art-Nr")!= null ? rs.getString("Kd-Art-Nr") : "");
-                 verfugbareGroßen.setKdFarbe(rs.getString("Kd-Farbe")!= null ? rs.getString("Kd-Farbe") : "");
-                 verfugbareGroßen.setKdGrosse(rs.getString("Kd-Größe")!= null ? rs.getString("Kd-Größe") : "");
-                 verfugbareGroßen.setKdVariante(rs.getString("Kd-Variante")!= null ? rs.getString("Kd-Variante") : "");
-                 verfugbareGroßen.setSort(rs.getString("Sort")!= null ? rs.getString("Sort") : "");
-                 verfugbareGroßen.setStaffelNum(rs.getString("Staffel_Nr")!= null ? rs.getString("Staffel_Nr") : "");
-                 verfugbareGroßens.add(verfugbareGroßen);
+                    VerfugbareGroßen verfugbareGroßen = new VerfugbareGroßen();
+                    verfugbareGroßen.setGp1(rs.getString("GP1") != null ? rs.getString("GP1") : "");
+                    verfugbareGroßen.setGp2(rs.getString("GP2") != null ? rs.getString("GP2") : "");
+                    verfugbareGroßen.setGp3(rs.getString("GP3") != null ? rs.getString("GP3") : "");
+                    verfugbareGroßen.setGp4(rs.getString("GP4") != null ? rs.getString("GP4") : "");
+                    verfugbareGroßen.setGroesse(rs.getString("Groesse") != null ? rs.getString("Groesse") : "");
+                    verfugbareGroßen.setGz(rs.getString("GZ") != null ? rs.getString("GZ") : "");
+                    verfugbareGroßen.setKd1(rs.getString("Kd_1") != null ? rs.getString("Kd_1") : "");
+                    verfugbareGroßen.setKdArtNum(rs.getString("Kd-Art-Nr") != null ? rs.getString("Kd-Art-Nr") : "");
+                    verfugbareGroßen.setKdFarbe(rs.getString("Kd-Farbe") != null ? rs.getString("Kd-Farbe") : "");
+                    verfugbareGroßen.setKdGrosse(rs.getString("Kd-Größe") != null ? rs.getString("Kd-Größe") : "");
+                    verfugbareGroßen.setKdVariante(rs.getString("Kd-Variante") != null ? rs.getString("Kd-Variante") : "");
+                    verfugbareGroßen.setSort(rs.getString("Sort") != null ? rs.getString("Sort") : "");
+                    verfugbareGroßen.setStaffelNum(rs.getString("Staffel_Nr") != null ? rs.getString("Staffel_Nr") : "");
+                    verfugbareGroßens.add(verfugbareGroßen);
                 }
                 rs.close();
                 cs.close();
@@ -505,7 +506,7 @@ public class JlieferDao implements JlieferDaoInterface {
             Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         //System.out.println("verfugbareGroßens lengh: "+verfugbareGroßens.size());
-    return verfugbareGroßens;
+        return verfugbareGroßens;
     }
 
     @Override
@@ -517,8 +518,8 @@ public class JlieferDao implements JlieferDaoInterface {
             Statement s = conProdukt.createStatement();
             try (ResultSet rs = s.executeQuery(proc)) {
                 while (rs.next()) {
-                    ret = rs.getString("Meldung_Text")+"--"+rs.getString("Vorgang_Text");
-                    
+                    ret = rs.getString("Meldung_Text") + "--" + rs.getString("Vorgang_Text");
+
                 }
                 rs.close();
                 s.close();
@@ -527,8 +528,8 @@ public class JlieferDao implements JlieferDaoInterface {
         } catch (SQLException ex) {
             Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return ret; 
-        }
+        return ret;
+    }
 
     @Override
     public String getMengenbezug(String kdNummer) {
@@ -550,13 +551,13 @@ public class JlieferDao implements JlieferDaoInterface {
             }
         } catch (Exception e) {
         }
-     
+
         return ret;
     }
 
     @Override
     public String getPreisVariante(String posGridID) {
-    String ret = "";
+        String ret = "";
         try {
             String proc = "SELECT GTIN_Preisermittlung_Varianten_GrPosID('" + posGridID + "')";
             Connection conProdukt = DriverManager.getConnection(dburlProdukt);
@@ -572,45 +573,45 @@ public class JlieferDao implements JlieferDaoInterface {
         } catch (SQLException ex) {
             Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return ret;    
+        return ret;
     }
 
     @Override
-    public VerwendeteMengenstaffel getVerMengen(String indice,String posGridId) {
-    VerwendeteMengenstaffel verwendeteMengenstaffel = new VerwendeteMengenstaffel();
+    public VerwendeteMengenstaffel getVerMengen(String indice, String posGridId) {
+        VerwendeteMengenstaffel verwendeteMengenstaffel = new VerwendeteMengenstaffel();
         VerwendetePreise verwendetePreise = new VerwendetePreise();
         VerwendeterGroßenzuschlag verwendeterGroßenzuschlag = new VerwendeterGroßenzuschlag();
-    
-   try {
+
+        try {
             //String proc = "SELECT GTIN_Stammsatz_anlegen_aendern ( '0', '1701000', '13', 'EL', ';001;002;061O;072;091;111C;111D;', '', '2230531' )";
-            String proc = "CALL GTIN_Preisermittlung_Basisdaten_GrPosID ( '"+indice+"', '"+posGridId+"')";
-            
+            String proc = "CALL GTIN_Preisermittlung_Basisdaten_GrPosID ( '" + indice + "', '" + posGridId + "')";
+
             Connection conProdukt = DriverManager.getConnection(dburlProdukt);
             Statement s = conProdukt.createStatement();
             try (ResultSet rs = s.executeQuery(proc)) {
                 while (rs.next()) {
-                  verwendeteMengenstaffel.setKundNummer(rs.getString("s_Kd_Nr"));
+                    verwendeteMengenstaffel.setKundNummer(rs.getString("s_Kd_Nr"));
                     //System.out.println(verwendeteMengenstaffel.getKundNummer());
-                  verwendeteMengenstaffel.setStufe(rs.getString("s_Stufe"));
-                  verwendeteMengenstaffel.setTyp(rs.getString("s_Typ"));
-                  verwendeteMengenstaffel.setStaffelNr(rs.getString("s_Staffel_Nr"));
-                  verwendeteMengenstaffel.setMenge1(rs.getString("s_Menge_1"));
-                  verwendeteMengenstaffel.setMenge2(rs.getString("s_Menge_2"));
-                  verwendeteMengenstaffel.setMenge3(rs.getString("s_Menge_3"));
-                  verwendeteMengenstaffel.setMenge4(rs.getString("s_Menge_4"));
-                  verwendeteMengenstaffel.setMengeBetzeug(rs.getString("s_Mng_Bezug_GP"));
-                  verwendeteMengenstaffel.setAnderung1(rs.getString("s_Aenderung_1"));
-                  verwendeteMengenstaffel.setAnderung2(rs.getString("s_Aenderung_2"));
-                  verwendeteMengenstaffel.setAnderung3(rs.getString("s_Aenderung_3"));
-                  verwendeteMengenstaffel.setAnderung4(rs.getString("s_Aenderung_4"));
-                  verwendetePreise.setBasisPreis(rs.getString("s_Basispreis_1"));
-                  verwendetePreise.setVarianten(getPreisvariante(posGridId));
-                  verwendeteMengenstaffel.setVerwendetePreise(verwendetePreise);
-                  verwendeterGroßenzuschlag.setKundNummer(rs.getString("z_Kd_Nr"));
-                  verwendeterGroßenzuschlag.setWgZuchlag(rs.getString("s_warengruppe_GZ"));
-                  verwendeteMengenstaffel.setVerwendeterGroßenzuschlag(verwendeterGroßenzuschlag);
-                  verwendeteMengenstaffel.setVariantens(getListVarianten(posGridId));
-                  }
+                    verwendeteMengenstaffel.setStufe(rs.getString("s_Stufe"));
+                    verwendeteMengenstaffel.setTyp(rs.getString("s_Typ"));
+                    verwendeteMengenstaffel.setStaffelNr(rs.getString("s_Staffel_Nr"));
+                    verwendeteMengenstaffel.setMenge1(rs.getString("s_Menge_1"));
+                    verwendeteMengenstaffel.setMenge2(rs.getString("s_Menge_2"));
+                    verwendeteMengenstaffel.setMenge3(rs.getString("s_Menge_3"));
+                    verwendeteMengenstaffel.setMenge4(rs.getString("s_Menge_4"));
+                    verwendeteMengenstaffel.setMengeBetzeug(rs.getString("s_Mng_Bezug_GP"));
+                    verwendeteMengenstaffel.setAnderung1(rs.getString("s_Aenderung_1"));
+                    verwendeteMengenstaffel.setAnderung2(rs.getString("s_Aenderung_2"));
+                    verwendeteMengenstaffel.setAnderung3(rs.getString("s_Aenderung_3"));
+                    verwendeteMengenstaffel.setAnderung4(rs.getString("s_Aenderung_4"));
+                    verwendetePreise.setBasisPreis(rs.getString("s_Basispreis_1"));
+                    verwendetePreise.setVarianten(getPreisvariante(posGridId));
+                    verwendeteMengenstaffel.setVerwendetePreise(verwendetePreise);
+                    verwendeterGroßenzuschlag.setKundNummer(rs.getString("z_Kd_Nr"));
+                    verwendeterGroßenzuschlag.setWgZuchlag(rs.getString("s_warengruppe_GZ"));
+                    verwendeteMengenstaffel.setVerwendeterGroßenzuschlag(verwendeterGroßenzuschlag);
+                    verwendeteMengenstaffel.setVariantens(getListVarianten(posGridId));
+                }
                 rs.close();
                 s.close();
                 conProdukt.close();
@@ -618,15 +619,15 @@ public class JlieferDao implements JlieferDaoInterface {
         } catch (SQLException ex) {
             Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
         }
-    return verwendeteMengenstaffel;
+        return verwendeteMengenstaffel;
     }
 
     @Override
     public String gtinStammsatzAnderung(String indicator, String ArtNr, String FarbNr, String Gross, String Varianten, String GTIN, String PosGrID) {
-     String ret = "";
+        String ret = "";
         try {
-            String proc = "SELECT GTIN_Stammsatz_anlegen_aendern ( '"+indicator+"', '"+ArtNr+"', '"+FarbNr+"', '"+Gross+"', '"+Varianten+"', '"+GTIN+"', '"+PosGrID+"' )";
-            
+            String proc = "SELECT GTIN_Stammsatz_anlegen_aendern ( '" + indicator + "', '" + ArtNr + "', '" + FarbNr + "', '" + Gross + "', '" + Varianten + "', '" + GTIN + "', '" + PosGrID + "' )";
+
             Connection conProdukt = DriverManager.getConnection(dburlProdukt);
             Statement s = conProdukt.createStatement();
             try (ResultSet rs = s.executeQuery(proc)) {
@@ -640,16 +641,16 @@ public class JlieferDao implements JlieferDaoInterface {
         } catch (SQLException ex) {
             Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return ret;     
+        return ret;
     }
 
     @Override
     public String updateFaktor(String indice, String KdNr, String ArtikelNr, String Faktor, String runden, String NKS) {
-      String ret = "";
+        String ret = "";
         try {
             //String proc = "SELECT GTIN_Stammsatz_anlegen_aendern ( '0', '1701000', '13', 'EL', ';001;002;061O;072;091;111C;111D;', '', '2230531' )";
-            String proc = "SELECT GTIN_ME_Faktor_anlegen_aendern( '"+indice+"', '"+KdNr+"', '"+ArtikelNr+"', '"+Faktor+"', '"+runden+"', '"+NKS+"')";
-           
+            String proc = "SELECT GTIN_ME_Faktor_anlegen_aendern( '" + indice + "', '" + KdNr + "', '" + ArtikelNr + "', '" + Faktor + "', '" + runden + "', '" + NKS + "')";
+
             Connection conProdukt = DriverManager.getConnection(dburlProdukt);
             Statement s = conProdukt.createStatement();
             try (ResultSet rs = s.executeQuery(proc)) {
@@ -663,23 +664,23 @@ public class JlieferDao implements JlieferDaoInterface {
         } catch (SQLException ex) {
             Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return ret;   
+        return ret;
     }
 
     @Override
-    public List<String> updateInFamak(String kundnummer, String kdBest, String kdBesDate, String kundWunch,List<LieferKund> lieferKunds) {
-        
+    public List<String> updateInFamak(String kundnummer, String kdBest, String kdBesDate, String kundWunch, List<LieferKund> lieferKunds) {
+
         List<String> list = new ArrayList<>();
-        lieferKunds.stream().forEach((cnsmr) ->
-        {
-            String procName = "SELECT GTIN_Erfassungsdaten_in_Famak_schreiben( '" + kundnummer 
+        lieferKunds.stream().forEach((cnsmr)
+                -> {
+            String procName = "SELECT GTIN_Erfassungsdaten_in_Famak_schreiben( '" + kundnummer
                     + "', '" + kdBest + "', '" + kdBesDate + "', '" + kundWunch + "', '" + cnsmr.getPosiNummer()
-                    + "', '" + cnsmr.getArtikel_Nr() + "', '" + cnsmr.getFarbe() + "' , '" + cnsmr.getGroesse() 
-                    + "', '"+ cnsmr.getVariante() + "', '" + cnsmr.getMenge() + "', '"+ cnsmr.getSumme() + "', '" + cnsmr.getLagerNum() +"')";
-            System.out.println("position nummer: "+cnsmr.getPosiNummer());
-            Connection conProdukt;
-            try {
-                conProdukt = DriverManager.getConnection(dburlProdukt);
+                    + "', '" + cnsmr.getArtikel_Nr() + "', '" + cnsmr.getFarbe() + "' , '" + cnsmr.getGroesse()
+                    + "', '" + cnsmr.getVariante() + "', '" + cnsmr.getMenge() + "', '" + cnsmr.getSumme() + "', '" + cnsmr.getLagerNum() + "', '" + cnsmr.getKommission() + "')";
+            System.out.println("position nummer: " + cnsmr.getPosiNummer());
+             if (cnsmr.getId().equals("0")) {
+                 try {
+                Connection conProdukt = DriverManager.getConnection(dburlProdukt);
                 Statement s = conProdukt.createStatement();
                 try (ResultSet rs = s.executeQuery(procName)) {
 //                    if (kdBesDate==null) {
@@ -690,94 +691,167 @@ public class JlieferDao implements JlieferDaoInterface {
 //                       cs.setNull(4, java.sql.Types.DATE); 
 //                    }
                     while (rs.next()) {
-                    list.add(rs.getString(1));
+                        list.add(rs.getString(1));
                     }
-                    
-                   rs.close();
-                   s.close();
-                   conProdukt.close();
+
+                    rs.close();
+                    s.close();
+                    conProdukt.close();
                 }
 
             } catch (SQLException ex) {
                 Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
-                recorded= false;
-                exceptionRecord=ex.getMessage();
+                recorded = false;
+                exceptionRecord = ex.getMessage();
+            } 
             }
+          
         });
         return list;
     }
 
     @Override
-    public boolean updateTableGin(String kundnummer, String kdBest, String kdBesDate, String kundWunch, String erfasser, String erDatum, String kdPosActiv, List<LieferKund> lieferKunds, String st, String ub, String id) {
-       
-        lieferKunds.stream().forEach((cnsmr) ->
-        {
-            String procName = "{CALL GTIN_Erfassungsdaten_speichern( '" + kundnummer 
-                    + "', '" + kdBest + "', '" + kdBesDate + "', '" + kundWunch + "', '" + erfasser 
-                    + "', '" + erDatum + "', '" + kdPosActiv + "' , '" + cnsmr.getPosiNummer() 
-                    + "', '"+ cnsmr.getArtikel_Nr() + "', '" + cnsmr.getFarbe() + "', '" + cnsmr.getGroesse() 
-                    + "', '"+ cnsmr.getVariante() + "', '" + cnsmr.getMenge() + "', '" + cnsmr.getPreis() 
-                    + "', '"+ cnsmr.getKommission() + "', '"+ st + "', '"+ ub + "', '"+ id + "')}";
-            Connection conProdukt;
-            if (cnsmr.getStatus().equals("0") && cnsmr.getUbergabe().equals("0")&& cnsmr.getId().equals("0")) {
-                
-            try {
-                conProdukt = DriverManager.getConnection(dburlProdukt);
-                try (CallableStatement cs = conProdukt.prepareCall(procName)) {
-                    if (kdBesDate==null) {
-                       cs.setNull(3, java.sql.Types.DATE); 
-                    }
-                    if (kundWunch==null) {
-                       cs.setNull(4, java.sql.Types.DATE); 
-                    }
-                    if (erDatum==null) {
-                       cs.setNull(6, java.sql.Types.DATE); 
-                    }
-                    //cs.executeUpdate();
-                    
-                    cs.executeQuery();
-                    cs.close();
-                    conProdukt.close();
-                    indexes.add(cnsmr.getPosiNummer());
-                }
+    public boolean updateTableGin(String kundnummer, String kdBest, String kdBesDate, String kundWunch, String erfasser, String erDatum, String kdPosActiv, List<LieferKund> lieferKunds, String id) {
 
-            } catch (SQLException ex) {
-                Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
-                recorded= false;
-                exceptionRecord=ex.getMessage();
-            }}
+        lieferKunds.stream().forEach(cnsmr -> {
+
+            String procName;
+
+            switch (id) {
+
+                case "0":
+                    if (cnsmr.getStatus().equals("0") && cnsmr.getUbergabe().equals("0") && cnsmr.getId().equals("0")) {
+                        procName = "{CALL GTIN_Erfassungsdaten_speichern( '" + kundnummer
+                                + "', '" + kdBest + "', '" + kdBesDate + "', '" + kundWunch + "', '" + erfasser
+                                + "', '" + erDatum + "', '" + kdPosActiv + "' , '" + cnsmr.getPosiNummer()
+                                + "', '" + cnsmr.getArtikel_Nr() + "', '" + cnsmr.getFarbe() + "', '" + cnsmr.getGroesse()
+                                + "', '" + cnsmr.getVariante() + "', '" + cnsmr.getMenge() + "', '" + cnsmr.getPreis()
+                                + "', '" + cnsmr.getKommission() + "', '" + "" + "', '" + "" + "', '" + "" + "')}";
+                        executeQuery(kdBesDate, kundWunch, erDatum, procName, cnsmr);
+                    }
+                    break;
+
+                case "1":
+                    if (cnsmr.getStatus().equals("0")) {
+                        procName = "{CALL GTIN_Erfassungsdaten_speichern( '" + kundnummer
+                                + "', '" + kdBest + "', '" + kdBesDate + "', '" + kundWunch + "', '" + erfasser
+                                + "', '" + erDatum + "', '" + kdPosActiv + "' , '" + cnsmr.getPosiNummer()
+                                + "', '" + cnsmr.getArtikel_Nr() + "', '" + cnsmr.getFarbe() + "', '" + cnsmr.getGroesse()
+                                + "', '" + cnsmr.getVariante() + "', '" + cnsmr.getMenge() + "', '" + cnsmr.getPreis()
+                                + "', '" + cnsmr.getKommission() + "', '" + "901" + "', '" + "" + "', '" + cnsmr.getStatus() + "')}";
+                        executeQuery(kdBesDate, kundWunch, erDatum, procName, cnsmr);
+
+                    }
+
+                    break;
+
+                case "2":
+                    if (cnsmr.getUbergabe().equals("0")) {
+                        procName = "{CALL GTIN_Erfassungsdaten_speichern( '" + kundnummer
+                                + "', '" + kdBest + "', '" + kdBesDate + "', '" + kundWunch + "', '" + erfasser
+                                + "', '" + erDatum + "', '" + kdPosActiv + "' , '" + cnsmr.getPosiNummer()
+                                + "', '" + cnsmr.getArtikel_Nr() + "', '" + cnsmr.getFarbe() + "', '" + cnsmr.getGroesse()
+                                + "', '" + cnsmr.getVariante() + "', '" + cnsmr.getMenge() + "', '" + cnsmr.getPreis()
+                                + "', '" + cnsmr.getKommission() + "', '" + "902" + "', '" + "" + "', '" + cnsmr.getUbergabe() + "')}";
+                        if (cnsmr.getStatus().equals("1")) {
+
+                        } else {
+                            executeQuery(kdBesDate, kundWunch, erDatum, procName, cnsmr);
+                        }
+                    }
+                    break;
+            }
         });
+
         return recorded;
     }
 
+
     @Override
     public boolean updateTablePrufen(String id, String posNr, String artikelNr, String farbe, String groesse, String variante, String menge, String preis, String kommission) {
-     String procName = "{CALL GTIN_Erfassungsdaten_aendern( '" + id 
-                    + "', '" + posNr + "', '" + artikelNr + "', '" + farbe + "', '" + groesse 
-                    + "', '" + variante + "', '" + menge + "' , '" + preis 
-                    + "', '"+ kommission + "')}";
-            Connection conProdukt;
-            try {
-                conProdukt = DriverManager.getConnection(dburlProdukt);
-                try (CallableStatement cs = conProdukt.prepareCall(procName)) {
-                    
-                    cs.executeQuery();
-                    cs.close();
-                    conProdukt.close();
+        String procName = "{CALL GTIN_Erfassungsdaten_aendern( '" + id
+                + "', '" + posNr + "', '" + artikelNr + "', '" + farbe + "', '" + groesse
+                + "', '" + variante + "', '" + menge + "' , '" + preis
+                + "', '" + kommission + "')}";
+        Connection conProdukt;
+        try {
+            conProdukt = DriverManager.getConnection(dburlProdukt);
+            try (CallableStatement cs = conProdukt.prepareCall(procName)) {
+
+                cs.executeQuery();
+                cs.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+            updated = false;
+            exceptionUpdate = ex.getMessage();
+        }
+        return updated;
+    }
+    
+    
+    private void executeQuery(String kdBesDate, String kundWunch, String erDatum, String procName, LieferKund cnsmr) {
+        try {
+            Connection conProdukt = DriverManager.getConnection(dburlProdukt);
+            try (CallableStatement cs = conProdukt.prepareCall(procName)) {
+                if (kdBesDate == null) {
+                    cs.setNull(3, java.sql.Types.DATE);
                 }
-            } catch (SQLException ex) {
-                Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
-                updated= false;
-                exceptionUpdate=ex.getMessage();
-            } 
-            return updated;
+                if (kundWunch == null) {
+                    cs.setNull(4, java.sql.Types.DATE);
+                }
+                if (erDatum == null) {
+                    cs.setNull(6, java.sql.Types.DATE);
+                }
+                //cs.executeUpdate();
+                
+                cs.executeQuery();
+                cs.close();
+                conProdukt.close();
+                indexes.add(cnsmr.getPosiNummer());
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+            recorded = false;
+            exceptionRecord = ex.getMessage();
+        }
     }
 
-    private String getPreisvariante(String posGridId){
+    private List<Varianten> getListVarianten(String posGridId) {
+        List<Varianten> variantens = new ArrayList<>();
+        String proc = "CALL GTIN_Varianten_Position_Liste ( '" + posGridId + "')";
+
+        Connection conProdukt;
+        try {
+            conProdukt = DriverManager.getConnection(dburlProdukt);
+            CallableStatement cs = conProdukt.prepareCall(proc);
+            try (ResultSet rs = cs.executeQuery()) {
+                while (rs.next()) {
+                    Varianten varianten = new Varianten();
+                    varianten.setAufpreis(rs.getString("Aufpreis"));
+                    varianten.setBezeichung(rs.getString("Bezeichnung"));
+                    varianten.setNummer(rs.getString("Nr"));
+
+                    variantens.add(varianten);
+                }
+                rs.close();
+                cs.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return variantens;
+
+    }
+    private String getPreisvariante(String posGridId) {
         String varPreis = "";
         try {
             //String proc = "SELECT GTIN_Stammsatz_anlegen_aendern ( '0', '1701000', '13', 'EL', ';001;002;061O;072;091;111C;111D;', '', '2230531' )";
-            String proc = "SELECT GTIN_Preisermittlung_Varianten_GrPosID ( '"+posGridId+"')";
+            String proc = "SELECT GTIN_Preisermittlung_Varianten_GrPosID ( '" + posGridId + "')";
             
             Connection conProdukt = DriverManager.getConnection(dburlProdukt);
             Statement s = conProdukt.createStatement();
@@ -793,33 +867,5 @@ public class JlieferDao implements JlieferDaoInterface {
             Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         return varPreis;
-    }
-    private List<Varianten> getListVarianten(String posGridId){
-        List<Varianten> variantens = new ArrayList<>();
-        String proc = "CALL GTIN_Varianten_Position_Liste ( '"+posGridId+"')";
-            
-        Connection conProdukt;
-        try {
-            conProdukt = DriverManager.getConnection(dburlProdukt);
-            CallableStatement cs = conProdukt.prepareCall(proc);
-            try (ResultSet rs = cs.executeQuery()) {
-                while (rs.next()) {
-                 Varianten varianten = new Varianten();
-                 varianten.setAufpreis(rs.getString("Aufpreis"));
-                 varianten.setBezeichung(rs.getString("Bezeichnung"));
-                 varianten.setNummer(rs.getString("Nr"));
-                 
-                 variantens.add(varianten);
-                }
-                rs.close();
-                cs.close();
-                conProdukt.close();
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return variantens;
-
     }
 }

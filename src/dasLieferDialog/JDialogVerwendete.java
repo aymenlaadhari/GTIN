@@ -37,7 +37,7 @@ public class JDialogVerwendete extends javax.swing.JDialog {
     private final DefaultTableModel tableModel, tablemodelvarianten, tableModelGroessen;
     private List<VerfugbareGroßen> verfugbareGroßens;
     private VerfugbareGroßen großen;
-    private final LieferKundPrufer kundPruferFamakIn,kundPrufer;
+    private final LieferKundPrufer kundPruferFamakIn, kundPrufer;
     private final JlieferDaoInterface jlieferDaoInterface;
     private final String preisVariante;
     private final List<Protokoll> protokolls;
@@ -77,7 +77,7 @@ public class JDialogVerwendete extends javax.swing.JDialog {
         jTextFieldAnderung2.setText(verwendeteMengenstaffel.getAnderung2());
         jTextFieldAnderung3.setText(verwendeteMengenstaffel.getAnderung3());
         jTextFieldAnderung4.setText(verwendeteMengenstaffel.getAnderung4());
-       // jTextFieldKundNumGros.setText(verwendeteMengenstaffel.getVerwendeterGroßenzuschlag().getKundNummer());
+        // jTextFieldKundNumGros.setText(verwendeteMengenstaffel.getVerwendeterGroßenzuschlag().getKundNummer());
         jTextFieldKundNumGros.setText(kundNum);
         //jTextFieldKundumMeng.setText(verwendeteMengenstaffel.getKundNummer());
         jTextFieldKundumMeng.setText(kundNum);
@@ -162,7 +162,7 @@ public class JDialogVerwendete extends javax.swing.JDialog {
             }
         });
     }
-    
+
     private void populateJtableMengen(List<VerfugbareMengenstaffeln> verfugbareMengenstaffelns) {
         verfugbareMengenstaffelns.stream().forEach(cnsmr -> {
             addTotableMengen(cnsmr);
@@ -792,45 +792,45 @@ public class JDialogVerwendete extends javax.swing.JDialog {
                 //System.out.println("In table:" + jTextFieldKundumMeng.getText() + "---" + cnsmr.getKdFarbe() + "---" + cnsmr.getKdGrosse() + "---" + cnsmr.getKdVariante());
                 String meldung2 = jlieferDaoInterface.anlegenAndern("0", kundPruferFamakIn.getKundNummer(), cnsmr.getKdArtNum(), cnsmr.getKdFarbe(), cnsmr.getKdGrosse(), cnsmr.getKdVariante(), meldung1, kundPruferFamakIn.getPosGrId(), cnsmr.getGp1(), jTextFieldVarianten.getText().replace(",", "."));
                 String indicator1 = meldung2;
-                
-                if (meldung2.length()>4) {
-                    
-                   indicator1 = "E";
+
+                if (meldung2.length() > 4) {
+
+                    indicator1 = "E";
                 }
                 String message2 = jlieferDaoInterface.getMeldung("2", indicator1);
                 switch (meldung2) {
-                case "30":
-                    //System.out.println(kundPrufer.getKundNummer()+"-"+ kundPrufer.getKundenArtikelNummer()+"-"+ kundPrufer.getFarbe()+"-"+ kundPrufer.getGroesse()+"-"+ kundPrufer.getVariante()+"-"+gtinParam);
-                    kundPrufer.setFarbe(cnsmr.getKdFarbe());
-                    kundPrufer.setGroesse(cnsmr.getGroesse());
-                    kundPrufer.setVarNummer(cnsmr.getKdVariante());
-                   // kljdf
-                    List<LieferKundPrufer> listGtinAnderung = jlieferDaoInterface.getListGtinAnderung(kundPrufer.getKundNummer(), cnsmr.getKdArtNum(), cnsmr.getKdFarbe(), cnsmr.getGroesse(), kundPrufer.getVariante(), meldung1, cnsmr.getGp1(), jTextFieldVarianten.getText().replace(",", "."));
+                    case "30":
+                        //System.out.println(kundPrufer.getKundNummer()+"-"+ kundPrufer.getKundenArtikelNummer()+"-"+ kundPrufer.getFarbe()+"-"+ kundPrufer.getGroesse()+"-"+ kundPrufer.getVariante()+"-"+gtinParam);
+                        kundPrufer.setFarbe(cnsmr.getKdFarbe());
+                        kundPrufer.setGroesse(cnsmr.getGroesse());
+                        kundPrufer.setVarNummer(cnsmr.getKdVariante());
+                        // kljdf
+                        List<LieferKundPrufer> listGtinAnderung = jlieferDaoInterface.getListGtinAnderung(kundPrufer.getKundNummer(), cnsmr.getKdArtNum(), cnsmr.getKdFarbe(), cnsmr.getGroesse(), kundPrufer.getVariante(), meldung1, cnsmr.getGp1(), jTextFieldVarianten.getText().replace(",", "."));
 
-                    JDialogKundenArtikelDatenAndern artikelDatenAndern = new JDialogKundenArtikelDatenAndern(this, true, listGtinAnderung, kundPruferFamakIn, kundPrufer, this.dbUrl, meldung1, cnsmr.getGp1(), jTextFieldVarianten.getText(),message2);
-                    artikelDatenAndern.setVisible(true);
-                    System.out.println("we are here");
-                    //meldung = artikelDatenAndern.getMeldung();
-                    
-                    break;
-                case "38":
-                    int reply = JOptionPane.showConfirmDialog(null, message2, "Actung", JOptionPane.YES_NO_OPTION);
+                        JDialogKundenArtikelDatenAndern artikelDatenAndern = new JDialogKundenArtikelDatenAndern(this, true, listGtinAnderung, kundPruferFamakIn, kundPrufer, this.dbUrl, meldung1, cnsmr.getGp1(), jTextFieldVarianten.getText(), message2);
+                        artikelDatenAndern.setVisible(true);
+                        System.out.println("we are here");
+                        //meldung = artikelDatenAndern.getMeldung();
 
-                    if (reply == JOptionPane.YES_OPTION) {
-                        String meldung3 = jlieferDaoInterface.anlegenAndern("1", kundPrufer.getKundNummer(), cnsmr.getKdArtNum(), cnsmr.getKdFarbe(), cnsmr.getGroesse(), cnsmr.getKdVariante(), meldung1, kundPruferFamakIn.getPosGrId(), cnsmr.getGp1(), jTextFieldVarianten.getText().replace(",", "."));
-                        String message3 = jlieferDaoInterface.getMeldung("2", meldung3);
-                        String[] parts3 = message3.split("--");
-                        String part1_3 = parts3[0]; // 004
-                        String part2_3 = parts3[1]; // 034556
-                        JOptionPane.showMessageDialog(null,
-                                part1_3,
-                                part2_3,
-                                JOptionPane.WARNING_MESSAGE);
-                    }
-                    break;
-                
-            }
-                insertIntoList(kundNum, cnsmr.getKdArtNum(), cnsmr.getKdFarbe(), cnsmr.getGroesse(), cnsmr.getKdVariante(), kundPruferFamakIn.getGtin(), kundPruferFamakIn.getPosGrId(), cnsmr.getGp1(), jTextFieldVarianten.getText(), meldung2, message2+";"+meldung2);
+                        break;
+                    case "38":
+                        int reply = JOptionPane.showConfirmDialog(null, message2, "Actung", JOptionPane.YES_NO_OPTION);
+
+                        if (reply == JOptionPane.YES_OPTION) {
+                            String meldung3 = jlieferDaoInterface.anlegenAndern("1", kundPrufer.getKundNummer(), cnsmr.getKdArtNum(), cnsmr.getKdFarbe(), cnsmr.getGroesse(), cnsmr.getKdVariante(), meldung1, kundPruferFamakIn.getPosGrId(), cnsmr.getGp1(), jTextFieldVarianten.getText().replace(",", "."));
+                            String message3 = jlieferDaoInterface.getMeldung("2", meldung3);
+                            String[] parts3 = message3.split("--");
+                            String part1_3 = parts3[0]; // 004
+                            String part2_3 = parts3[1]; // 034556
+                            JOptionPane.showMessageDialog(null,
+                                    part1_3,
+                                    part2_3,
+                                    JOptionPane.WARNING_MESSAGE);
+                        }
+                        break;
+
+                }
+                insertIntoList(kundNum, cnsmr.getKdArtNum(), cnsmr.getKdFarbe(), cnsmr.getGroesse(), cnsmr.getKdVariante(), kundPruferFamakIn.getGtin(), kundPruferFamakIn.getPosGrId(), cnsmr.getGp1(), jTextFieldVarianten.getText(), meldung2, message2 + ";" + meldung2);
             }
         });
 
@@ -838,7 +838,6 @@ public class JDialogVerwendete extends javax.swing.JDialog {
         dialogProtokoll.setVisible(true);
 
         //jlieferDaoInterface.gtinStammsatzAnderung("0", kundPruferFamakIn.getArtikel_Nr(), kundPruferFamakIn.getFarbeNummer(), getSelectedGrossen().get(0).getGroesse(), kundPruferFamakIn.getVariante(), kundPruferFamakIn.getGtin(), kundPruferFamakIn.getPosGrId());
-
     }//GEN-LAST:event_jButtonMarkierteActionPerformed
 
     private void jButtonGroessenberechnenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGroessenberechnenActionPerformed
@@ -855,9 +854,9 @@ public class JDialogVerwendete extends javax.swing.JDialog {
             String step2 = df.format((100 + Double.parseDouble(jTextFieldAnderung1.getText())) / 100).replace(",", ".");
             //System.out.println("step1: "+step1+"; step2: "+step2);
             double result = Double.parseDouble(step1) * Double.parseDouble(step2);
-           
+
             cnsmr.setGp1(df.format(result).replace(",", "."));
-        }); 
+        });
         populateTableGroessen(verfugbareGroßens);
     }//GEN-LAST:event_jButtonGroessenberechnenActionPerformed
 
@@ -892,7 +891,7 @@ public class JDialogVerwendete extends javax.swing.JDialog {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                JDialogVerwendete dialog = new JDialogVerwendete(new JDialog(), true, new VerwendeteMengenstaffel(), new ArrayList<>(), new ArrayList<>(), new LieferKundPrufer(), new LieferKundPrufer(), "", "","");
+                JDialogVerwendete dialog = new JDialogVerwendete(new JDialog(), true, new VerwendeteMengenstaffel(), new ArrayList<>(), new ArrayList<>(), new LieferKundPrufer(), new LieferKundPrufer(), "", "", "");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

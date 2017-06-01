@@ -10,7 +10,8 @@ package model;
  * @author aladhari
  */
 public class Protokoll {
-    private String origin,artNummer,farbNummer,groesse,varianten,posgridID,null1,null2,meldung,message,gtin;
+
+    private String origin, artNummer, farbNummer, groesse, varianten, posgridID, null1, null2, meldung, message, gtin;
 
     public String getGtin() {
         return gtin;
@@ -99,5 +100,5 @@ public class Protokoll {
     public void setMeldung(String meldung) {
         this.meldung = meldung;
     }
-    
+
 }

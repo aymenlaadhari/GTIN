@@ -10,6 +10,7 @@ package model;
  * @author aladhari
  */
 public class Faktor {
+
     private String zehler, me, faktor, runde, nks;
 
     public String getZehler() {
@@ -51,6 +52,5 @@ public class Faktor {
     public void setNks(String nks) {
         this.nks = nks;
     }
-    
-    
+
 }

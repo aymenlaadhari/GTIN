@@ -10,7 +10,8 @@ package model;
  * @author aladhari
  */
 public class Mengenstaffel {
-    private String stufe,typ,menge1,menge2,menge3,menge4,staffelNr;
+
+    private String stufe, typ, menge1, menge2, menge3, menge4, staffelNr;
 
     public String getStufe() {
         return stufe;
@@ -67,5 +68,5 @@ public class Mengenstaffel {
     public void setStaffelNr(String staffelNr) {
         this.staffelNr = staffelNr;
     }
-    
+
 }

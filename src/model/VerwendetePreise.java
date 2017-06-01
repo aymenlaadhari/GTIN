@@ -10,7 +10,8 @@ package model;
  * @author aladhari
  */
 public class VerwendetePreise {
-    String basisPreis,varianten;
+
+    String basisPreis, varianten;
 
     public String getBasisPreis() {
         return basisPreis;
@@ -27,5 +28,5 @@ public class VerwendetePreise {
     public void setVarianten(String varianten) {
         this.varianten = varianten;
     }
-    
+
 }

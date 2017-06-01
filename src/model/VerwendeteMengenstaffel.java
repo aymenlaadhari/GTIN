@@ -11,8 +11,9 @@ import java.util.List;
  *
  * @author aladhari
  */
-public class VerwendeteMengenstaffel extends Mengenstaffel{
-    private String kundNummer,mengeBetzeug,anderung1,anderung2,anderung3,anderung4;
+public class VerwendeteMengenstaffel extends Mengenstaffel {
+
+    private String kundNummer, mengeBetzeug, anderung1, anderung2, anderung3, anderung4;
     private VerwendetePreise verwendetePreise;
     private VerwendeterGroßenzuschlag verwendeterGroßenzuschlag;
     private List<Varianten> variantens;
@@ -40,7 +41,6 @@ public class VerwendeteMengenstaffel extends Mengenstaffel{
     public void setVerwendeterGroßenzuschlag(VerwendeterGroßenzuschlag verwendeterGroßenzuschlag) {
         this.verwendeterGroßenzuschlag = verwendeterGroßenzuschlag;
     }
-    
 
     public String getKundNummer() {
         return kundNummer;
@@ -89,5 +89,5 @@ public class VerwendeteMengenstaffel extends Mengenstaffel{
     public void setAnderung4(String anderung4) {
         this.anderung4 = anderung4;
     }
-    
+
 }

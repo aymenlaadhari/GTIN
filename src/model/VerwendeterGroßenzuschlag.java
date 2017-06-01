@@ -10,7 +10,8 @@ package model;
  * @author aladhari
  */
 public class VerwendeterGroßenzuschlag {
-    String kundNummer,wgZuchlag;
+
+    String kundNummer, wgZuchlag;
 
     public String getKundNummer() {
         return kundNummer;
@@ -27,5 +28,5 @@ public class VerwendeterGroßenzuschlag {
     public void setWgZuchlag(String wgZuchlag) {
         this.wgZuchlag = wgZuchlag;
     }
-    
+
 }

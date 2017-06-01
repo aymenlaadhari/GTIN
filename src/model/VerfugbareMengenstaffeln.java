@@ -9,6 +9,6 @@ package model;
  *
  * @author aladhari
  */
-public class VerfugbareMengenstaffeln extends Mengenstaffel{
-    
+public class VerfugbareMengenstaffeln extends Mengenstaffel {
+
 }

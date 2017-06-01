@@ -10,7 +10,8 @@ package model;
  * @author aladhari
  */
 public class ParameterKund {
-    private String Kd_Pos_activ="", Pos_Zaehler="", Artikel_Nr="", Farbe="", Groesse="", Variante="", Menge="", Preis="", Kommission="", Suchen="", Ersetzen="";
+
+    private String Kd_Pos_activ = "", Pos_Zaehler = "", Artikel_Nr = "", Farbe = "", Groesse = "", Variante = "", Menge = "", Preis = "", Kommission = "", Suchen = "", Ersetzen = "";
 
     public String getKd_Pos_activ() {
         return Kd_Pos_activ;
@@ -100,6 +101,4 @@ public class ParameterKund {
         this.Ersetzen = Ersetzen;
     }
 
-    
-    
 }

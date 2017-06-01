@@ -10,7 +10,8 @@ package model;
  * @author aladhari
  */
 public class Varianten {
-    String nummer,bezeichung,aufpreis;
+
+    String nummer, bezeichung, aufpreis;
 
     public String getNummer() {
         return nummer;
@@ -35,5 +36,5 @@ public class Varianten {
     public void setAufpreis(String aufpreis) {
         this.aufpreis = aufpreis;
     }
-    
+
 }

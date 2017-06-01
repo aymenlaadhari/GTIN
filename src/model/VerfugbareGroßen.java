@@ -10,7 +10,8 @@ package model;
  * @author aladhari
  */
 public class VerfugbareGroßen {
-    String kdArtNum, kdFarbe,kdGrosse,kdVariante,sort,groesse,kd1,gz,gp1,gp2,gp3,gp4,staffelNum;
+
+    String kdArtNum, kdFarbe, kdGrosse, kdVariante, sort, groesse, kd1, gz, gp1, gp2, gp3, gp4, staffelNum;
 
     public String getKdArtNum() {
         return kdArtNum;
@@ -115,5 +116,5 @@ public class VerfugbareGroßen {
     public void setStaffelNum(String staffelNum) {
         this.staffelNum = staffelNum;
     }
-    
+
 }

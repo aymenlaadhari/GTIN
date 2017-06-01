@@ -20,22 +20,25 @@ import model.VerwendeteMengenstaffel;
 
 /**
  *
- * @author aladhari 
+ * @author aladhari
  */
 public class JDialogGTIN extends javax.swing.JDialog {
+
     private final JlieferDaoInterface jlieferDaoInterface;
     private final DefaultTableModel tableModel;
     private final String dbUrl;
-    private final LieferKundPrufer kundPrufer,kundPruferFamak;
+    private final LieferKundPrufer kundPrufer, kundPruferFamak;
     private Float varianten, grossenBasis;
     private final Object[] rowData = new Object[5];
-    private  List<Faktor> faktors;
+    private List<Faktor> faktors;
     private Faktor localfaktor;
     private final VerwendeteMengenstaffel verwendeteMengenstaffel;
     private final List<VerfugbareMengenstaffeln> verfugbareMengenstaffelns;
-    private final  List<VerfugbareGroßen> verfugbareGroßens;
+    private final List<VerfugbareGroßen> verfugbareGroßens;
+
     /**
      * Creates new form JDialogGTIN
+     *
      * @param parent
      * @param modal
      * @param kundPruferIn
@@ -46,7 +49,7 @@ public class JDialogGTIN extends javax.swing.JDialog {
     public JDialogGTIN(java.awt.Frame parent, boolean modal, LieferKundPrufer kundPruferIn, LieferKundPrufer kundPruferFamakIn, String preisVariante, String dbUrl1) {
         super(parent, modal);
         initComponents();
-        this.dbUrl =  dbUrl1;
+        this.dbUrl = dbUrl1;
         this.kundPrufer = kundPruferIn;
         this.kundPruferFamak = kundPruferFamakIn;
         jlieferDaoInterface = new JlieferDao(dbUrl);
@@ -55,40 +58,40 @@ public class JDialogGTIN extends javax.swing.JDialog {
         jTextFieldFarbe.setText(kundPrufer.getFarbe());
         jTextFieldGroesse.setText(kundPrufer.getGroesse());
         jTextFieldVariante.setText(kundPrufer.getVariante());
-        
+
         jTextFieldGTIN.setText(kundPruferFamak.getGtin());
         jTextFieldGTIN.setEditable(false);
-        
+
         jTextFieldFarbNum.setText(kundPruferFamak.getFarbeNummer());
         varianten = Float.parseFloat(preisVariante);
-        grossenBasis = (Float.parseFloat(kundPruferFamak.getPosGrPreis())- varianten);
-        jTextFieldPreisGrossBasis.setText(String.format("%.2f",grossenBasis));
+        grossenBasis = (Float.parseFloat(kundPruferFamak.getPosGrPreis()) - varianten);
+        jTextFieldPreisGrossBasis.setText(String.format("%.2f", grossenBasis));
         jTextFieldPreisVarianten.setText(String.format("%.2f", varianten));
-        
-        jTextFieldPreisGesamt.setText(String.format("%.2f",Float.parseFloat(preisVariante)+grossenBasis));
+
+        jTextFieldPreisGesamt.setText(String.format("%.2f", Float.parseFloat(preisVariante) + grossenBasis));
         jTextFieldPreisGesamt.setEditable(false);
-        
+
         jTextFieldPosGrID.setText(kundPruferFamak.getPosGrId());
         jTextFieldPosGrID.setEditable(false);
-        
+
         jTextFieldArtNummerFamak.setText(kundPruferFamak.getArtikel_Nr());
         jTextFieldGroesseFamak.setText(kundPruferFamak.getGroesse());
         jTextFieldVariantenFamak.setText(kundPruferFamak.getVarNummer());
-        
+
         tableModel = (DefaultTableModel) jTableFaktor.getModel();
         tableModel.setRowCount(0);
-        
+
         faktors = jlieferDaoInterface.getListFaktor(kundPrufer.getKundNummer(), kundPruferFamak.getArtikel_Nr());
         localfaktor = faktors.get(0);
         String menge = jlieferDaoInterface.getListFaktor("000000", kundPruferFamak.getArtikel_Nr()).get(0).getMe();
-        verwendeteMengenstaffel = jlieferDaoInterface.getVerMengen("1",kundPruferFamak.getPosGrId());
-        verfugbareMengenstaffelns = jlieferDaoInterface.getListVerfugmeng("2",kundPruferFamak.getPosGrId());
-        verfugbareGroßens = jlieferDaoInterface.getListverfugGroesse("0",kundPruferFamak.getPosGrId());
+        verwendeteMengenstaffel = jlieferDaoInterface.getVerMengen("1", kundPruferFamak.getPosGrId());
+        verfugbareMengenstaffelns = jlieferDaoInterface.getListVerfugmeng("2", kundPruferFamak.getPosGrId());
+        verfugbareGroßens = jlieferDaoInterface.getListverfugGroesse("0", kundPruferFamak.getPosGrId());
         addToTable(localfaktor);
-        jTextFieldDastex.setText(menge);        
+        jTextFieldDastex.setText(menge);
     }
 
-    private void addToTable(Faktor faktor){
+    private void addToTable(Faktor faktor) {
         rowData[0] = faktor.getZehler();
         rowData[1] = faktor.getMe();
         rowData[2] = faktor.getFaktor();
@@ -96,11 +99,12 @@ public class JDialogGTIN extends javax.swing.JDialog {
         rowData[4] = faktor.getNks();
         tableModel.addRow(rowData);
     }
-    
-    private void populateJtable(Faktor faktor){
+
+    private void populateJtable(Faktor faktor) {
         tableModel.setRowCount(0);
         addToTable(faktor);
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -506,7 +510,7 @@ public class JDialogGTIN extends javax.swing.JDialog {
             }
 
             message = jlieferDaoInterface.getMeldung("1", indicator);
-            
+
         } else {
             message = jlieferDaoInterface.getMeldung("1", meldung);
         }
@@ -527,7 +531,6 @@ public class JDialogGTIN extends javax.swing.JDialog {
             JDialogGTINAndern dialogGTINAndern = new JDialogGTINAndern(this, true, kunds, part1, dbUrl, kundPruferFamak, kundPrufer, jTextFieldPreisGrossBasis.getText(), jTextFieldPreisVarianten.getText());
             dialogGTINAndern.setVisible(true);
             meldung = dialogGTINAndern.getMeldung();
-
 
         } else {
             JOptionPane.showMessageDialog(null,
@@ -557,7 +560,7 @@ public class JDialogGTIN extends javax.swing.JDialog {
                 message2 = jlieferDaoInterface.getMeldung("2", indcator);
             } else {
                 message2 = jlieferDaoInterface.getMeldung("2", meldung2);
-                
+
             }
             String[] parts2 = message2.split("--");
             String part1_1; // 004
@@ -573,10 +576,10 @@ public class JDialogGTIN extends javax.swing.JDialog {
                     kundPrufer.setFarbe(jTextFieldFarbe.getText());
                     kundPrufer.setGroesse(jTextFieldGroesse.getText());
                     kundPrufer.setVarNummer(jTextFieldVariante.getText());
-                   // kljdf
+                    // kljdf
                     List<LieferKundPrufer> listGtinAnderung = jlieferDaoInterface.getListGtinAnderung(kundPrufer.getKundNummer(), kundPrufer.getKundenArtikelNummer(), jTextFieldFarbe.getText(), jTextFieldGroesse.getText(), kundPrufer.getVariante(), gtinParam, preisGrossBasis, preisVarianten);
 
-                    JDialogKundenArtikelDatenAndern artikelDatenAndern = new JDialogKundenArtikelDatenAndern(this, true, listGtinAnderung, kundPruferFamak, kundPrufer, this.dbUrl, gtinParam, jTextFieldPreisGrossBasis.getText(), jTextFieldPreisVarianten.getText(),message2);
+                    JDialogKundenArtikelDatenAndern artikelDatenAndern = new JDialogKundenArtikelDatenAndern(this, true, listGtinAnderung, kundPruferFamak, kundPrufer, this.dbUrl, gtinParam, jTextFieldPreisGrossBasis.getText(), jTextFieldPreisVarianten.getText(), message2);
                     artikelDatenAndern.setVisible(true);
                     //meldung = artikelDatenAndern.getMeldung();
                     break;
@@ -603,24 +606,24 @@ public class JDialogGTIN extends javax.swing.JDialog {
                     break;
             }
         }
-        
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jTextFieldPreisGrossBasisKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldPreisGrossBasisKeyPressed
         // TODO add your handling code here:
-        if (evt.getKeyCode()== KeyEvent.VK_ENTER) {
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             varianten = Float.parseFloat(jTextFieldPreisVarianten.getText().replace(",", "."));
             grossenBasis = (Float.parseFloat(jTextFieldPreisGrossBasis.getText().replace(",", ".")));
-            jTextFieldPreisGesamt.setText(String.format("%.2f",varianten+grossenBasis));
+            jTextFieldPreisGesamt.setText(String.format("%.2f", varianten + grossenBasis));
         }
     }//GEN-LAST:event_jTextFieldPreisGrossBasisKeyPressed
 
     private void jTextFieldPreisVariantenKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldPreisVariantenKeyPressed
         // TODO add your handling code here:
-          if (evt.getKeyCode()== KeyEvent.VK_ENTER) {
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             varianten = Float.parseFloat(jTextFieldPreisVarianten.getText().replace(",", "."));
             grossenBasis = (Float.parseFloat(jTextFieldPreisGrossBasis.getText().replace(",", ".")));
-            jTextFieldPreisGesamt.setText(String.format("%.2f",varianten+grossenBasis));
+            jTextFieldPreisGesamt.setText(String.format("%.2f", varianten + grossenBasis));
         }
     }//GEN-LAST:event_jTextFieldPreisVariantenKeyPressed
 
@@ -634,13 +637,13 @@ public class JDialogGTIN extends javax.swing.JDialog {
         if (evt.getClickCount() == 2) {
             JDialogListFaktor dialogListFaktor = new JDialogListFaktor(this, true, faktors, dbUrl, kundPrufer.getKundNummer(), kundPruferFamak.getArtikel_Nr());
             dialogListFaktor.setVisible(true);
-            if (localfaktor != dialogListFaktor.getSelectedFaktor() && dialogListFaktor.getSelectedFaktor()!=null) {
-               localfaktor = dialogListFaktor.getSelectedFaktor();
-                System.out.println("0"+"-"+kundPrufer.getKundNummer()+"-"+kundPruferFamak.getArtikel_Nr()+"-"+localfaktor.getFaktor()+"-"+localfaktor.getRunde()+"-"+localfaktor.getNks());
+            if (localfaktor != dialogListFaktor.getSelectedFaktor() && dialogListFaktor.getSelectedFaktor() != null) {
+                localfaktor = dialogListFaktor.getSelectedFaktor();
+                System.out.println("0" + "-" + kundPrufer.getKundNummer() + "-" + kundPruferFamak.getArtikel_Nr() + "-" + localfaktor.getFaktor() + "-" + localfaktor.getRunde() + "-" + localfaktor.getNks());
                 String meldung5 = jlieferDaoInterface.updateFaktor("0", kundPrufer.getKundNummer(), kundPruferFamak.getArtikel_Nr(), localfaktor.getFaktor(), localfaktor.getRunde(), localfaktor.getNks());
                 String message = jlieferDaoInterface.getMeldung("5", meldung5);
-                System.out.println("meldung5: "+meldung5);
-                System.out.println("message5: "+message);
+                System.out.println("meldung5: " + meldung5);
+                System.out.println("message5: " + message);
 
                 String[] parts = message.split("--");
                 String part1 = parts[1];
@@ -648,8 +651,7 @@ public class JDialogGTIN extends javax.swing.JDialog {
                 if (meldung5.equals("59") || meldung5.equals("60")) {
                     int reply = JOptionPane.showConfirmDialog(null, part2, part1, JOptionPane.YES_NO_OPTION);
                     if (reply == JOptionPane.YES_OPTION) {
-                        
-                        
+
                         String meldung = jlieferDaoInterface.updateFaktor("1", kundPrufer.getKundNummer(), kundPruferFamak.getArtikel_Nr(), localfaktor.getFaktor(), localfaktor.getRunde(), localfaktor.getNks());
                         String message1 = jlieferDaoInterface.getMeldung("5", meldung);
                         System.out.println(message1);
@@ -683,7 +685,7 @@ public class JDialogGTIN extends javax.swing.JDialog {
 
     private void jButtonMehrereGrosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonMehrereGrosActionPerformed
         // TODO add your handling code here:
-        JDialogVerwendete dialogVerwendete = new JDialogVerwendete(this, true, verwendeteMengenstaffel,verfugbareMengenstaffelns, verfugbareGroßens,kundPruferFamak,kundPrufer, dbUrl, jTextFieldPreisVarianten.getText().replace(",", "."),kundPrufer.getKundNummer());
+        JDialogVerwendete dialogVerwendete = new JDialogVerwendete(this, true, verwendeteMengenstaffel, verfugbareMengenstaffelns, verfugbareGroßens, kundPruferFamak, kundPrufer, dbUrl, jTextFieldPreisVarianten.getText().replace(",", "."), kundPrufer.getKundNummer());
         dialogVerwendete.setVisible(true);
     }//GEN-LAST:event_jButtonMehrereGrosActionPerformed
 
@@ -718,7 +720,7 @@ public class JDialogGTIN extends javax.swing.JDialog {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                JDialogGTIN dialog = new JDialogGTIN(new javax.swing.JFrame(), true, new LieferKundPrufer(), new LieferKundPrufer(),"","");
+                JDialogGTIN dialog = new JDialogGTIN(new javax.swing.JFrame(), true, new LieferKundPrufer(), new LieferKundPrufer(), "", "");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

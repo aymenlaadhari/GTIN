@@ -14,17 +14,19 @@ import model.LieferKundPrufer;
  * @author aladhari
  */
 public class JDialogKundenbestellung extends javax.swing.JDialog {
+
     private final JlieferDaoInterface jlieferDaoInterface;
-    private boolean success=true;
+    private boolean success = true;
 
     /**
      * Creates new form JDialogKundenbestellung
+     *
      * @param parent
      * @param modal
      * @param kundPrufer
      * @param dbUrl
      */
-    public JDialogKundenbestellung(java.awt.Frame parent, boolean modal,LieferKundPrufer kundPrufer, String dbUrl) {
+    public JDialogKundenbestellung(java.awt.Frame parent, boolean modal, LieferKundPrufer kundPrufer, String dbUrl) {
         super(parent, modal);
         initComponents();
         System.out.println(kundPrufer.toString());
@@ -39,7 +41,7 @@ public class JDialogKundenbestellung extends javax.swing.JDialog {
         jTextFieldId.setText(kundPrufer.getId());
         jTextFieldId.setEditable(false);
         jlieferDaoInterface = new JlieferDao(dbUrl);
-        
+
     }
 
     /**
@@ -232,7 +234,7 @@ public class JDialogKundenbestellung extends javax.swing.JDialog {
 
     private void jButtonUbernehmenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUbernehmenActionPerformed
         // TODO add your handling code here:
-        success=jlieferDaoInterface.updateTablePrufen(jTextFieldId.getText(), jTextFieldposNr.getText(), jTextFieldArtNummer.getText(), jTextFieldFarbe.getText(), jTextFieldGroesse.getText(), jTextFieldVariante.getText(), jTextFieldMenge.getText(), jTextFieldPreis.getText(), jTextFieldKommission.getText());
+        success = jlieferDaoInterface.updateTablePrufen(jTextFieldId.getText(), jTextFieldposNr.getText(), jTextFieldArtNummer.getText(), jTextFieldFarbe.getText(), jTextFieldGroesse.getText(), jTextFieldVariante.getText(), jTextFieldMenge.getText(), jTextFieldPreis.getText(), jTextFieldKommission.getText());
         System.out.println(success);
         dispose();
     }//GEN-LAST:event_jButtonUbernehmenActionPerformed
@@ -272,7 +274,7 @@ public class JDialogKundenbestellung extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                JDialogKundenbestellung dialog = new JDialogKundenbestellung(new javax.swing.JFrame(), true, new LieferKundPrufer(),"");
+                JDialogKundenbestellung dialog = new JDialogKundenbestellung(new javax.swing.JFrame(), true, new LieferKundPrufer(), "");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
