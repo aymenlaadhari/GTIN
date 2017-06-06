@@ -33,12 +33,13 @@ import model.VerwendeterGroßenzuschlag;
  * @author aladhari
  */
 public class JlieferDao implements JlieferDaoInterface {
+
     private final String dburlProdukt;
 
     String exceptionRecord = "";
     String exceptionUpdate = "";
-    boolean verify, proceed=false;
-    List<String> indexes= new ArrayList<>(), infamakIndexes = new ArrayList<>();
+    boolean verify, proceed = false;
+    List<String> indexes = new ArrayList<>(), infamakIndexes = new ArrayList<>(), fehlerIndexes = new ArrayList<>();
     boolean recorded = true;
     boolean updated = true;
 
@@ -144,9 +145,14 @@ public class JlieferDao implements JlieferDaoInterface {
     }
 
     @Override
+    public List<String> getFehlerIndexes() {
+        return fehlerIndexes;
+    }
+
+    @Override
     public List<String> getIndexInFamak() {
         return infamakIndexes;
-        }
+    }
 
     @Override
     public List<String> getIndexes() {
@@ -683,11 +689,11 @@ public class JlieferDao implements JlieferDaoInterface {
                     + "', '" + cnsmr.getArtikel_Nr() + "', '" + cnsmr.getFarbe() + "' , '" + cnsmr.getGroesse()
                     + "', '" + cnsmr.getVariante() + "', '" + cnsmr.getMenge() + "', '" + cnsmr.getSumme() + "', '" + cnsmr.getLagerNum() + "', '" + cnsmr.getKommission() + "')";
             System.out.println("position nummer: " + cnsmr.getPosiNummer());
-             if (cnsmr.getId().equals("0")) {
-                 try {
-                Connection conProdukt = DriverManager.getConnection(dburlProdukt);
-                Statement s = conProdukt.createStatement();
-                try (ResultSet rs = s.executeQuery(procName)) {
+            if (cnsmr.getId().equals("0")) {
+                try {
+                    Connection conProdukt = DriverManager.getConnection(dburlProdukt);
+                    Statement s = conProdukt.createStatement();
+                    try (ResultSet rs = s.executeQuery(procName)) {
 //                    if (kdBesDate==null) {
 //                       rs.setNull(3, java.sql.Types.DATE); 
 //                       rs.
@@ -695,23 +701,28 @@ public class JlieferDao implements JlieferDaoInterface {
 //                    if (kundWunch==null) {
 //                       cs.setNull(4, java.sql.Types.DATE); 
 //                    }
-                    while (rs.next()) {
-                        list.add(rs.getString(1));
-                        infamakIndexes.add(cnsmr.getPosiNummer());
+                        while (rs.next()) {
+                            list.add(rs.getString(1));
+                            if (rs.getString(1).contains("Fehler")) {
+                              fehlerIndexes.add(cnsmr.getPosiNummer());
+                            }else{
+                               infamakIndexes.add(cnsmr.getPosiNummer()); 
+                            }
+                            
+                        }
+
+                        rs.close();
+                        s.close();
+                        conProdukt.close();
                     }
 
-                    rs.close();
-                    s.close();
-                    conProdukt.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+                    recorded = false;
+                    exceptionRecord = ex.getMessage();
                 }
-
-            } catch (SQLException ex) {
-                Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
-                recorded = false;
-                exceptionRecord = ex.getMessage();
-            } 
             }
-          
+
         });
         return list;
     }
@@ -722,7 +733,7 @@ public class JlieferDao implements JlieferDaoInterface {
         lieferKunds.stream().forEach(cnsmr -> {
 
             String procName;
-            
+
             switch (id) {
 
                 case "0":
@@ -771,7 +782,6 @@ public class JlieferDao implements JlieferDaoInterface {
         return recorded;
     }
 
-
     @Override
     public boolean updateTablePrufen(String id, String posNr, String artikelNr, String farbe, String groesse, String variante, String menge, String preis, String kommission) {
         String procName = "{CALL GTIN_Erfassungsdaten_aendern( '" + id
@@ -794,7 +804,7 @@ public class JlieferDao implements JlieferDaoInterface {
         }
         return updated;
     }
-    
+
     private void executeQuery(String kdBesDate, String kundWunch, String erDatum, String procName, LieferKund cnsmr) {
         try {
             Connection conProdukt = DriverManager.getConnection(dburlProdukt);
@@ -809,19 +819,20 @@ public class JlieferDao implements JlieferDaoInterface {
                     cs.setNull(6, java.sql.Types.DATE);
                 }
                 //cs.executeUpdate();
-                
+
                 cs.executeQuery();
                 cs.close();
                 conProdukt.close();
                 indexes.add(cnsmr.getPosiNummer());
             }
-            
+
         } catch (SQLException ex) {
             Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
             recorded = false;
             exceptionRecord = ex.getMessage();
         }
     }
+
     private List<Varianten> getListVarianten(String posGridId) {
         List<Varianten> variantens = new ArrayList<>();
         String proc = "CALL GTIN_Varianten_Position_Liste ( '" + posGridId + "')";
@@ -850,12 +861,13 @@ public class JlieferDao implements JlieferDaoInterface {
         return variantens;
 
     }
+
     private String getPreisvariante(String posGridId) {
         String varPreis = "";
         try {
             //String proc = "SELECT GTIN_Stammsatz_anlegen_aendern ( '0', '1701000', '13', 'EL', ';001;002;061O;072;091;111C;111D;', '', '2230531' )";
             String proc = "SELECT GTIN_Preisermittlung_Varianten_GrPosID ( '" + posGridId + "')";
-            
+
             Connection conProdukt = DriverManager.getConnection(dburlProdukt);
             Statement s = conProdukt.createStatement();
             try (ResultSet rs = s.executeQuery(proc)) {

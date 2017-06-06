@@ -652,7 +652,7 @@ public class MainFrame extends javax.swing.JFrame {
                             }
                         });
                     });
-
+                    
                     refrehTable(liefkunds);
 
                 } else {
@@ -705,21 +705,20 @@ public class MainFrame extends javax.swing.JFrame {
             @Override
             protected void done() {
                 dlgProgress.dispose();//close the modal dialog
-                list.stream().forEach(cnsmr -> {
-                    System.out.println("In famak inserted: "+cnsmr);
-                });
+                
 
                 JOptionPane.showMessageDialog(null,
                         new JScrollPane(new JList(list.toArray())), "Meldung von Famak", 1);
                 jlieferDaoInterface.getIndexInFamak().forEach(cnsmr -> {
                         liefkunds.stream().forEach(liefKund -> {
                             if (liefKund.getPosiNummer().equals(cnsmr)) {
+                                liefKund.setStatus("1");
                                 liefKund.setId("1");
-
                             }
                         });
                     });
-
+                
+             
                     refrehTable(liefkunds);
                 
 //                if (recorded) {
@@ -732,12 +731,14 @@ public class MainFrame extends javax.swing.JFrame {
 //                            JOptionPane.ERROR_MESSAGE);
 //                }
 
+
             }
         };
         sw.execute();
         dlgProgress.setVisible(true);
     }
 
+    
     private void populateJtablePrufung() {
         tableModelPrufer.setRowCount(0);
 

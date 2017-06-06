@@ -72,5 +72,6 @@ public interface JlieferDaoInterface {
 
     public List<String> getIndexes();
     public List<String> getIndexInFamak();
+    public List<String> getFehlerIndexes();
 
 }
