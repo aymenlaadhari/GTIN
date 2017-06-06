@@ -71,5 +71,6 @@ public interface JlieferDaoInterface {
     public String getMengenbezug(String kdNummer);
 
     public List<String> getIndexes();
+    public List<String> getIndexInFamak();
 
 }

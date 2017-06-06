@@ -38,7 +38,7 @@ public class JlieferDao implements JlieferDaoInterface {
     String exceptionRecord = "";
     String exceptionUpdate = "";
     boolean verify, proceed=false;
-    List<String> indexes = new ArrayList<>();
+    List<String> indexes= new ArrayList<>(), infamakIndexes = new ArrayList<>();
     boolean recorded = true;
     boolean updated = true;
 
@@ -142,6 +142,11 @@ public class JlieferDao implements JlieferDaoInterface {
     public String getException() {
         return exceptionRecord;
     }
+
+    @Override
+    public List<String> getIndexInFamak() {
+        return infamakIndexes;
+        }
 
     @Override
     public List<String> getIndexes() {
@@ -692,6 +697,7 @@ public class JlieferDao implements JlieferDaoInterface {
 //                    }
                     while (rs.next()) {
                         list.add(rs.getString(1));
+                        infamakIndexes.add(cnsmr.getPosiNummer());
                     }
 
                     rs.close();
@@ -716,7 +722,7 @@ public class JlieferDao implements JlieferDaoInterface {
         lieferKunds.stream().forEach(cnsmr -> {
 
             String procName;
-
+            
             switch (id) {
 
                 case "0":
@@ -762,7 +768,6 @@ public class JlieferDao implements JlieferDaoInterface {
                     break;
             }
         });
-
         return recorded;
     }
 
@@ -789,7 +794,6 @@ public class JlieferDao implements JlieferDaoInterface {
         }
         return updated;
     }
-    
     
     private void executeQuery(String kdBesDate, String kundWunch, String erDatum, String procName, LieferKund cnsmr) {
         try {
@@ -818,7 +822,6 @@ public class JlieferDao implements JlieferDaoInterface {
             exceptionRecord = ex.getMessage();
         }
     }
-
     private List<Varianten> getListVarianten(String posGridId) {
         List<Varianten> variantens = new ArrayList<>();
         String proc = "CALL GTIN_Varianten_Position_Liste ( '" + posGridId + "')";

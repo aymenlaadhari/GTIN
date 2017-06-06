@@ -558,9 +558,9 @@ public class MainFrame extends javax.swing.JFrame {
         jTable.scrollRectToVisible(new Rectangle(jTable.getCellRect(jTable.getRowCount() - 1, 0, true)));
     }
 
-    private void refrehTable() {
+    private void refrehTable(List<LieferKund> lieferKunds) {
         tableModel.setRowCount(0);
-        liefkunds.stream().forEach(cnsmr -> {
+        lieferKunds.stream().forEach(cnsmr -> {
             addToTable(cnsmr);
             tableModel.addRow(rowDataMuster);
         });
@@ -629,9 +629,6 @@ public class MainFrame extends javax.swing.JFrame {
                      
                      recorded = jlieferDaoInterface.updateTableGin(jTextFieldKdNr.getText(), jTextFieldKdBestNr.getText(), dateBest, wunchDat, jTextFieldErfasser.getText(), dateTod, jTextFieldKposAktiv.getText(), liefkunds, id);
 
-                  
-               
-                    
                 } catch (Exception ex) {
                     Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
 
@@ -656,7 +653,7 @@ public class MainFrame extends javax.swing.JFrame {
                         });
                     });
 
-                    refrehTable();
+                    refrehTable(liefkunds);
 
                 } else {
                     JOptionPane.showMessageDialog(null,
@@ -709,11 +706,22 @@ public class MainFrame extends javax.swing.JFrame {
             protected void done() {
                 dlgProgress.dispose();//close the modal dialog
                 list.stream().forEach(cnsmr -> {
-                    System.out.println(cnsmr);
+                    System.out.println("In famak inserted: "+cnsmr);
                 });
 
                 JOptionPane.showMessageDialog(null,
                         new JScrollPane(new JList(list.toArray())), "Meldung von Famak", 1);
+                jlieferDaoInterface.getIndexInFamak().forEach(cnsmr -> {
+                        liefkunds.stream().forEach(liefKund -> {
+                            if (liefKund.getPosiNummer().equals(cnsmr)) {
+                                liefKund.setId("1");
+
+                            }
+                        });
+                    });
+
+                    refrehTable(liefkunds);
+                
 //                if (recorded) {
 //                    JOptionPane.showMessageDialog(null, "Successeful recorded");
 //
@@ -1373,11 +1381,11 @@ public class MainFrame extends javax.swing.JFrame {
                 .addComponent(jLabel18)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonSaveInDb, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(28, 28, 28)
+                .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(28, 28, 28)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel21)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
