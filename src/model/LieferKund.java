@@ -11,7 +11,7 @@ package model;
  */
 public class LieferKund {
 
-    private String posiNummer = "", Kd_Pos_activ = "", Pos_Zaehler = "", Artikel_Nr = "", Farbe = "", Groesse = "", Variante = "", Menge = "", Preis = "", Kommission = "", lagerNum = "", summe = "0", status = "0", ubergabe = "0", id = "0";
+    private String posiNummer = "", Kd_Pos_activ = "", Pos_Zaehler = "", Artikel_Nr = "", Farbe = "", Groesse = "", Variante = "", Menge = "", Preis = "", Kommission = "", lagerNum = "", summe = "0", status = "0", ubergabe = "0", id = "0", meldungFamak="";
 
     public String getSumme() {
         return summe;
@@ -133,6 +133,15 @@ public class LieferKund {
         this.posiNummer = posiNummer;
     }
 
+    public String getMeldungFamak() {
+        return meldungFamak;
+    }
+
+    public void setMeldungFamak(String meldungFamak) {
+        this.meldungFamak = meldungFamak;
+    }
+
+    
     @Override
     public String toString() {
         return "LieferKund{" + "posiNummer=" + posiNummer + ", Kd_Pos_activ=" + Kd_Pos_activ + ", Pos_Zaehler=" + Pos_Zaehler + ", Artikel_Nr=" + Artikel_Nr + ", Farbe=" + Farbe + ", Groesse=" + Groesse + ", Variante=" + Variante + ", Menge=" + Menge + ", Preis=" + Preis + ", Kommission=" + Kommission + ", lagerNum=" + lagerNum + '}';

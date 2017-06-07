@@ -671,19 +671,19 @@ public class MainFrame extends javax.swing.JFrame {
         SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
             //boolean recorded;
             List<String> list;
-
+            
             @Override
             protected Void doInBackground() throws Exception {
-
+                
                 SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
                 //Date date = new Date();
                 String dateBest = "1900/01/01";
                 String dateTod = "1900/01/01";
                 String wunchDat = "1900/01/01";
-
+                
                 if (jXDatePickerKdBestDat.getDate() != null) {
                     dateBest = format.format(jXDatePickerKdBestDat.getDate());
-
+                    
                 }
                 if (jXDatePickerKdBestDat.getDate() != null) {
                     dateTod = format.format(jXDatePickerKdBestDat.getDate());
@@ -694,33 +694,47 @@ public class MainFrame extends javax.swing.JFrame {
                 // TODO add your handling code here:
                 try {
                     list = jlieferDaoInterface.updateInFamak(jTextFieldKdNr.getText(), jTextFieldKdBestNr.getText(), dateBest, wunchDat, liefkunds);
-
+                    list.stream().forEach(cnsmr->{
+                    String[] parts = cnsmr.split("-");
+                    String part1 = parts[0];
+                    String part2 = parts[1];
+                    liefkunds.get(Integer.valueOf(part1)).setMeldungFamak(part2);
+                    });
                 } catch (Exception ex) {
                     Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-
+                    
                 }
                 return null;
             }
-
+            
             @Override
             protected void done() {
                 dlgProgress.dispose();//close the modal dialog
                 
-
                 JOptionPane.showMessageDialog(null,
                         new JScrollPane(new JList(list.toArray())), "Meldung von Famak", 1);
                 jlieferDaoInterface.getIndexInFamak().forEach(cnsmr -> {
-                        liefkunds.stream().forEach(liefKund -> {
-                            if (liefKund.getPosiNummer().equals(cnsmr)) {
-                                liefKund.setStatus("1");
-                                liefKund.setId("1");
-                            }
-                        });
+                    liefkunds.stream().forEach(liefKund -> {
+                        
+                        if (liefKund.getPosiNummer().equals(cnsmr)) {
+                            liefKund.setStatus("1");
+                            liefKund.setId("1");
+                        }
                     });
+                });
                 
-             
-                    refrehTable(liefkunds);
+                jlieferDaoInterface.getFehlerIndexes().forEach(cnsmr -> {
+                    liefkunds.stream().forEach(liefKund -> {
+                        if (liefKund.getPosiNummer().equals(cnsmr)) {
+                            liefKund.setStatus("1");
+                            
+                        }
+                    });
+                });
                 
+                insertIntoDb("3");
+                refrehTable(liefkunds);
+
 //                if (recorded) {
 //                    JOptionPane.showMessageDialog(null, "Successeful recorded");
 //
@@ -730,8 +744,6 @@ public class MainFrame extends javax.swing.JFrame {
 //                            "Error",
 //                            JOptionPane.ERROR_MESSAGE);
 //                }
-
-
             }
         };
         sw.execute();

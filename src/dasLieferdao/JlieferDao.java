@@ -42,6 +42,7 @@ public class JlieferDao implements JlieferDaoInterface {
     List<String> indexes = new ArrayList<>(), infamakIndexes = new ArrayList<>(), fehlerIndexes = new ArrayList<>();
     boolean recorded = true;
     boolean updated = true;
+    List<String> listMeldung;
 
     public JlieferDao(String dburlProdukt) {
         this.dburlProdukt = dburlProdukt;
@@ -681,7 +682,7 @@ public class JlieferDao implements JlieferDaoInterface {
     @Override
     public List<String> updateInFamak(String kundnummer, String kdBest, String kdBesDate, String kundWunch, List<LieferKund> lieferKunds) {
 
-        List<String> list = new ArrayList<>();
+        listMeldung = new ArrayList<>();
         lieferKunds.stream().forEach((cnsmr)
                 -> {
             String procName = "SELECT GTIN_Erfassungsdaten_in_Famak_schreiben( '" + kundnummer
@@ -702,13 +703,12 @@ public class JlieferDao implements JlieferDaoInterface {
 //                       cs.setNull(4, java.sql.Types.DATE); 
 //                    }
                         while (rs.next()) {
-                            list.add(rs.getString(1));
-                            if (rs.getString(1).contains("Fehler")) {
+                            listMeldung.add(cnsmr.getPosiNummer()+"-"+rs.getString(1));
+                            if (rs.getString(1).startsWith("F")) {
                               fehlerIndexes.add(cnsmr.getPosiNummer());
                             }else{
                                infamakIndexes.add(cnsmr.getPosiNummer()); 
-                            }
-                            
+                            }  
                         }
 
                         rs.close();
@@ -724,7 +724,7 @@ public class JlieferDao implements JlieferDaoInterface {
             }
 
         });
-        return list;
+        return listMeldung;
     }
 
     @Override
@@ -770,6 +770,22 @@ public class JlieferDao implements JlieferDaoInterface {
                                 + "', '" + cnsmr.getArtikel_Nr() + "', '" + cnsmr.getFarbe() + "', '" + cnsmr.getGroesse()
                                 + "', '" + cnsmr.getVariante() + "', '" + cnsmr.getMenge() + "', '" + cnsmr.getPreis()
                                 + "', '" + cnsmr.getKommission() + "', '" + "902" + "', '" + "" + "', '" + cnsmr.getUbergabe() + "')}";
+                        if (cnsmr.getStatus().equals("1")) {
+
+                        } else {
+                            executeQuery(kdBesDate, kundWunch, erDatum, procName, cnsmr);
+                        }
+                    }
+                    break;
+
+                case "3":
+                    if (cnsmr.getStatus().equals("0")) {
+                        procName = "{CALL GTIN_Erfassungsdaten_speichern( '" + kundnummer
+                                + "', '" + kdBest + "', '" + kdBesDate + "', '" + kundWunch + "', '" + erfasser
+                                + "', '" + erDatum + "', '" + kdPosActiv + "' , '" + cnsmr.getPosiNummer()
+                                + "', '" + cnsmr.getArtikel_Nr() + "', '" + cnsmr.getFarbe() + "', '" + cnsmr.getGroesse()
+                                + "', '" + cnsmr.getVariante() + "', '" + cnsmr.getMenge() + "', '" + cnsmr.getPreis()
+                                + "', '" + cnsmr.getKommission() + "', '" + "900" + "', '" + cnsmr.getMeldungFamak() + "', '" + cnsmr.getId() + "')}";
                         if (cnsmr.getStatus().equals("1")) {
 
                         } else {
