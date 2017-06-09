@@ -5,6 +5,7 @@
  */
 package dasLiefer;
 
+import dasLieferDialog.JDialogDoppelErfassung;
 import dasLieferdao.JlieferDao;
 import dasLieferdao.JlieferDaoInterface;
 import dasLieferDialog.JDialogGTIN;
@@ -57,6 +58,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import model.LieferKund;
+import model.LieferKundDoppel;
 import model.LieferKundPrufer;
 import model.ParameterKund;
 import model.VarPreis;
@@ -536,8 +538,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         });
 
-        System.out.println("final summe: " + summe);
-
+        
         indexList.stream().forEach(cnsmr -> {
             liefkunds.get(cnsmr).setSumme(String.valueOf(summe));
 
@@ -558,7 +559,7 @@ public class MainFrame extends javax.swing.JFrame {
         jTable.scrollRectToVisible(new Rectangle(jTable.getCellRect(jTable.getRowCount() - 1, 0, true)));
     }
 
-    private void refrehTable(List<LieferKund> lieferKunds) {
+    private void refreshTable(List<LieferKund> lieferKunds) {
         tableModel.setRowCount(0);
         lieferKunds.stream().forEach(cnsmr -> {
             addToTable(cnsmr);
@@ -626,8 +627,7 @@ public class MainFrame extends javax.swing.JFrame {
                 }
                 // TODO add your handling code here:
                 try {
-                     
-                     recorded = jlieferDaoInterface.updateTableGin(jTextFieldKdNr.getText(), jTextFieldKdBestNr.getText(), dateBest, wunchDat, jTextFieldErfasser.getText(), dateTod, jTextFieldKposAktiv.getText(), liefkunds, id);
+                    recorded = jlieferDaoInterface.updateTableGin(jTextFieldKdNr.getText(), jTextFieldKdBestNr.getText(), dateBest, wunchDat, jTextFieldErfasser.getText(), dateTod, jTextFieldKposAktiv.getText(), liefkunds, id);
 
                 } catch (Exception ex) {
                     Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -645,19 +645,31 @@ public class MainFrame extends javax.swing.JFrame {
                     jlieferDaoInterface.getIndexes().forEach(cnsmr -> {
                         liefkunds.stream().forEach(liefKund -> {
                             if (liefKund.getPosiNummer().equals(cnsmr)) {
-                                liefKund.setStatus("1");
-                                liefKund.setUbergabe("1");
-                                liefKund.setId("1");
-
+                                switch (id) {
+                                    case "0":
+                                        liefKund.setStatus("1");
+                                        liefKund.setUbergabe("1");
+                                        liefKund.setId("1");
+                                        break;
+                                    case "1":
+                                        liefKund.setStatus("1");
+                                        break;
+                                    case "2":
+                                        liefKund.setUbergabe("1");
+                                        break;
+                                    case "3":
+                                        liefKund.setStatus("1");
+                                        break;
+                                }
                             }
                         });
                     });
-                    
-                    refrehTable(liefkunds);
+
+                    refreshTable(liefkunds);
 
                 } else {
                     JOptionPane.showMessageDialog(null,
-                            "Error when recording " + jlieferDaoInterface.getException(),
+                            "Keine Verarbeitung vorgenommen " + jlieferDaoInterface.getException(),
                             "Error",
                             JOptionPane.ERROR_MESSAGE);
                 }
@@ -671,19 +683,20 @@ public class MainFrame extends javax.swing.JFrame {
         SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
             //boolean recorded;
             List<String> list;
-            
+            List<String> meldungs = new ArrayList<>();
+
             @Override
             protected Void doInBackground() throws Exception {
-                
+
                 SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
                 //Date date = new Date();
                 String dateBest = "1900/01/01";
                 String dateTod = "1900/01/01";
                 String wunchDat = "1900/01/01";
-                
+
                 if (jXDatePickerKdBestDat.getDate() != null) {
                     dateBest = format.format(jXDatePickerKdBestDat.getDate());
-                    
+
                 }
                 if (jXDatePickerKdBestDat.getDate() != null) {
                     dateTod = format.format(jXDatePickerKdBestDat.getDate());
@@ -694,46 +707,50 @@ public class MainFrame extends javax.swing.JFrame {
                 // TODO add your handling code here:
                 try {
                     list = jlieferDaoInterface.updateInFamak(jTextFieldKdNr.getText(), jTextFieldKdBestNr.getText(), dateBest, wunchDat, liefkunds);
-                    list.stream().forEach(cnsmr->{
-                    String[] parts = cnsmr.split("-");
-                    String part1 = parts[0];
-                    String part2 = parts[1];
-                    liefkunds.get(Integer.valueOf(part1)).setMeldungFamak(part2);
+
+                    list.stream().forEach(cnsmr -> {
+                        String[] parts = cnsmr.split("-");
+                        if (parts.length != 0) {
+                            String part1 = parts[0];
+                            String part2 = parts[1];
+                            meldungs.add(part2);
+                            liefkunds.get(Integer.valueOf(part1)-1).setMeldungFamak(part2);
+                        }
                     });
                 } catch (Exception ex) {
                     Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-                    
+
                 }
                 return null;
             }
-            
+
             @Override
             protected void done() {
                 dlgProgress.dispose();//close the modal dialog
-                
+
                 JOptionPane.showMessageDialog(null,
-                        new JScrollPane(new JList(list.toArray())), "Meldung von Famak", 1);
+                        new JScrollPane(new JList(meldungs.toArray())), "Meldung von Famak", 1);
                 jlieferDaoInterface.getIndexInFamak().forEach(cnsmr -> {
                     liefkunds.stream().forEach(liefKund -> {
-                        
+
                         if (liefKund.getPosiNummer().equals(cnsmr)) {
-                            liefKund.setStatus("1");
+                            //liefKund.setStatus("1");
                             liefKund.setId("1");
                         }
                     });
                 });
-                
-                jlieferDaoInterface.getFehlerIndexes().forEach(cnsmr -> {
-                    liefkunds.stream().forEach(liefKund -> {
-                        if (liefKund.getPosiNummer().equals(cnsmr)) {
-                            liefKund.setStatus("1");
-                            
-                        }
-                    });
-                });
-                
+
+//                jlieferDaoInterface.getFehlerIndexes().forEach(cnsmr -> {
+//                    liefkunds.stream().forEach(liefKund -> {
+//                        if (liefKund.getPosiNummer().equals(cnsmr)) {
+//                            liefKund.setStatus("1");
+//
+//                        }
+//                    });
+//                });
+
                 insertIntoDb("3");
-                refrehTable(liefkunds);
+                refreshTable(liefkunds);
 
 //                if (recorded) {
 //                    JOptionPane.showMessageDialog(null, "Successeful recorded");
@@ -750,7 +767,6 @@ public class MainFrame extends javax.swing.JFrame {
         dlgProgress.setVisible(true);
     }
 
-    
     private void populateJtablePrufung() {
         tableModelPrufer.setRowCount(0);
 
@@ -870,8 +886,7 @@ public class MainFrame extends javax.swing.JFrame {
         //System.out.println("0"+ kundPrufer.getId()+";"+ kundPruferFamak.getPosGrId()+";"+ kundPrufer.getStatus());
         String meldung3 = jlieferDaoInterface.erfassungManuelzuweisen("0", kundPrufer.getId(), kundPruferFamak.getPosGrId(), kundPrufer.getStatus());
         String message = jlieferDaoInterface.getMeldung("3", meldung3);
-        System.out.println(message);
-        String[] parts3 = message.split("--");
+         String[] parts3 = message.split("--");
         String part1 = parts3[0]; // 004
         String part2 = parts3[1]; // 034556
         JOptionPane.showMessageDialog(null,
@@ -884,7 +899,6 @@ public class MainFrame extends javax.swing.JFrame {
         //System.out.println("0"+ kundPrufer.getId()+";"+ kundPruferFamak.getPosGrId()+";"+ kundPrufer.getStatus());
         String meldung3 = jlieferDaoInterface.erfassungManuelzuweisen("1", kundPrufer.getId(), kundPruferFamak.getPosGrId(), kundPrufer.getStatus());
         String message = jlieferDaoInterface.getMeldung("3", meldung3);
-        System.out.println(message);
         String[] parts3 = message.split("--");
         String part1 = parts3[0]; // 004
         String part2 = parts3[1]; // 034556
@@ -897,7 +911,6 @@ public class MainFrame extends javax.swing.JFrame {
     private void erfassungAbschliesen() {
         String meldung3 = jlieferDaoInterface.erfassungAbschliessen(kundPrufer.getId(), kundPruferFamak.getPosGrId());
         String message = jlieferDaoInterface.getMeldung("4", meldung3);
-        System.out.println(message);
         String[] parts3 = message.split("--");
         String part1 = parts3[0]; // 004
         String part2 = parts3[1]; // 034556
@@ -920,6 +933,12 @@ public class MainFrame extends javax.swing.JFrame {
                     "Fehler",
                     JOptionPane.ERROR_MESSAGE);
         }
+    }
+    
+    private void doppelErfassungPrüfen(){
+        List<LieferKundDoppel> kundDoppels = jlieferDaoInterface.getListDoppelErfassung();
+        JDialogDoppelErfassung dialogDoppelErfassung = new JDialogDoppelErfassung(this, true, kundDoppels, dbUrl);
+        dialogDoppelErfassung.setVisible(true);
     }
 
     private void resizeColumnWidth(JTable table) {
@@ -992,7 +1011,7 @@ public class MainFrame extends javax.swing.JFrame {
         jLabel23 = new javax.swing.JLabel();
         jButton3 = new javax.swing.JButton();
         jLabel24 = new javax.swing.JLabel();
-        jButton4 = new javax.swing.JButton();
+        jButtonDoppelErfasung = new javax.swing.JButton();
         jLabel25 = new javax.swing.JLabel();
         jButton5 = new javax.swing.JButton();
         jPanel9 = new javax.swing.JPanel();
@@ -1317,11 +1336,16 @@ public class MainFrame extends javax.swing.JFrame {
 
         jLabel24.setText(">>");
 
-        jButton4.setText("Doppel-Erfassung prüfen");
+        jButtonDoppelErfasung.setText("Doppel-Erfassung prüfen");
+        jButtonDoppelErfasung.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDoppelErfasungActionPerformed(evt);
+            }
+        });
 
         jLabel25.setText(">>");
 
-        jButton5.setText("jButton5");
+        jButton5.setText("Erfassungsdaten verarbeiten");
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
@@ -1343,12 +1367,12 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel24)
                 .addGap(18, 18, 18)
-                .addComponent(jButton4)
+                .addComponent(jButtonDoppelErfasung)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel25)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton5)
-                .addContainerGap(66, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1362,7 +1386,7 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(jLabel23)
                     .addComponent(jButton3)
                     .addComponent(jLabel24)
-                    .addComponent(jButton4)
+                    .addComponent(jButtonDoppelErfasung)
                     .addComponent(jLabel25)
                     .addComponent(jButton5))
                 .addContainerGap(30, Short.MAX_VALUE))
@@ -2135,9 +2159,14 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        
+
         insertIntoDb("2");
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButtonDoppelErfasungActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDoppelErfasungActionPerformed
+        // TODO add your handling code here:
+        doppelErfassungPrüfen();
+    }//GEN-LAST:event_jButtonDoppelErfasungActionPerformed
 
     /**
      * @param args the command line arguments
@@ -2178,10 +2207,10 @@ public class MainFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButtonAbOZu;
     private javax.swing.JButton jButtonAdd;
+    private javax.swing.JButton jButtonDoppelErfasung;
     private javax.swing.JButton jButtonInFamak;
     private javax.swing.JButton jButtonLaden;
     private javax.swing.JButton jButtonManZu;

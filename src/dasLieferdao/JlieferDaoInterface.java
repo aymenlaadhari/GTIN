@@ -9,6 +9,7 @@ import java.util.List;
 import model.Faktor;
 import model.Kund;
 import model.LieferKund;
+import model.LieferKundDoppel;
 import model.LieferKundPrufer;
 import model.ParameterKund;
 import model.VarPreis;
@@ -69,9 +70,13 @@ public interface JlieferDaoInterface {
     public List<VarPreis> getListVarPreis(String kdNummer, String kdArtNummer, String kdFarbe, String kdGroesse, String kdVariante, String menge, String lagerNummer);
 
     public String getMengenbezug(String kdNummer);
-
+    
     public List<String> getIndexes();
     public List<String> getIndexInFamak();
     public List<String> getFehlerIndexes();
-
+    
+    public List<LieferKundDoppel> getListDoppelErfassung();
+    public String erfassungAktualisieren(String id,String kdPosnr,String kdArtNr,String kdfarb,String kdGros,String kdVar,String kdKomm,String kdMeng);
+    public String erfassungLoschen(String id);
+    public List<LieferKundDoppel> getListDoppelErfassungZuruck();
 }

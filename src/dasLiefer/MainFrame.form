@@ -614,12 +614,12 @@
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="jLabel24" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="jButton4" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jButtonDoppelErfasung" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="jLabel25" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="jButton5" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="66" max="32767" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
@@ -635,7 +635,7 @@
                                       <Component id="jLabel23" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="jButton3" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="jLabel24" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jButton4" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jButtonDoppelErfasung" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="jLabel25" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="jButton5" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
@@ -689,10 +689,13 @@
                             <Property name="text" type="java.lang.String" value="&gt;&gt;"/>
                           </Properties>
                         </Component>
-                        <Component class="javax.swing.JButton" name="jButton4">
+                        <Component class="javax.swing.JButton" name="jButtonDoppelErfasung">
                           <Properties>
                             <Property name="text" type="java.lang.String" value="Doppel-Erfassung pr&#xfc;fen"/>
                           </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonDoppelErfasungActionPerformed"/>
+                          </Events>
                         </Component>
                         <Component class="javax.swing.JLabel" name="jLabel25">
                           <Properties>
@@ -701,7 +704,7 @@
                         </Component>
                         <Component class="javax.swing.JButton" name="jButton5">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="jButton5"/>
+                            <Property name="text" type="java.lang.String" value="Erfassungsdaten verarbeiten"/>
                           </Properties>
                         </Component>
                       </SubComponents>

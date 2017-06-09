@@ -15,9 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import model.Faktor;
 import model.Kund;
 import model.LieferKund;
+import model.LieferKundDoppel;
 import model.LieferKundPrufer;
 import model.ParameterKund;
 import model.VarPreis;
@@ -92,6 +94,49 @@ public class JlieferDao implements JlieferDaoInterface {
             Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         return ret;
+    }
+
+    @Override
+    public String erfassungAktualisieren(String id,String kdPosnr,String kdArtNr,String kdfarb,String kdGros,String kdVar,String kdKomm,String kdMeng) {
+    String ret = "";
+        try {
+            String proc = "CALL GTIN_DoppelErfassung_Zeile_aktualisieren('" + id + "','" + kdPosnr + "','" + kdArtNr + "','" + kdfarb + "','" + kdGros + "','" + kdVar + "','" + kdKomm + "','" + kdMeng + "')";
+            Connection conProdukt = DriverManager.getConnection(dburlProdukt);
+            Statement s = conProdukt.createStatement();
+            try (ResultSet rs = s.executeQuery(proc)) {
+                while (rs.next()) {
+                    ret = rs.getString(1);
+                }
+                rs.close();
+                s.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return ret;    
+    }
+
+    @Override
+    public String erfassungLoschen(String id) {
+        
+    String ret = "";
+        try {
+            String proc = "CALL GTIN_DoppelErfassung_Zeile_loeschen('" + id + "')";
+            Connection conProdukt = DriverManager.getConnection(dburlProdukt);
+            Statement s = conProdukt.createStatement();
+            try (ResultSet rs = s.executeQuery(proc)) {
+                while (rs.next()) {
+                    ret = rs.getString(1);
+                }
+                rs.close();
+                s.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return ret; 
     }
 
     @Override
@@ -230,7 +275,6 @@ public class JlieferDao implements JlieferDaoInterface {
     @Override
     public String getLagerNr(String kdNr, String kdArtNr, String kdFarbe, String kdGroesse, String kdVariante) {
         String ret = "";
-        System.out.println("getLagerNr from dao: " + kdNr + "," + kdArtNr + "," + kdFarbe + "," + kdGroesse + "," + kdVariante);
         try {
             String proc = "SELECT GTIN_Kunden_Lagerartikel_pruefen('" + kdNr + "','" + kdArtNr + "','" + kdFarbe + "','" + kdGroesse + "','" + kdVariante + "')";
             Connection conProdukt = DriverManager.getConnection(dburlProdukt);
@@ -243,7 +287,6 @@ public class JlieferDao implements JlieferDaoInterface {
                         ret = rs.getString(1);
                     }
                 }
-                System.out.println("lagerNummer from dao" + ret);
                 rs.close();
                 s.close();
                 conProdukt.close();
@@ -252,6 +295,86 @@ public class JlieferDao implements JlieferDaoInterface {
             Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         return ret;
+    }
+
+    @Override
+    public List<LieferKundDoppel> getListDoppelErfassung() {
+        List<LieferKundDoppel> listLiefDoppel = new ArrayList<>();
+        String procName = "{CALL GTIN_DoppelErfassung_verarbeiten()}";
+        Connection conProdukt;
+        try {
+            conProdukt = DriverManager.getConnection(dburlProdukt);
+            CallableStatement cs = conProdukt.prepareCall(procName);
+            try (ResultSet rs = cs.executeQuery()) {
+                while (rs.next()) {
+                    LieferKundDoppel kundDoppel = new LieferKundDoppel();
+                    //verfugbareGroßen.setGp1(rs.getString("GP1") != null ? rs.getString("GP1") : "");
+                    kundDoppel.setKdNummer(rs.getString(1) != null ? rs.getString(1) : "");
+                    kundDoppel.setKdBestNummer(rs.getString(2)!= null ? rs.getString(2) : "");
+                    kundDoppel.setKdPosNummer(rs.getString(3)!= null ? rs.getString(3) : "");
+                    kundDoppel.setKdArtNummer(rs.getString(4)!= null ? rs.getString(4) : "");
+                    kundDoppel.setKdFarbe(rs.getString(5)!= null ? rs.getString(5) : "");
+                    kundDoppel.setKdGroesse(rs.getString(6)!= null ? rs.getString(6) : "");
+                    kundDoppel.setKdVariante(rs.getString(7)!= null ? rs.getString(7) : "");
+                    kundDoppel.setKommission(rs.getString(8)!= null ? rs.getString(8) : "");
+                    kundDoppel.setKdMenge(rs.getString(9)!= null ? rs.getString(9) : "");
+                    kundDoppel.setStatus(rs.getString(10)!= null ? rs.getString(10) : "");
+                    kundDoppel.setErfasser(rs.getString(11)!= null ? rs.getString(11) : "");
+                    kundDoppel.setErfassungDatum(rs.getString(12)!= null ? rs.getString(12) : "");
+                    kundDoppel.setId(rs.getString(13)!= null ? rs.getString(13) : "");
+                    kundDoppel.setPosGroId(rs.getString(14)!= null ? rs.getString(14) : "");
+                    kundDoppel.setBemerkung(rs.getString(15)!= null ? rs.getString(15) : "");
+                    
+                    listLiefDoppel.add(kundDoppel);
+
+                }
+                rs.close();
+                cs.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return listLiefDoppel;
+    }
+
+    @Override
+    public List<LieferKundDoppel> getListDoppelErfassungZuruck() {
+    List<LieferKundDoppel> listLiefDoppel = new ArrayList<>();
+        String procName = "{CALL GTIN_DoppelErfassung_Status_zuruecksetzen ()}";
+        Connection conProdukt;
+        try {
+            conProdukt = DriverManager.getConnection(dburlProdukt);
+            CallableStatement cs = conProdukt.prepareCall(procName);
+            try (ResultSet rs = cs.executeQuery()) {
+                while (rs.next()) {
+                    LieferKundDoppel kundDoppel = new LieferKundDoppel();
+                    kundDoppel.setKdNummer(rs.getString(1)!= null ? rs.getString(1) : "");
+                    kundDoppel.setKdBestNummer(rs.getString(2)!= null ? rs.getString(2) : "");
+                    kundDoppel.setKdPosNummer(rs.getString(3)!= null ? rs.getString(3) : "");
+                    kundDoppel.setKdArtNummer(rs.getString(4)!= null ? rs.getString(4) : "");
+                    kundDoppel.setKdFarbe(rs.getString(5)!= null ? rs.getString(5) : "");
+                    kundDoppel.setKdGroesse(rs.getString(6)!= null ? rs.getString(6) : "");
+                    kundDoppel.setKdVariante(rs.getString(7)!= null ? rs.getString(7) : "");
+                    kundDoppel.setKommission(rs.getString(8)!= null ? rs.getString(8) : "");
+                    kundDoppel.setKdMenge(rs.getString(9)!= null ? rs.getString(9) : "");
+                    kundDoppel.setStatus(rs.getString(10)!= null ? rs.getString(10) : "");
+                    kundDoppel.setErfasser(rs.getString(11)!= null ? rs.getString(11) : "");
+                    kundDoppel.setErfassungDatum(rs.getString(12)!= null ? rs.getString(12) : "");
+                    kundDoppel.setId(rs.getString(13)!= null ? rs.getString(13) : "");
+                    kundDoppel.setPosGroId(rs.getString(14)!= null ? rs.getString(14) : "");
+                    kundDoppel.setBemerkung(rs.getString(15)!= null ? rs.getString(15) : "");
+                    
+                    listLiefDoppel.add(kundDoppel);
+                }
+                rs.close();
+                cs.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return listLiefDoppel;    
     }
 
     @Override
@@ -424,7 +547,6 @@ public class JlieferDao implements JlieferDaoInterface {
     public List<VarPreis> getListVarPreis(String kdNummer, String kdArtNummer, String kdFarbe, String kdGroesse, String kdVariante, String menge, String lagerNummer) {
         List<VarPreis> varPreises = new ArrayList<>();
         String proc = "CALL GTIN_Varianten_KdArtNr_Liste( '" + kdNummer + "', '" + kdArtNummer + "', '" + kdFarbe + "', '" + kdGroesse + "', '" + kdVariante + "', '" + menge + "', '" + lagerNummer + "')";
-        System.out.println(kdNummer + "," + kdArtNummer + "," + kdFarbe + "," + kdGroesse + "," + kdVariante + "," + menge + "," + lagerNummer);
         Connection conProdukt;
         try {
             conProdukt = DriverManager.getConnection(dburlProdukt);
@@ -689,7 +811,6 @@ public class JlieferDao implements JlieferDaoInterface {
                     + "', '" + kdBest + "', '" + kdBesDate + "', '" + kundWunch + "', '" + cnsmr.getPosiNummer()
                     + "', '" + cnsmr.getArtikel_Nr() + "', '" + cnsmr.getFarbe() + "' , '" + cnsmr.getGroesse()
                     + "', '" + cnsmr.getVariante() + "', '" + cnsmr.getMenge() + "', '" + cnsmr.getSumme() + "', '" + cnsmr.getLagerNum() + "', '" + cnsmr.getKommission() + "')";
-            System.out.println("position nummer: " + cnsmr.getPosiNummer());
             if (cnsmr.getId().equals("0")) {
                 try {
                     Connection conProdukt = DriverManager.getConnection(dburlProdukt);
@@ -733,7 +854,6 @@ public class JlieferDao implements JlieferDaoInterface {
         lieferKunds.stream().forEach(cnsmr -> {
 
             String procName;
-
             switch (id) {
 
                 case "0":
@@ -745,19 +865,26 @@ public class JlieferDao implements JlieferDaoInterface {
                                 + "', '" + cnsmr.getVariante() + "', '" + cnsmr.getMenge() + "', '" + cnsmr.getPreis()
                                 + "', '" + cnsmr.getKommission() + "', '" + "" + "', '" + "" + "', '" + "" + "')}";
                         executeQuery(kdBesDate, kundWunch, erDatum, procName, cnsmr);
+                    }else{
+                        recorded = false;
                     }
                     break;
 
                 case "1":
                     if (cnsmr.getStatus().equals("0")) {
-                        procName = "{CALL GTIN_Erfassungsdaten_speichern( '" + kundnummer
+                         procName = "{CALL GTIN_Erfassungsdaten_speichern( '" + kundnummer
                                 + "', '" + kdBest + "', '" + kdBesDate + "', '" + kundWunch + "', '" + erfasser
                                 + "', '" + erDatum + "', '" + kdPosActiv + "' , '" + cnsmr.getPosiNummer()
                                 + "', '" + cnsmr.getArtikel_Nr() + "', '" + cnsmr.getFarbe() + "', '" + cnsmr.getGroesse()
                                 + "', '" + cnsmr.getVariante() + "', '" + cnsmr.getMenge() + "', '" + cnsmr.getPreis()
                                 + "', '" + cnsmr.getKommission() + "', '" + "901" + "', '" + "" + "', '" + cnsmr.getStatus() + "')}";
-                        executeQuery(kdBesDate, kundWunch, erDatum, procName, cnsmr);
+                        
+                        
+                            executeQuery(kdBesDate, kundWunch, erDatum, procName, cnsmr);
+                        
 
+                    }else{
+                        recorded = false;
                     }
 
                     break;
@@ -770,28 +897,43 @@ public class JlieferDao implements JlieferDaoInterface {
                                 + "', '" + cnsmr.getArtikel_Nr() + "', '" + cnsmr.getFarbe() + "', '" + cnsmr.getGroesse()
                                 + "', '" + cnsmr.getVariante() + "', '" + cnsmr.getMenge() + "', '" + cnsmr.getPreis()
                                 + "', '" + cnsmr.getKommission() + "', '" + "902" + "', '" + "" + "', '" + cnsmr.getUbergabe() + "')}";
-                        if (cnsmr.getStatus().equals("1")) {
-
+                        if (!cnsmr.getStatus().equals("0")) {
+                            int dialogResult = JOptionPane.showConfirmDialog(
+                                    null,
+                                    "Die Daten wurden bereits für \"Speichern 1\" verwendet, wollen Sie fortfahren?",
+                                    "Achtung",
+                                    JOptionPane.YES_NO_OPTION);
+                            if (dialogResult == JOptionPane.YES_OPTION) {
+                                // Saving code here
+                                executeQuery(kdBesDate, kundWunch, erDatum, procName, cnsmr);
+                            }                            
                         } else {
                             executeQuery(kdBesDate, kundWunch, erDatum, procName, cnsmr);
-                        }
+                        }    
+                         
+                    }else{
+                        recorded = false;
                     }
                     break;
 
                 case "3":
+                    
                     if (cnsmr.getStatus().equals("0")) {
+                        
                         procName = "{CALL GTIN_Erfassungsdaten_speichern( '" + kundnummer
                                 + "', '" + kdBest + "', '" + kdBesDate + "', '" + kundWunch + "', '" + erfasser
                                 + "', '" + erDatum + "', '" + kdPosActiv + "' , '" + cnsmr.getPosiNummer()
                                 + "', '" + cnsmr.getArtikel_Nr() + "', '" + cnsmr.getFarbe() + "', '" + cnsmr.getGroesse()
                                 + "', '" + cnsmr.getVariante() + "', '" + cnsmr.getMenge() + "', '" + cnsmr.getPreis()
                                 + "', '" + cnsmr.getKommission() + "', '" + "900" + "', '" + cnsmr.getMeldungFamak() + "', '" + cnsmr.getId() + "')}";
-                        if (cnsmr.getStatus().equals("1")) {
-
-                        } else {
+                        
                             executeQuery(kdBesDate, kundWunch, erDatum, procName, cnsmr);
-                        }
+                    }else{
+                        recorded = false;
                     }
+                        
+                        
+                    
                     break;
             }
         });
@@ -841,7 +983,7 @@ public class JlieferDao implements JlieferDaoInterface {
                 conProdukt.close();
                 indexes.add(cnsmr.getPosiNummer());
             }
-
+           recorded = true;
         } catch (SQLException ex) {
             Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
             recorded = false;
