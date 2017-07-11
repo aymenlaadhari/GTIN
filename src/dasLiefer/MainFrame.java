@@ -165,10 +165,7 @@ public class MainFrame extends javax.swing.JFrame {
                 tclLiefKund = (TableCellListener) e.getSource();
                 switch (tclLiefKund.getColumn()) {
 
-//                       case 0:
-//                        //selectedArtikel.getCombinations().get(tclPreis.getRow()).setGroessen(tclPreis.getNewValue().toString());
-//                          liefkunds.get(tclLiefKund.getRow()).setPo(tclLiefKund.getNewValue().toString());
-//                        break; 
+ 
                     case 1:
                         //selectedArtikel.getCombinations().get(tclPreis.getRow()).setGroessen(tclPreis.getNewValue().toString());
                         liefkunds.get(tclLiefKund.getRow()).setArtikel_Nr(tclLiefKund.getNewValue().toString());
@@ -207,8 +204,6 @@ public class MainFrame extends javax.swing.JFrame {
                         } else {
                             liefkunds.get(tclLiefKund.getRow()).setPreis(tclLiefKund.getNewValue().toString());
                         }
-                
-
                         break;
 
                     case 7:
@@ -1806,7 +1801,7 @@ public class MainFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 1574, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 1676, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -2207,20 +2202,16 @@ public class MainFrame extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
+                if ("Metal".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        
         //</editor-fold>
 
         /* Create and display the form */

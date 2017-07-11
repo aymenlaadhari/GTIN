@@ -933,6 +933,8 @@ public class JlieferDao implements JlieferDaoInterface {
                             if (dialogResult == JOptionPane.YES_OPTION) {
                                 // Saving code here
                                 executeQuery(kdBesDate, kundWunch, erDatum, procName, cnsmr);
+                            } else{
+                            recorded = false;
                             }                            
                         } else {
                             executeQuery(kdBesDate, kundWunch, erDatum, procName, cnsmr);
