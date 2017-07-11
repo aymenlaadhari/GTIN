@@ -913,7 +913,6 @@ public class JlieferDao implements JlieferDaoInterface {
                     }else{
                         recorded = false;
                     }
-
                     break;
 
                 case "2":

@@ -854,20 +854,42 @@ public class JDialogVerwendete extends javax.swing.JDialog {
         DecimalFormat df = new DecimalFormat("0.00");
 
         verfugbareGroßens.stream().forEach(cnsmr -> {
-            if (cnsmr.getGz().isEmpty()) {
-                cnsmr.setGz("0");
-            }
-            double gz = Double.parseDouble(cnsmr.getGz());
-            String step1 = df.format(basisPreis * (100 + gz) / 100).replace(",", ".");
-            String step2 = df.format((100 + Double.parseDouble(jTextFieldAnderung1.getText())) / 100).replace(",", ".");
-            //System.out.println("step1: "+step1+"; step2: "+step2);
-            double result = Double.parseDouble(step1) * Double.parseDouble(step2);
-
-            cnsmr.setGp1(df.format(result).replace(",", "."));
+            rechnenGrossenPreis(cnsmr, basisPreis, df);
         });
         populateTableGroessen(verfugbareGroßens);
     }//GEN-LAST:event_jButtonGroessenberechnenActionPerformed
 
+    private void rechnenGrossenPreis(VerfugbareGroßen cnsmr, double basisPreis, DecimalFormat df) {
+        if (cnsmr.getGz().isEmpty()) {
+            cnsmr.setGz("0");
+        }
+        double gz = Double.parseDouble(cnsmr.getGz());
+        String step = df.format(basisPreis * (100 + gz) / 100).replace(",", ".");
+        String step1 = df.format((100 + Double.parseDouble(jTextFieldAnderung1.getText())) / 100).replace(",", ".");
+        String step2 = df.format((100 + Double.parseDouble(jTextFieldAnderung2.getText())) / 100).replace(",", ".");
+        String step3 = df.format((100 + Double.parseDouble(jTextFieldAnderung3.getText())) / 100).replace(",", ".");
+        String step4 = df.format((100 + Double.parseDouble(jTextFieldAnderung4.getText())) / 100).replace(",", ".");
+        //System.out.println("step1: "+step1+"; step2: "+step2);
+        double result1 = Double.parseDouble(step) * Double.parseDouble(step1);
+        double result2 = Double.parseDouble(step) * Double.parseDouble(step2);
+        double result3 = Double.parseDouble(step) * Double.parseDouble(step3);
+        double result4 = Double.parseDouble(step) * Double.parseDouble(step4);
+
+        cnsmr.setGp1(df.format(result1).replace(",", "."));
+
+        if (!jTextFieldMenge2.getText().isEmpty()) {
+            cnsmr.setGp2(df.format(result2).replace(",", "."));
+        }
+        if (!jTextFieldMenge3.getText().isEmpty()) {
+            cnsmr.setGp3(df.format(result3).replace(",", "."));
+        }
+        if (!jTextFieldMenge4.getText().isEmpty()) {
+
+            cnsmr.setGp4(df.format(result4).replace(",", "."));
+        }
+    }
+    
+    
     /**
      * @param args the command line arguments
      */
