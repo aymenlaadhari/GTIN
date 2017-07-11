@@ -6,6 +6,7 @@
 package dasLieferdao;
 
 import java.util.List;
+import model.ABDaten;
 import model.Faktor;
 import model.Kund;
 import model.LieferKund;
@@ -79,4 +80,6 @@ public interface JlieferDaoInterface {
     public String erfassungAktualisieren(String id,String kdPosnr,String kdArtNr,String kdfarb,String kdGros,String kdVar,String kdKomm,String kdMeng);
     public String erfassungLoschen(String id);
     public List<LieferKundDoppel> getListDoppelErfassungZuruck();
+    
+    public ABDaten getabDaten(String posGridId);
 }

@@ -11,6 +11,7 @@ import java.awt.event.KeyEvent;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import model.ABDaten;
 import model.Faktor;
 import model.Kund;
 import model.LieferKundPrufer;
@@ -56,7 +57,7 @@ public class JDialogGTIN extends javax.swing.JDialog {
         jLabelkundNummer.setText(kundPrufer.getKundNummer());
         jTextFieldArtikelNummer.setText(kundPrufer.getKundenArtikelNummer());
         jTextFieldFarbe.setText(kundPrufer.getFarbe());
-        jTextFieldGroesse.setText(kundPrufer.getGroesse());
+        jTextFieldGroesse.setText(kundPrufer.getKdgroesse());
         jTextFieldVariante.setText(kundPrufer.getVariante());
 
         jTextFieldGTIN.setText(kundPruferFamak.getGtin());
@@ -77,7 +78,8 @@ public class JDialogGTIN extends javax.swing.JDialog {
         jTextFieldArtNummerFamak.setText(kundPruferFamak.getArtikel_Nr());
         jTextFieldGroesseFamak.setText(kundPruferFamak.getGroesse());
         jTextFieldVariantenFamak.setText(kundPruferFamak.getVarNummer());
-
+        ABDaten aBDaten = jlieferDaoInterface.getabDaten(kundPruferFamak.getPosGrId());
+        jLabel10.setText("GTIN (Famak, AB: "+aBDaten.getAb()+", Pos: "+aBDaten.getPos()+", GrNr: "+aBDaten.getGrNr()+")");
         tableModel = (DefaultTableModel) jTableFaktor.getModel();
         tableModel.setRowCount(0);
 
@@ -132,6 +134,7 @@ public class JDialogGTIN extends javax.swing.JDialog {
         jTextFieldPreisVarianten = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         jTextFieldPreisGesamt = new javax.swing.JTextField();
+        jLabel19 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         jTextFieldArtNummerFamak = new javax.swing.JTextField();
@@ -201,6 +204,8 @@ public class JDialogGTIN extends javax.swing.JDialog {
             }
         });
 
+        jLabel19.setText("Preis für 1 Einheit (St., Pr. etc.) inkl. MMZ, ohne Varianten-Aufschlag");
+
         javax.swing.GroupLayout jPanelKundenAnlegenLayout = new javax.swing.GroupLayout(jPanelKundenAnlegen);
         jPanelKundenAnlegen.setLayout(jPanelKundenAnlegenLayout);
         jPanelKundenAnlegenLayout.setHorizontalGroup(
@@ -237,13 +242,17 @@ public class JDialogGTIN extends javax.swing.JDialog {
                         .addGroup(jPanelKundenAnlegenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel8)
                             .addComponent(jTextFieldPreisVarianten, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
                         .addGroup(jPanelKundenAnlegenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jTextFieldPreisGesamt, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelKundenAnlegenLayout.createSequentialGroup()
                                 .addComponent(jLabel9)
                                 .addGap(9, 9, 9)))))
-                .addContainerGap(62, Short.MAX_VALUE))
+                .addContainerGap(45, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelKundenAnlegenLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanelKundenAnlegenLayout.setVerticalGroup(
             jPanelKundenAnlegenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -279,7 +288,8 @@ public class JDialogGTIN extends javax.swing.JDialog {
                     .addComponent(jTextFieldPreisGrossBasis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextFieldPreisVarianten, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextFieldPreisGesamt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(16, 16, 16))
+                .addGap(14, 14, 14)
+                .addComponent(jLabel19))
         );
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Dastex Daten", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.DEFAULT_POSITION));
@@ -746,6 +756,7 @@ public class JDialogGTIN extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

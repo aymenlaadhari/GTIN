@@ -17,6 +17,7 @@ public class JDialogKundenbestellung extends javax.swing.JDialog {
 
     private final JlieferDaoInterface jlieferDaoInterface;
     private boolean success = true;
+    private boolean refresh = false;
 
     /**
      * Creates new form JDialogKundenbestellung
@@ -43,6 +44,12 @@ public class JDialogKundenbestellung extends javax.swing.JDialog {
         jlieferDaoInterface = new JlieferDao(dbUrl);
 
     }
+
+    public boolean isRefresh() {
+        return refresh;
+    }
+
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -236,12 +243,14 @@ public class JDialogKundenbestellung extends javax.swing.JDialog {
         // TODO add your handling code here:
         success = jlieferDaoInterface.updateTablePrufen(jTextFieldId.getText(), jTextFieldposNr.getText(), jTextFieldArtNummer.getText(), jTextFieldFarbe.getText(), jTextFieldGroesse.getText(), jTextFieldVariante.getText(), jTextFieldMenge.getText(), jTextFieldPreis.getText(), jTextFieldKommission.getText());
         System.out.println(success);
+        refresh = true;
         dispose();
     }//GEN-LAST:event_jButtonUbernehmenActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         dispose();
+        refresh = false;
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /**

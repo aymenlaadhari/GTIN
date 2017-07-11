@@ -123,6 +123,7 @@ public class MainFrame extends javax.swing.JFrame {
         dlgProgress.setSize(300, 90);
         dlgProgress.setResizable(false);
         dlgProgress.setLocationRelativeTo(getParent());
+        jCheckBoxPreisSofort.setSelected(true);
 
         popupMenu = new JPopupMenu();
         JMenuItem menuItemAdd = new JMenuItem("GTIN prüfen");
@@ -131,6 +132,7 @@ public class MainFrame extends javax.swing.JFrame {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 String preisVariante = jlieferDaoInterface.getPreisVariante(kundPruferFamak.getPosGrId());
+                System.out.println("Preis Variante: "+preisVariante);
                 JDialogGTIN dialogGTIN = new JDialogGTIN(MainFrame.this, true, kundPrufer, kundPruferFamak, preisVariante, dbUrl);
                 dialogGTIN.setVisible(true);
             }
@@ -199,7 +201,13 @@ public class MainFrame extends javax.swing.JFrame {
 
                     case 6:
                         //selectedArtikel.getCombinations().get(tclPreis.getRow()).setWz(tclPreis.getNewValue().toString());
-                        liefkunds.get(tclLiefKund.getRow()).setPreis(tclLiefKund.getNewValue().toString());
+                        if (tclLiefKund.getNewValue().toString().contains(",")) {
+                            String replaceAll = tclLiefKund.getNewValue().toString().replaceAll(",", ".");
+                            liefkunds.get(tclLiefKund.getRow()).setPreis(replaceAll);
+                        } else {
+                            liefkunds.get(tclLiefKund.getRow()).setPreis(tclLiefKund.getNewValue().toString());
+                        }
+                
 
                         break;
 
@@ -232,17 +240,17 @@ public class MainFrame extends javax.swing.JFrame {
         kundPruferFamak = new LieferKundPrufer();
 
         int[] rows = jTablePrufer.getSelectedRows();
-        if (!"".equals(liefPrufers.get(rows[0]).getPosGrId())) {
+        if (!"".equals(liefPrufers.get(rows[0]).getPosGrId()) && liefPrufers.get(rows[0]).getId().equals("") ) {
             kundPruferFamak = liefPrufers.get(rows[0]);
 
-        } else {
+        } else if(!liefPrufers.get(rows[0]).getId().equals("")){
             kundPrufer = liefPrufers.get(rows[0]);
         }
 
-        if (!"".equals(liefPrufers.get(rows[1]).getPosGrId())) {
+        if (!"".equals(liefPrufers.get(rows[1]).getPosGrId())&& liefPrufers.get(rows[1]).getId().equals("")) {
             kundPruferFamak = liefPrufers.get(rows[1]);
 
-        } else {
+        } else if(!liefPrufers.get(rows[1]).getId().equals("")){
             kundPrufer = liefPrufers.get(rows[1]);
         }
     }
@@ -1346,6 +1354,11 @@ public class MainFrame extends javax.swing.JFrame {
         jLabel25.setText(">>");
 
         jButton5.setText("Erfassungsdaten verarbeiten");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
@@ -1406,6 +1419,11 @@ public class MainFrame extends javax.swing.JFrame {
         jLabel20.setText(">> Daten in Famak eingeben >>");
 
         jButton1.setText("Erfassungsdaten verarbeiten");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jLabel21.setText("oder automatische nachtverarbeitung abwarten");
 
@@ -1827,12 +1845,13 @@ public class MainFrame extends javax.swing.JFrame {
     private void jTablePruferMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTablePruferMouseClicked
         // TODO add your handling code here:
         if (tableModelPrufer.getRowCount() != 0) {
-
             if (evt.getClickCount() == 2) {
                 if (!liefPrufers.get(jTablePrufer.getSelectedRow()).getId().isEmpty()) {
                     JDialogKundenbestellung dialogKundenbestellung = new JDialogKundenbestellung(this, true, liefPrufers.get(jTablePrufer.getSelectedRow()), dbUrl);
                     dialogKundenbestellung.setVisible(true);
-                    populateJtablePrufung();
+                    if (dialogKundenbestellung.isRefresh()) {
+                        populateJtablePrufung();
+                    }  
                 }
 
             } else if (evt.getButton() == MouseEvent.BUTTON3) {
@@ -2159,7 +2178,6 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-
         insertIntoDb("2");
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -2167,6 +2185,16 @@ public class MainFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         doppelErfassungPrüfen();
     }//GEN-LAST:event_jButtonDoppelErfasungActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        erfassungVerarbeiten();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+        erfassungVerarbeiten();
+    }//GEN-LAST:event_jButton5ActionPerformed
 
     /**
      * @param args the command line arguments

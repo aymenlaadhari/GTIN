@@ -316,11 +316,10 @@ public class JDialogDoppelErfassung extends javax.swing.JDialog {
         // TODO add your handling code here:
         int[] rows = jTable.getSelectedRows();
         for (int i = 0; i < rows.length; i++) {
-            LieferKundDoppel kundDoppel = kundDoppelsIn.get(rows[i] - i);
+            LieferKundDoppel kundDoppel = kundDoppelsIn.get(rows[i]);
             String meldung = jlieferDaoInterface.erfassungAktualisieren(kundDoppel.getId(), kundDoppel.getKdPosNummer(), kundDoppel.getKdArtNummer(), kundDoppel.getKdFarbe(), kundDoppel.getKdGroesse(), kundDoppel.getKdVariante(), kundDoppel.getKommission(), kundDoppel.getKdMenge());
             JOptionPane.showMessageDialog(null, meldung, "Information",
                     JOptionPane.INFORMATION_MESSAGE);
-
         }
     }//GEN-LAST:event_jButtonmarkierteAktualisierenActionPerformed
 

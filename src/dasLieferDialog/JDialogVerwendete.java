@@ -91,7 +91,15 @@ public class JDialogVerwendete extends javax.swing.JDialog {
         jTextFieldTyp.setText(verwendeteMengenstaffel.getTyp());
         jTextFieldVarianten.setText(verwendeteMengenstaffel.getVerwendetePreise().getVarianten().replace(".", ","));
         jTextFieldWGZ.setText(verwendeteMengenstaffel.getVerwendeterGroßenzuschlag().getWgZuchlag());
-        jTextFieldbasisPreisVerw.setText(verwendeteMengenstaffel.getVerwendetePreise().getBasisPreis().replace(".", ","));
+        
+        System.out.println("basispreis: " + verwendeteMengenstaffel.getVerwendetePreise().getBasisPreis());
+        if (!verwendeteMengenstaffel.getVerwendetePreise().getBasisPreis().isEmpty()) {
+            jTextFieldbasisPreisVerw.setText(verwendeteMengenstaffel.getVerwendetePreise().getBasisPreis().replace(".", ","));
+        } else {
+
+            jTextFieldbasisPreisVerw.setText("");
+        }
+
         tableModel.setRowCount(0);
         tablemodelvarianten.setRowCount(0);
         tableModelGroessen.setRowCount(0);
