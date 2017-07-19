@@ -74,6 +74,7 @@ public interface JlieferDaoInterface {
     
     public List<String> getIndexes();
     public List<String> getIndexInFamak();
+    public String getOneIndexInFamak();
     public List<String> getFehlerIndexes();
     
     public List<LieferKundDoppel> getListDoppelErfassung();
@@ -82,4 +83,8 @@ public interface JlieferDaoInterface {
     public List<LieferKundDoppel> getListDoppelErfassungZuruck();
     
     public ABDaten getabDaten(String posGridId);
+    
+    
+    public String insertInFamak(String kundnummer, String kdBest, String kdBesDate, String kundWunch, LieferKund cnsmr);
+    public boolean insertIntoDb(String kundnummer, String kdBest, String kdBesDate, String kundWunch, String erfasser, String erDatum, String kdPosActiv,LieferKund cnsmr, String id);
 }

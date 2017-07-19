@@ -13,6 +13,7 @@ public class LieferKund {
 
     private String posiNummer = "", Kd_Pos_activ = "", Pos_Zaehler = "", Artikel_Nr = "", Farbe = "", Groesse = "", Variante = "", Menge = "", Preis = "", Kommission = "", lagerNum = "", summe = "0", status = "0", ubergabe = "0", id = "0", meldungFamak="";
 
+    private boolean liefRecorded;
     public String getSumme() {
         return summe;
     }
@@ -28,6 +29,16 @@ public class LieferKund {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public boolean isLiefRecorded() {
+        return liefRecorded;
+    }
+
+    public void setLiefRecorded(boolean liefRecorded) {
+        this.liefRecorded = liefRecorded;
+    }
+
+    
 
     public String getUbergabe() {
         return ubergabe;

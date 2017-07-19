@@ -43,6 +43,7 @@ public class JlieferDao implements JlieferDaoInterface {
     String exceptionUpdate = "";
     boolean verify, proceed = false;
     List<String> indexes = new ArrayList<>(), infamakIndexes = new ArrayList<>(), fehlerIndexes = new ArrayList<>();
+    String indexFamak;
     boolean recorded = true;
     boolean updated = true;
     List<String> listMeldung;
@@ -200,6 +201,12 @@ public class JlieferDao implements JlieferDaoInterface {
     public List<String> getIndexInFamak() {
         return infamakIndexes;
     }
+
+    @Override
+    public String getOneIndexInFamak() {
+       return indexFamak;
+    }
+    
 
     @Override
     public List<String> getIndexes() {
@@ -838,6 +845,54 @@ public class JlieferDao implements JlieferDaoInterface {
                     + "', '" + kdBest + "', '" + kdBesDate + "', '" + kundWunch + "', '" + cnsmr.getPosiNummer()
                     + "', '" + cnsmr.getArtikel_Nr() + "', '" + cnsmr.getFarbe() + "' , '" + cnsmr.getGroesse()
                     + "', '" + cnsmr.getVariante() + "', '" + cnsmr.getMenge() + "', '" + cnsmr.getSumme() + "', '" + cnsmr.getLagerNum() + "', '" + cnsmr.getKommission() + "')";
+            System.out.println("PositionNummer in the procedure: "+cnsmr.getPosiNummer());
+            
+            if (cnsmr.getId().equals("0")) {
+                try {
+                    Connection conProdukt = DriverManager.getConnection(dburlProdukt);
+                    Statement s = conProdukt.createStatement();
+                    try (ResultSet rs = s.executeQuery(procName)) {
+//                    if (kdBesDate==null) {
+//                       rs.setNull(3, java.sql.Types.DATE); 
+//                       rs.
+//                    }
+//                    if (kundWunch==null) {
+//                       cs.setNull(4, java.sql.Types.DATE); 
+//                    }
+                        while (rs.next()) {
+                            //listMeldung.add(cnsmr.getPosiNummer()+"-"+rs.getString(1)+"//"+cnsmr.hashCode());
+                            listMeldung.add(rs.getString(1)+"//"+cnsmr.hashCode());
+                            if (rs.getString(1).startsWith("F")) {
+                              fehlerIndexes.add(cnsmr.getPosiNummer());
+                            }else{
+                               infamakIndexes.add(cnsmr.getPosiNummer());
+                               indexFamak = cnsmr.getPosiNummer();
+                            }  
+                        }
+
+                        rs.close();
+                        s.close();
+                        conProdukt.close();
+                    }
+
+                } catch (SQLException ex) {
+                    Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+                    recorded = false;
+                    exceptionRecord = ex.getMessage();
+                }
+            }
+
+        });
+        return listMeldung;
+    }
+    
+    @Override
+    public String insertInFamak(String kundnummer, String kdBest, String kdBesDate, String kundWunch, LieferKund cnsmr){
+        String meldung = "";
+        String procName = "SELECT GTIN_Erfassungsdaten_in_Famak_schreiben( '" + kundnummer
+                    + "', '" + kdBest + "', '" + kdBesDate + "', '" + kundWunch + "', '" + cnsmr.getPosiNummer()
+                    + "', '" + cnsmr.getArtikel_Nr() + "', '" + cnsmr.getFarbe() + "' , '" + cnsmr.getGroesse()
+                    + "', '" + cnsmr.getVariante() + "', '" + cnsmr.getMenge() + "', '" + cnsmr.getSumme() + "', '" + cnsmr.getLagerNum() + "', '" + cnsmr.getKommission() + "')";
             if (cnsmr.getId().equals("0")) {
                 try {
                     Connection conProdukt = DriverManager.getConnection(dburlProdukt);
@@ -870,16 +925,16 @@ public class JlieferDao implements JlieferDaoInterface {
                     exceptionRecord = ex.getMessage();
                 }
             }
-
-        });
-        return listMeldung;
+        return meldung;
     }
 
+    
+    
     @Override
     public boolean updateTableGin(String kundnummer, String kdBest, String kdBesDate, String kundWunch, String erfasser, String erDatum, String kdPosActiv, List<LieferKund> lieferKunds, String id) {
 
         lieferKunds.stream().forEach(cnsmr -> {
-
+            System.out.println("positionNummer in insertDB: "+cnsmr.getPosiNummer());
             String procName;
             switch (id) {
 
@@ -969,6 +1024,92 @@ public class JlieferDao implements JlieferDaoInterface {
     }
 
     @Override
+    public boolean insertIntoDb(String kundnummer, String kdBest, String kdBesDate, String kundWunch, String erfasser, String erDatum, String kdPosActiv,LieferKund cnsmr, String id){
+        String procName;
+            switch (id) {
+
+            case "0":
+                if (cnsmr.getStatus().equals("0") && cnsmr.getUbergabe().equals("0") && cnsmr.getId().equals("0")) {
+                    procName = "{CALL GTIN_Erfassungsdaten_speichern( '" + kundnummer
+                            + "', '" + kdBest + "', '" + kdBesDate + "', '" + kundWunch + "', '" + erfasser
+                            + "', '" + erDatum + "', '" + kdPosActiv + "' , '" + cnsmr.getPosiNummer()
+                            + "', '" + cnsmr.getArtikel_Nr() + "', '" + cnsmr.getFarbe() + "', '" + cnsmr.getGroesse()
+                            + "', '" + cnsmr.getVariante() + "', '" + cnsmr.getMenge() + "', '" + cnsmr.getPreis()
+                            + "', '" + cnsmr.getKommission() + "', '" + "" + "', '" + "" + "', '" + "" + "')}";
+                    executeQuery(kdBesDate, kundWunch, erDatum, procName, cnsmr);
+                } else {
+                    recorded = false;
+                }
+                break;
+
+            case "1":
+                if (cnsmr.getStatus().equals("0")) {
+                    procName = "{CALL GTIN_Erfassungsdaten_speichern( '" + kundnummer
+                            + "', '" + kdBest + "', '" + kdBesDate + "', '" + kundWunch + "', '" + erfasser
+                            + "', '" + erDatum + "', '" + kdPosActiv + "' , '" + cnsmr.getPosiNummer()
+                            + "', '" + cnsmr.getArtikel_Nr() + "', '" + cnsmr.getFarbe() + "', '" + cnsmr.getGroesse()
+                            + "', '" + cnsmr.getVariante() + "', '" + cnsmr.getMenge() + "', '" + cnsmr.getPreis()
+                            + "', '" + cnsmr.getKommission() + "', '" + "901" + "', '" + "" + "', '" + cnsmr.getStatus() + "')}";
+
+                    executeQuery(kdBesDate, kundWunch, erDatum, procName, cnsmr);
+
+                } else {
+                    recorded = false;
+                }
+                break;
+
+            case "2":
+                if (cnsmr.getUbergabe().equals("0")) {
+                    procName = "{CALL GTIN_Erfassungsdaten_speichern( '" + kundnummer
+                            + "', '" + kdBest + "', '" + kdBesDate + "', '" + kundWunch + "', '" + erfasser
+                            + "', '" + erDatum + "', '" + kdPosActiv + "' , '" + cnsmr.getPosiNummer()
+                            + "', '" + cnsmr.getArtikel_Nr() + "', '" + cnsmr.getFarbe() + "', '" + cnsmr.getGroesse()
+                            + "', '" + cnsmr.getVariante() + "', '" + cnsmr.getMenge() + "', '" + cnsmr.getPreis()
+                            + "', '" + cnsmr.getKommission() + "', '" + "902" + "', '" + "" + "', '" + cnsmr.getUbergabe() + "')}";
+                    if (!cnsmr.getStatus().equals("0")) {
+                        int dialogResult = JOptionPane.showConfirmDialog(
+                                null,
+                                "Die Daten wurden bereits für \"Speichern 1\" verwendet, wollen Sie fortfahren?",
+                                "Achtung",
+                                JOptionPane.YES_NO_OPTION);
+                        if (dialogResult == JOptionPane.YES_OPTION) {
+                            // Saving code here
+                            executeQuery(kdBesDate, kundWunch, erDatum, procName, cnsmr);
+                        } else {
+                            recorded = false;
+                        }
+                    } else {
+                        executeQuery(kdBesDate, kundWunch, erDatum, procName, cnsmr);
+                    }
+
+                } else {
+                    recorded = false;
+                }
+                break;
+
+            case "3":
+
+                if (cnsmr.getStatus().equals("0")) {
+
+                    procName = "{CALL GTIN_Erfassungsdaten_speichern( '" + kundnummer
+                            + "', '" + kdBest + "', '" + kdBesDate + "', '" + kundWunch + "', '" + erfasser
+                            + "', '" + erDatum + "', '" + kdPosActiv + "' , '" + cnsmr.getPosiNummer()
+                            + "', '" + cnsmr.getArtikel_Nr() + "', '" + cnsmr.getFarbe() + "', '" + cnsmr.getGroesse()
+                            + "', '" + cnsmr.getVariante() + "', '" + cnsmr.getMenge() + "', '" + cnsmr.getPreis()
+                            + "', '" + cnsmr.getKommission() + "', '" + "900" + "', '" + cnsmr.getMeldungFamak() + "', '" + cnsmr.getId() + "')}";
+
+                    executeQuery(kdBesDate, kundWunch, erDatum, procName, cnsmr);
+                } else {
+                    recorded = false;
+                }
+                break;
+        }
+        return recorded;
+    };
+    
+    
+    
+    @Override
     public boolean updateTablePrufen(String id, String posNr, String artikelNr, String farbe, String groesse, String variante, String menge, String preis, String kommission) {
         String procName = "{CALL GTIN_Erfassungsdaten_aendern( '" + id
                 + "', '" + posNr + "', '" + artikelNr + "', '" + farbe + "', '" + groesse
@@ -991,7 +1132,8 @@ public class JlieferDao implements JlieferDaoInterface {
         return updated;
     }
 
-    private void executeQuery(String kdBesDate, String kundWunch, String erDatum, String procName, LieferKund cnsmr) {
+    private boolean executeQuery(String kdBesDate, String kundWunch, String erDatum, String procName, LieferKund cnsmr) {
+        boolean liefRecorded;
         try {
             Connection conProdukt = DriverManager.getConnection(dburlProdukt);
             try (CallableStatement cs = conProdukt.prepareCall(procName)) {
@@ -1012,11 +1154,16 @@ public class JlieferDao implements JlieferDaoInterface {
                 indexes.add(cnsmr.getPosiNummer());
             }
            recorded = true;
+           liefRecorded = true;
+           
         } catch (SQLException ex) {
             Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
             recorded = false;
+            liefRecorded = false;
             exceptionRecord = ex.getMessage();
         }
+        
+        return liefRecorded;
     }
 
     private List<Varianten> getListVarianten(String posGridId) {
