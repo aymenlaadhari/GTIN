@@ -449,11 +449,7 @@ public class JlieferDao implements JlieferDaoInterface {
         } catch (SQLException ex) {
             Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
         }
-//        kunds.stream().forEach(cnsmr->{
-//            System.out.println(cnsmr.getKdArtNummer());
-//    });
         return listGtinAnderung;
-
     }
 
     @Override
@@ -482,11 +478,8 @@ public class JlieferDao implements JlieferDaoInterface {
         } catch (SQLException ex) {
             Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
         }
-//        kunds.stream().forEach(cnsmr->{
-//            System.out.println(cnsmr.getKdArtNummer());
-//    });
-        return kunds;
 
+        return kunds;
     }
 
     @Override
@@ -501,13 +494,6 @@ public class JlieferDao implements JlieferDaoInterface {
                 while (rs.next()) {
                     LieferKundPrufer liefPrufer = new LieferKundPrufer();
 
-//                     if (rs.wasNull()) {
-//                        System.out.println("was NULL");
-//                    } else {
-//                        System.out.println("not NULL");
-//                    }
-//                     String handel = rs.getString("Erfasser") != null ? rs.getString("Erfasser") : "-1";
-//                     System.out.println(handel);
                     liefPrufer.setZeile(rs.getString("Zeile") != null ? rs.getString("Zeile") : "");
                     liefPrufer.setTreffer(rs.getString("Treffer") != null ? rs.getString("Treffer") : "");
                     liefPrufer.setKundNummer(rs.getString("Kd_Nr") != null ? rs.getString("Kd_Nr") : "");
@@ -845,20 +831,14 @@ public class JlieferDao implements JlieferDaoInterface {
                     + "', '" + kdBest + "', '" + kdBesDate + "', '" + kundWunch + "', '" + cnsmr.getPosiNummer()
                     + "', '" + cnsmr.getArtikel_Nr() + "', '" + cnsmr.getFarbe() + "' , '" + cnsmr.getGroesse()
                     + "', '" + cnsmr.getVariante() + "', '" + cnsmr.getMenge() + "', '" + cnsmr.getSumme() + "', '" + cnsmr.getLagerNum() + "', '" + cnsmr.getKommission() + "')";
-            System.out.println("PositionNummer in the procedure: "+cnsmr.getPosiNummer());
+           
             
             if (cnsmr.getId().equals("0")) {
                 try {
                     Connection conProdukt = DriverManager.getConnection(dburlProdukt);
                     Statement s = conProdukt.createStatement();
                     try (ResultSet rs = s.executeQuery(procName)) {
-//                    if (kdBesDate==null) {
-//                       rs.setNull(3, java.sql.Types.DATE); 
-//                       rs.
-//                    }
-//                    if (kundWunch==null) {
-//                       cs.setNull(4, java.sql.Types.DATE); 
-//                    }
+
                         while (rs.next()) {
                             //listMeldung.add(cnsmr.getPosiNummer()+"-"+rs.getString(1)+"//"+cnsmr.hashCode());
                             listMeldung.add(rs.getString(1)+"//"+cnsmr.hashCode());
@@ -928,13 +908,11 @@ public class JlieferDao implements JlieferDaoInterface {
         return meldung;
     }
 
-    
-    
     @Override
     public boolean updateTableGin(String kundnummer, String kdBest, String kdBesDate, String kundWunch, String erfasser, String erDatum, String kdPosActiv, List<LieferKund> lieferKunds, String id) {
 
         lieferKunds.stream().forEach(cnsmr -> {
-            System.out.println("positionNummer in insertDB: "+cnsmr.getPosiNummer());
+            
             String procName;
             switch (id) {
 
@@ -947,25 +925,23 @@ public class JlieferDao implements JlieferDaoInterface {
                                 + "', '" + cnsmr.getVariante() + "', '" + cnsmr.getMenge() + "', '" + cnsmr.getPreis()
                                 + "', '" + cnsmr.getKommission() + "', '" + "" + "', '" + "" + "', '" + "" + "')}";
                         executeQuery(kdBesDate, kundWunch, erDatum, procName, cnsmr);
-                    }else{
+                    } else {
                         recorded = false;
                     }
                     break;
 
                 case "1":
                     if (cnsmr.getStatus().equals("0")) {
-                         procName = "{CALL GTIN_Erfassungsdaten_speichern( '" + kundnummer
+                        procName = "{CALL GTIN_Erfassungsdaten_speichern( '" + kundnummer
                                 + "', '" + kdBest + "', '" + kdBesDate + "', '" + kundWunch + "', '" + erfasser
                                 + "', '" + erDatum + "', '" + kdPosActiv + "' , '" + cnsmr.getPosiNummer()
                                 + "', '" + cnsmr.getArtikel_Nr() + "', '" + cnsmr.getFarbe() + "', '" + cnsmr.getGroesse()
                                 + "', '" + cnsmr.getVariante() + "', '" + cnsmr.getMenge() + "', '" + cnsmr.getPreis()
                                 + "', '" + cnsmr.getKommission() + "', '" + "901" + "', '" + "" + "', '" + cnsmr.getStatus() + "')}";
-                        
-                        
-                            executeQuery(kdBesDate, kundWunch, erDatum, procName, cnsmr);
-                        
 
-                    }else{
+                        executeQuery(kdBesDate, kundWunch, erDatum, procName, cnsmr);
+
+                    } else {
                         recorded = false;
                     }
                     break;
@@ -987,36 +963,32 @@ public class JlieferDao implements JlieferDaoInterface {
                             if (dialogResult == JOptionPane.YES_OPTION) {
                                 // Saving code here
                                 executeQuery(kdBesDate, kundWunch, erDatum, procName, cnsmr);
-                            } else{
-                            recorded = false;
-                            }                            
+                            } else {
+                                recorded = false;
+                            }
                         } else {
                             executeQuery(kdBesDate, kundWunch, erDatum, procName, cnsmr);
-                        }    
-                         
-                    }else{
+                        }
+
+                    } else {
                         recorded = false;
                     }
                     break;
 
                 case "3":
-                    
                     if (cnsmr.getStatus().equals("0")) {
-                        
+
                         procName = "{CALL GTIN_Erfassungsdaten_speichern( '" + kundnummer
                                 + "', '" + kdBest + "', '" + kdBesDate + "', '" + kundWunch + "', '" + erfasser
                                 + "', '" + erDatum + "', '" + kdPosActiv + "' , '" + cnsmr.getPosiNummer()
                                 + "', '" + cnsmr.getArtikel_Nr() + "', '" + cnsmr.getFarbe() + "', '" + cnsmr.getGroesse()
                                 + "', '" + cnsmr.getVariante() + "', '" + cnsmr.getMenge() + "', '" + cnsmr.getPreis()
                                 + "', '" + cnsmr.getKommission() + "', '" + "900" + "', '" + cnsmr.getMeldungFamak() + "', '" + cnsmr.getId() + "')}";
-                        
-                            executeQuery(kdBesDate, kundWunch, erDatum, procName, cnsmr);
-                    }else{
+
+                        executeQuery(kdBesDate, kundWunch, erDatum, procName, cnsmr);
+                    } else {
                         recorded = false;
                     }
-                        
-                        
-                    
                     break;
             }
         });
@@ -1105,10 +1077,8 @@ public class JlieferDao implements JlieferDaoInterface {
                 break;
         }
         return recorded;
-    };
-    
-    
-    
+    }
+
     @Override
     public boolean updateTablePrufen(String id, String posNr, String artikelNr, String farbe, String groesse, String variante, String menge, String preis, String kommission) {
         String procName = "{CALL GTIN_Erfassungsdaten_aendern( '" + id

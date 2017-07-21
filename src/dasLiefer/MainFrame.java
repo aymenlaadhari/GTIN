@@ -168,37 +168,31 @@ public class MainFrame extends javax.swing.JFrame {
                 switch (tclLiefKund.getColumn()) {
 
                     case 1:
-                        //selectedArtikel.getCombinations().get(tclPreis.getRow()).setGroessen(tclPreis.getNewValue().toString());
                         liefkunds.get(tclLiefKund.getRow()).setArtikel_Nr(tclLiefKund.getNewValue().toString());
                         changeArtnum = true;
                         break;
 
                     case 2:
-                        //selectedArtikel.getCombinations().get(tclPreis.getRow()).setGs(tclPreis.getNewValue().toString());
                         liefkunds.get(tclLiefKund.getRow()).setFarbe(tclLiefKund.getNewValue().toString());
                         changeFarb = true;
                         break;
 
                     case 3:
-                        //selectedArtikel.getCombinations().get(tclPreis.getRow()).setArt(tclPreis.getNewValue().toString());
                         liefkunds.get(tclLiefKund.getRow()).setGroesse(tclLiefKund.getNewValue().toString());
 
                         break;
 
                     case 4:
-                        //selectedArtikel.getCombinations().get(tclPreis.getRow()).setAb(tclPreis.getNewValue().toString());
                         liefkunds.get(tclLiefKund.getRow()).setVariante(tclLiefKund.getNewValue().toString());
                         changeVar = true;
                         break;
 
                     case 5:
 
-                        //selectedArtikel.getCombinations().get(tclPreis.getRow()).setPreis(tclPreis.getNewValue().toString());
                         liefkunds.get(tclLiefKund.getRow()).setMenge(tclLiefKund.getNewValue().toString());
                         break;
 
                     case 6:
-                        //selectedArtikel.getCombinations().get(tclPreis.getRow()).setWz(tclPreis.getNewValue().toString());
                         if (tclLiefKund.getNewValue().toString().contains(",")) {
                             String replaceAll = tclLiefKund.getNewValue().toString().replaceAll(",", ".");
                             liefkunds.get(tclLiefKund.getRow()).setPreis(replaceAll);
@@ -208,27 +202,20 @@ public class MainFrame extends javax.swing.JFrame {
                         break;
 
                     case 7:
-                        //selectedArtikel.getCombinations().get(tclPreis.getRow()).setPmng(tclPreis.getNewValue().toString());
                         liefkunds.get(tclLiefKund.getRow()).setKommission(tclLiefKund.getNewValue().toString());
 
                         break;
 
                     case 8:
-                        //selectedArtikel.getCombinations().get(tclPreis.getRow()).setMe(tclPreis.getNewValue().toString());
                         liefkunds.get(tclLiefKund.getRow()).setLagerNum(tclLiefKund.getNewValue().toString());
 
                         break;
 
                     case 9:
-                        //selectedArtikel.getCombinations().get(tclPreis.getRow()).setVpMng(tclPreis.getNewValue().toString());
                         liefkunds.get(tclLiefKund.getRow()).setSumme(tclLiefKund.getNewValue().toString());
 
                         break;
                 }
-                //populateJtablePreisListe();
-                liefkunds.stream().forEach(cnsmr->{
-                    System.out.println(cnsmr.getPosiNummer());
-                });
                 refreshTableLiefKund(tclLiefKund.getRow(), changeArtnum, changeFarb, changeVar);
             }
         });
@@ -400,8 +387,6 @@ public class MainFrame extends javax.swing.JFrame {
 
             @Override
             public void removeUpdate(DocumentEvent de) {
-//                changed=true;
-//                count = (Integer.valueOf(jTextFieldKdPosNr.getText()));
 
             }
         });
@@ -454,33 +439,15 @@ public class MainFrame extends javax.swing.JFrame {
         }
 
         if (changeInthtable) {
-            System.out.println("changeInthtable");
+           
             rowDataMuster[0] = lieferKund.getPosiNummer();
             
         } else{
-            
-//            if (!changedJtextPosition) {
-//                System.out.println("!changedJtextPosition");
-//
-//            if ((Integer.valueOf(jTextFieldKdPosNr.getText()) % 10) == 0) {
-//
-//                if ((Integer.valueOf(jTextFieldKdPosNr.getText()) % 100) == 0) {
-//                    rowDataMuster[0] = (jTable.getRowCount() + increment) * 100;
-//                } else {
-//                    rowDataMuster[0] = (jTable.getRowCount() + increment) * 10;
-//                }
-//            } else {
-//                rowDataMuster[0] = (jTable.getRowCount() + increment);
-//            }
-//        } else {
-//
-//            rowDataMuster[0] = count++;
-//        }
 
             if (changedJtextPosition) {
                 rowDataMuster[0] = count++;
             }else{
-                System.out.println("changedJtextPosition");
+                
 
                 if ((Integer.valueOf(jTextFieldKdPosNr.getText()) % 10) == 0) {
 
@@ -507,8 +474,6 @@ public class MainFrame extends javax.swing.JFrame {
         rowDataMuster[10] = lieferKund.getStatus();
         rowDataMuster[11] = lieferKund.getUbergabe();
         rowDataMuster[12] = lieferKund.getId();
-        
-        System.out.println("new position: "+lieferKund.getPosiNummer());
     }
 
     private void addToTableNormal(LieferKund lieferKund){
@@ -527,11 +492,8 @@ public class MainFrame extends javax.swing.JFrame {
         rowDataMuster[12] = lieferKund.getId();
     }
     private void populateJtable() {
-        //jTextFieldKdPosNr.setText(String.valueOf(indexPos));
+
         LieferKund lieferKund = new LieferKund();
-        //lieferKund.setKd_Pos_activ(jTextFieldKposAktiv.getText());
-//        
-//        indexPos = Integer.valueOf(jTextFieldKdPosNr.getText()); 
         
         if ((!liefkunds.isEmpty()) && jTextFieldKdArtNr.getText().equals("")) {
             lieferKund.setArtikel_Nr(liefkunds.get(liefkunds.size() - 1).getArtikel_Nr());
@@ -617,7 +579,7 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     private void refreshTable(List<LieferKund> lieferKunds) {
-        System.out.println("in refreshTable");
+        
         tableModel.setRowCount(0);
         lieferKunds.stream().forEach(cnsmr -> {
             addToTableNormal(cnsmr);
@@ -626,7 +588,7 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     private void refreshTableLiefKund(int position, boolean changeArtnum, boolean changeFarb, boolean changeVariante) {
-        System.out.println("in refreshTableLiefKund");
+       
         String kdArtNum = liefkunds.get(position).getArtikel_Nr();
         String kdFarbe = liefkunds.get(position).getFarbe();
         String kdVariante = liefkunds.get(position).getVariante();
@@ -688,8 +650,6 @@ public class MainFrame extends javax.swing.JFrame {
                 // TODO add your handling code here:
                 try {
                     recorded = jlieferDaoInterface.updateTableGin(jTextFieldKdNr.getText(), jTextFieldKdBestNr.getText(), dateBest, wunchDat, jTextFieldErfasser.getText(), dateTod, jTextFieldKposAktiv.getText(), liefkunds, id);
-                    System.out.println("recorded:" +recorded);                      
-//recorded = jlieferDaoInterface.insertIntoDb(jTextFieldKdNr.getText(), jTextFieldKdBestNr.getText(), dateBest, wunchDat, jTextFieldErfasser.getText(), dateTod, jTextFieldKposAktiv.getText(), liefkund, id);
                       
                 } catch (Exception ex) {
                     Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -771,12 +731,12 @@ public class MainFrame extends javax.swing.JFrame {
                 try {
                     list = jlieferDaoInterface.updateInFamak(jTextFieldKdNr.getText(), jTextFieldKdBestNr.getText(), dateBest, wunchDat, liefkunds);
                     list.stream().forEach(cnsmr ->{
-                        System.out.println("meldungs fromFamak:" +cnsmr);
+                        
                     });
                     
                     liefkunds.stream().forEach(cnsmr->{
                     
-                        System.out.println("index in list liiefkund:"+liefkunds.indexOf(cnsmr));
+                        
                     });
                     
                     list.stream().forEach(cnsmr -> {
@@ -966,7 +926,6 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     private void selectInTheTable() {
-
         String pruf1 = jTablePrufer.getValueAt(jTablePrufer.getSelectedRow(), 0).toString();
         String pruf2 = "";
         if (jTablePrufer.getValueAt(jTablePrufer.getSelectedRow(), 1) != null) {
@@ -979,7 +938,6 @@ public class MainFrame extends javax.swing.JFrame {
             }
         }
         selecteItems();
-
     }
 
     private void erfassungManuelle() {
