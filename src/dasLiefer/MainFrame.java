@@ -5,7 +5,6 @@
  */
 package dasLiefer;
 
-import com.sun.xml.internal.ws.util.StringUtils;
 import dasLieferDialog.JDialogDoppelErfassung;
 import dasLieferdao.JlieferDao;
 import dasLieferdao.JlieferDaoInterface;
