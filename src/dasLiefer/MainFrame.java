@@ -89,7 +89,7 @@ public class MainFrame extends javax.swing.JFrame {
     private final JDialog dlgProgress;
     private String dbUrl;
     private boolean ctrlPressed;
-    JPopupMenu popupMenu;
+    JPopupMenu popupMenu, popupMenueingaben;
     private LieferKundPrufer kundPruferFamak, kundPrufer;
     private VerwendeteMengenstaffel verwendeteMengenstaffel;
     private final ListSelectionModel listSelectionModel;
@@ -127,8 +127,9 @@ public class MainFrame extends javax.swing.JFrame {
         jCheckBoxPreisSofort.setSelected(true);
 
         popupMenu = new JPopupMenu();
+        popupMenueingaben = new JPopupMenu();
         JMenuItem menuItemAdd = new JMenuItem("GTIN prüfen");
-
+        JMenuItem menuItemAddSuche = new JMenuItem("Suchen");
         menuItemAdd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -138,7 +139,15 @@ public class MainFrame extends javax.swing.JFrame {
                 dialogGTIN.setVisible(true);
             }
         });
+        menuItemAddSuche.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                System.out.println("Suchen");
+                }
+        });
+        
         popupMenu.add(menuItemAdd);
+        popupMenueingaben.add(menuItemAddSuche);
         ctrlPressed = false;
 
         listSelectionModel = jTable.getSelectionModel();
@@ -1334,6 +1343,9 @@ public class MainFrame extends javax.swing.JFrame {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTableMouseClicked(evt);
             }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                jTableMouseReleased(evt);
+            }
         });
         jTable.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -2259,6 +2271,17 @@ public class MainFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         erfassungVerarbeiten();
     }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableMouseReleased
+        // TODO add your handling code here:
+         int rowindex = jTable.getSelectedRow();
+        if (rowindex < 0) {
+            return;
+        }
+        if (evt.isPopupTrigger() && evt.getComponent() instanceof JTable) {
+            popupMenueingaben.show(evt.getComponent(), evt.getX(), evt.getY());
+        }
+    }//GEN-LAST:event_jTableMouseReleased
 
     /**
      * @param args the command line arguments
