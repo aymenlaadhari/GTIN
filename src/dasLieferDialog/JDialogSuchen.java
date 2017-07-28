@@ -5,25 +5,74 @@
  */
 package dasLieferDialog;
 
+import dasLieferdao.JlieferDao;
+import dasLieferdao.JlieferDaoInterface;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+import model.LieferKund;
+import model.LieferKundPrufer;
+
 /**
  *
  * @author aladhari
  */
 public class JDialogSuchen extends javax.swing.JDialog {
-
+    private final DefaultTableModel tableModel;
+    private JlieferDaoInterface jlieferDaoInterface;
+    private final Object[] rowDataTable = new Object[8];
+    private List<LieferKundPrufer> list;
+    private final String kdNummerIn;
+    private final LieferKund lieferKund;
     /**
      * Creates new form JDialogSuchen
      * @param parent
-     * @param modal
-     * @param kundNummer
+     * @param lieferKundIn
+     
+    
+     * @param kdNummer
+     * @param dbUrl
+   
      */
-    public JDialogSuchen(java.awt.Frame parent, boolean modal,String kundNummer) {
-        super(parent, modal);
+    public JDialogSuchen(java.awt.Frame parent, LieferKund lieferKundIn,String kdNummer, String dbUrl) {
+        super(parent);
         initComponents();
-        setTitle("Artikel Suche für Kunden Num: ");
+        kdNummerIn = kdNummer;
+        lieferKund = lieferKundIn;
+        setTitle("Artikel Suche für Kunden Num: "+kdNummer);
+        tableModel = (DefaultTableModel) jTable.getModel();
+        initialise(lieferKund, dbUrl);
+        populateTable(list);
         
     }
+    private void initialise(LieferKund lieferKund,String dbUrl) {
+    jlieferDaoInterface = new JlieferDao(dbUrl);
+    jTextFieldKdGross.setText(lieferKund.getGroesse());
+    jTextFieldKdVariant.setText(lieferKund.getVariante());
+    jTextFieldKdfarb.setText(lieferKund.getFarbe());
+    jTextFieldkdArtNum.setText(lieferKund.getArtikel_Nr());
+    list = jlieferDaoInterface.getLieferKundSuche(kdNummerIn, lieferKund.getArtikel_Nr(), lieferKund.getFarbe(), lieferKund.getGroesse(), lieferKund.getVariante());
+    }
+    
+    private void populateTable(List<LieferKundPrufer> listGtinAnderung) {
+        tableModel.setRowCount(0);
+        listGtinAnderung.stream().forEach(cnsmr -> {
 
+            addToTable(cnsmr);
+            tableModel.addRow(rowDataTable);
+
+        });
+    }
+    
+    private void addToTable(LieferKundPrufer kund){
+        rowDataTable[0] = kund.getGtin();
+        rowDataTable[1] = kund.getKundNummer();
+        rowDataTable[2] = kund.getKundenArtikelNummer();
+        rowDataTable[3] = kund.getFarbeNummer();
+        rowDataTable[4] = kund.getGroesse();
+        rowDataTable[5] = kund.getVariante();
+        rowDataTable[6] = kund.getPosGrPreis();
+        rowDataTable[7] = kund.getGtinPreis();           
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -33,18 +82,36 @@ public class JDialogSuchen extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
-        jTextField4 = new javax.swing.JTextField();
+        jTextFieldkdArtNum = new javax.swing.JTextField();
+        jTextFieldKdfarb = new javax.swing.JTextField();
+        jTextFieldKdGross = new javax.swing.JTextField();
+        jTextFieldKdVariant = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jTable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        jTextFieldKdfarb.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextFieldKdfarbKeyReleased(evt);
+            }
+        });
+
+        jTextFieldKdGross.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextFieldKdGrossKeyReleased(evt);
+            }
+        });
+
+        jTextFieldKdVariant.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextFieldKdVariantKeyReleased(evt);
+            }
+        });
 
         jLabel1.setText("Kd-Artikel-Num");
 
@@ -54,7 +121,7 @@ public class JDialogSuchen extends javax.swing.JDialog {
 
         jLabel4.setText("Kd-Variante");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null},
@@ -65,7 +132,7 @@ public class JDialogSuchen extends javax.swing.JDialog {
                 "GTIN", "Kd_Nr", "Kd_Art_Nr", "Kd_Farbe", "Kd_Groesse", "Kd_Variante", "Gr_Preis1", "var_Preis"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(jTable);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -79,7 +146,7 @@ public class JDialogSuchen extends javax.swing.JDialog {
                         .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextFieldkdArtNum, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(22, 22, 22)
                                 .addComponent(jLabel1)))
@@ -91,16 +158,16 @@ public class JDialogSuchen extends javax.swing.JDialog {
                                 .addComponent(jLabel3))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(11, 11, 11)
-                                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jTextFieldKdfarb, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(jTextFieldKdGross, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addComponent(jLabel4)
                                 .addGap(56, 56, 56))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jTextFieldKdVariant, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18))))))
         );
         layout.setVerticalGroup(
@@ -114,10 +181,10 @@ public class JDialogSuchen extends javax.swing.JDialog {
                     .addComponent(jLabel4))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextFieldkdArtNum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextFieldKdfarb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextFieldKdGross, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextFieldKdVariant, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 262, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(24, Short.MAX_VALUE))
@@ -125,6 +192,24 @@ public class JDialogSuchen extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jTextFieldKdfarbKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldKdfarbKeyReleased
+        // TODO add your handling code here:
+         list = jlieferDaoInterface.getLieferKundSuche(kdNummerIn, lieferKund.getArtikel_Nr(), lieferKund.getFarbe(), lieferKund.getGroesse(), lieferKund.getVariante());
+         populateTable(list);
+    }//GEN-LAST:event_jTextFieldKdfarbKeyReleased
+
+    private void jTextFieldKdGrossKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldKdGrossKeyReleased
+        // TODO add your handling code here:
+        list = jlieferDaoInterface.getLieferKundSuche(kdNummerIn, lieferKund.getArtikel_Nr(), lieferKund.getFarbe(), lieferKund.getGroesse(), lieferKund.getVariante());
+        populateTable(list);
+    }//GEN-LAST:event_jTextFieldKdGrossKeyReleased
+
+    private void jTextFieldKdVariantKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldKdVariantKeyReleased
+        // TODO add your handling code here:
+        list = jlieferDaoInterface.getLieferKundSuche(kdNummerIn, lieferKund.getArtikel_Nr(), lieferKund.getFarbe(), lieferKund.getGroesse(), lieferKund.getVariante());
+        populateTable(list);
+    }//GEN-LAST:event_jTextFieldKdVariantKeyReleased
 
     /**
      * @param args the command line arguments
@@ -156,7 +241,7 @@ public class JDialogSuchen extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                JDialogSuchen dialog = new JDialogSuchen(new javax.swing.JFrame(), true,"");
+                JDialogSuchen dialog = new JDialogSuchen(new javax.swing.JFrame(), new LieferKund(),"","");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -174,10 +259,10 @@ public class JDialogSuchen extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
+    private javax.swing.JTable jTable;
+    private javax.swing.JTextField jTextFieldKdGross;
+    private javax.swing.JTextField jTextFieldKdVariant;
+    private javax.swing.JTextField jTextFieldKdfarb;
+    private javax.swing.JTextField jTextFieldkdArtNum;
     // End of variables declaration//GEN-END:variables
 }

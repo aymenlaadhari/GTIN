@@ -84,7 +84,7 @@ public interface JlieferDaoInterface {
     
     public ABDaten getabDaten(String posGridId);
     
-    
+    public List<LieferKundPrufer> getLieferKundSuche(String kdNummer,String kdArtNummer, String kdFarbe,String kdGroesse, String kdVariante);
     public String insertInFamak(String kundnummer, String kdBest, String kdBesDate, String kundWunch, LieferKund cnsmr);
     public boolean insertIntoDb(String kundnummer, String kdBest, String kdBesDate, String kundWunch, String erfasser, String erDatum, String kdPosActiv,LieferKund cnsmr, String id);
 }

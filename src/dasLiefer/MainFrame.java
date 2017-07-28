@@ -10,6 +10,7 @@ import dasLieferdao.JlieferDao;
 import dasLieferdao.JlieferDaoInterface;
 import dasLieferDialog.JDialogGTIN;
 import dasLieferDialog.JDialogKundenbestellung;
+import dasLieferDialog.JDialogSuchen;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -142,7 +143,13 @@ public class MainFrame extends javax.swing.JFrame {
         menuItemAddSuche.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                System.out.println("Suchen");
+              
+                  if (!liefkunds.get(jTable.getSelectedRow()).getId().isEmpty()) {
+                    JDialogSuchen dialogSuchen = new JDialogSuchen(MainFrame.this,liefkunds.get(jTable.getSelectedRow()),jTextFieldKdNr.getText(), dbUrl );
+                    dialogSuchen.setVisible(true);
+                    
+                }
+                
                 }
         });
         
