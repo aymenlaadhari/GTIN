@@ -95,6 +95,12 @@ public class JDialogSuchen extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
+        jTextFieldkdArtNum.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextFieldkdArtNumKeyReleased(evt);
+            }
+        });
+
         jTextFieldKdfarb.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 jTextFieldKdfarbKeyReleased(evt);
@@ -195,21 +201,27 @@ public class JDialogSuchen extends javax.swing.JDialog {
 
     private void jTextFieldKdfarbKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldKdfarbKeyReleased
         // TODO add your handling code here:
-         list = jlieferDaoInterface.getLieferKundSuche(kdNummerIn, lieferKund.getArtikel_Nr(), lieferKund.getFarbe(), lieferKund.getGroesse(), lieferKund.getVariante());
+         list = jlieferDaoInterface.getLieferKundSuche(kdNummerIn, jTextFieldkdArtNum.getText(), jTextFieldKdfarb.getText(), jTextFieldKdGross.getText(), jTextFieldKdVariant.getText());
          populateTable(list);
     }//GEN-LAST:event_jTextFieldKdfarbKeyReleased
 
     private void jTextFieldKdGrossKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldKdGrossKeyReleased
         // TODO add your handling code here:
-        list = jlieferDaoInterface.getLieferKundSuche(kdNummerIn, lieferKund.getArtikel_Nr(), lieferKund.getFarbe(), lieferKund.getGroesse(), lieferKund.getVariante());
-        populateTable(list);
+        list = jlieferDaoInterface.getLieferKundSuche(kdNummerIn, jTextFieldkdArtNum.getText(), jTextFieldKdfarb.getText(), jTextFieldKdGross.getText(), jTextFieldKdVariant.getText());
+         populateTable(list);
     }//GEN-LAST:event_jTextFieldKdGrossKeyReleased
 
     private void jTextFieldKdVariantKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldKdVariantKeyReleased
         // TODO add your handling code here:
-        list = jlieferDaoInterface.getLieferKundSuche(kdNummerIn, lieferKund.getArtikel_Nr(), lieferKund.getFarbe(), lieferKund.getGroesse(), lieferKund.getVariante());
-        populateTable(list);
+        list = jlieferDaoInterface.getLieferKundSuche(kdNummerIn, jTextFieldkdArtNum.getText(), jTextFieldKdfarb.getText(), jTextFieldKdGross.getText(), jTextFieldKdVariant.getText());
+         populateTable(list);
     }//GEN-LAST:event_jTextFieldKdVariantKeyReleased
+
+    private void jTextFieldkdArtNumKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldkdArtNumKeyReleased
+        // TODO add your handling code here:
+        list = jlieferDaoInterface.getLieferKundSuche(kdNummerIn, jTextFieldkdArtNum.getText(), jTextFieldKdfarb.getText(), jTextFieldKdGross.getText(), jTextFieldKdVariant.getText());
+         populateTable(list);
+    }//GEN-LAST:event_jTextFieldkdArtNumKeyReleased
 
     /**
      * @param args the command line arguments
