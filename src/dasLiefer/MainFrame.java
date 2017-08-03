@@ -287,7 +287,6 @@ public class MainFrame extends javax.swing.JFrame {
         jTextFieldkdPreis.setText("");
         jTextFieldKommission.setText("");
         jTextFieldKdArtNr.requestFocus();
-
     }
 
     private void initilize() {
