@@ -810,14 +810,16 @@ public class JDialogVerwendete extends javax.swing.JDialog {
                     case "30":
                         //System.out.println(kundPrufer.getKundNummer()+"-"+ kundPrufer.getKundenArtikelNummer()+"-"+ kundPrufer.getFarbe()+"-"+ kundPrufer.getGroesse()+"-"+ kundPrufer.getVariante()+"-"+gtinParam);
                         kundPrufer.setFarbe(cnsmr.getKdFarbe());
-                        kundPrufer.setGroesse(cnsmr.getGroesse());
+                        kundPrufer.setGroesse(cnsmr.getKdGrosse());
                         kundPrufer.setVarNummer(cnsmr.getKdVariante());
                         // kljdf
                         List<LieferKundPrufer> listGtinAnderung = jlieferDaoInterface.getListGtinAnderung(kundPrufer.getKundNummer(), cnsmr.getKdArtNum(), cnsmr.getKdFarbe(), cnsmr.getGroesse(), kundPrufer.getVariante(), meldung1, cnsmr.getGp1(), jTextFieldVarianten.getText().replace(",", "."));
-
+                         
+                        System.out.println("kundprufer in JDialogVerwendete: " + kundPrufer.getGroesse() + "-" + kundPrufer.getFarbe() + "" + kundPrufer.getVariante());
+        
                         JDialogKundenArtikelDatenAndern artikelDatenAndern = new JDialogKundenArtikelDatenAndern(this, true, listGtinAnderung, kundPruferFamakIn, kundPrufer, this.dbUrl, meldung1, cnsmr.getGp1(), jTextFieldVarianten.getText(), message2);
                         artikelDatenAndern.setVisible(true);
-                        System.out.println("we are here");
+                       
                         //meldung = artikelDatenAndern.getMeldung();
 
                         break;
@@ -838,7 +840,7 @@ public class JDialogVerwendete extends javax.swing.JDialog {
                         break;
 
                 }
-                insertIntoList(kundNum, cnsmr.getKdArtNum(), cnsmr.getKdFarbe(), cnsmr.getGroesse(), cnsmr.getKdVariante(), kundPruferFamakIn.getGtin(), kundPruferFamakIn.getPosGrId(), cnsmr.getGp1(), jTextFieldVarianten.getText(), meldung2, message2 + ";" + meldung2);
+                insertIntoList(kundNum, cnsmr.getKdArtNum(), cnsmr.getKdFarbe(), cnsmr.getKdGrosse(), cnsmr.getKdVariante(), kundPruferFamakIn.getGtin(), kundPruferFamakIn.getPosGrId(), cnsmr.getGp1(), jTextFieldVarianten.getText(), meldung2, message2 + ";" + meldung2);
             }
         });
 

@@ -185,11 +185,12 @@ public class JDialogKundenArtikelDatenAndern extends javax.swing.JDialog {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         //System.out.println("1"+"/"+kundPrufer.getKundNummer()+"/"+ kundPrufer.getKundenArtikelNummer()+"/"+kundPrufer.getFarbe()+"/"+kundPrufer.getGroesse()+"/"+kundPrufer.getVariante()+"/"+gtinParam+"/"+kundPruferFamamk.getPosGrId()+"/"+preisGrossBasis+"/"+preisVarianten);
-        System.out.println("kundprufer : " + kundPrufer.getGroesse() + "-" + kundPrufer.getFarbe() + "" + kundPrufer.getVariante());
+        System.out.println("kundprufer in JDialogKundenArtikelDatenAndern: " + kundPrufer.getGroesse() + "-" + kundPrufer.getFarbe() + "" + kundPrufer.getVariante());
+        
         meldung = daoInterface.anlegenAndern("1", kundPrufer.getKundNummer(), kundPrufer.getKundenArtikelNummer(), kundPrufer.getFarbe(), kundPrufer.getGroesse(), kundPrufer.getVariante(), gtinParam, kundPruferFamamk.getPosGrId(), preisGrossBasis, preisVarianten);
-        System.out.println("melung in KundenArtikelDaten: " + meldung);
+        //System.out.println("melung in KundenArtikelDaten: " + meldung);
         String message = daoInterface.getMeldung("2", meldung);
-        System.out.println("message in KundenArtikelDaten: " + message);
+        //System.out.println("message in KundenArtikelDaten: " + message);
         String[] parts3 = message.split("--");
         String part1_3 = parts3[0]; // 004
         String part2_3 = parts3[1]; // 034556

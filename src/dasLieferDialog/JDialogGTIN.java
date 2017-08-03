@@ -59,22 +59,17 @@ public class JDialogGTIN extends javax.swing.JDialog {
         jTextFieldFarbe.setText(kundPrufer.getFarbe());
         jTextFieldGroesse.setText(kundPrufer.getKdgroesse());
         jTextFieldVariante.setText(kundPrufer.getVariante());
-
         jTextFieldGTIN.setText(kundPruferFamak.getGtin());
         jTextFieldGTIN.setEditable(false);
-
         jTextFieldFarbNum.setText(kundPruferFamak.getFarbeNummer());
         varianten = Float.parseFloat(preisVariante);
         grossenBasis = (Float.parseFloat(kundPruferFamak.getPosGrPreis()) - varianten);
         jTextFieldPreisGrossBasis.setText(String.format("%.2f", grossenBasis));
         jTextFieldPreisVarianten.setText(String.format("%.2f", varianten));
-
         jTextFieldPreisGesamt.setText(String.format("%.2f", Float.parseFloat(preisVariante) + grossenBasis));
         jTextFieldPreisGesamt.setEditable(false);
-
         jTextFieldPosGrID.setText(kundPruferFamak.getPosGrId());
         jTextFieldPosGrID.setEditable(false);
-
         jTextFieldArtNummerFamak.setText(kundPruferFamak.getArtikel_Nr());
         jTextFieldGroesseFamak.setText(kundPruferFamak.getGroesse());
         jTextFieldVariantenFamak.setText(kundPruferFamak.getVarNummer());

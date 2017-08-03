@@ -60,8 +60,11 @@ public class JlieferDao implements JlieferDaoInterface {
             // String proc = "SELECT GTIN_Stammsatz_anlegen_aendern ( '0', '1040', '13', 'EL', ';001;002;061O;072;091;111C;111D;', '', '2230531' )";
             //String proc = "SELECT GTIN_Kunde_KdArtNr_anlegen_aendern( '0', '104008', 'null', 'null', 'null', null, '"+gtin+"', '"+posGrId+"', '"+grundPreis+"', '"+varPreis+"' )";
             String proc = "SELECT GTIN_Kunde_KdArtNr_anlegen_aendern( '" + indicator + "', '" + kundNummer + "', '" + kundArtNummer + "', '" + kundfarbe + "', '" + kundGroesse + "', '" + variante + "', '" + gtin + "', '" + posGrId + "', '" + grundPreis + "', '" + varPreis + "' )";
-
+            
+            System.out.println("here steht: "+proc);
+            
             Connection conProdukt = DriverManager.getConnection(dburlProdukt);
+            
             Statement s = conProdukt.createStatement();
             try (ResultSet rs = s.executeQuery(proc)) {
                 while (rs.next()) {

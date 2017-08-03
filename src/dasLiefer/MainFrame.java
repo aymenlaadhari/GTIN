@@ -97,6 +97,7 @@ public class MainFrame extends javax.swing.JFrame {
     private final TableCellListener tclLieferKund;
     private TableCellListener tclLiefKund;
     Integer indexPos;
+    
 
     /**
      * Creates new form MainFrame
@@ -294,6 +295,7 @@ public class MainFrame extends javax.swing.JFrame {
         Instant instant = now.atZone(ZoneId.systemDefault()).toInstant();
         Date dateFromOld = Date.from(instant);
         jXDatePickerToday.setDate(dateFromOld);
+        jXDatePickerBisDatum.setDate(dateFromOld);
         jTextFieldErfasser.setText(System.getProperty("user.name"));
         jXDatePickerKdBestDat.getEditor().addKeyListener(new KeyAdapter() {
             @Override
@@ -319,6 +321,7 @@ public class MainFrame extends javax.swing.JFrame {
                 }
             }
         });
+        
         liefkunds = new ArrayList<>();
         liefPrufers = new ArrayList<>();
 
