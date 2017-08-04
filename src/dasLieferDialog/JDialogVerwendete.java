@@ -813,7 +813,7 @@ public class JDialogVerwendete extends javax.swing.JDialog {
                         kundPrufer.setGroesse(cnsmr.getKdGrosse());
                         kundPrufer.setVarNummer(cnsmr.getKdVariante());
                         // kljdf
-                        List<LieferKundPrufer> listGtinAnderung = jlieferDaoInterface.getListGtinAnderung(kundPrufer.getKundNummer(), cnsmr.getKdArtNum(), cnsmr.getKdFarbe(), cnsmr.getGroesse(), kundPrufer.getVariante(), meldung1, cnsmr.getGp1(), jTextFieldVarianten.getText().replace(",", "."));
+                        List<LieferKundPrufer> listGtinAnderung = jlieferDaoInterface.getListGtinAnderung(kundPrufer.getKundNummer(), cnsmr.getKdArtNum(), cnsmr.getKdFarbe(), cnsmr.getKdGrosse(), kundPrufer.getVariante(), meldung1, cnsmr.getGp1(), jTextFieldVarianten.getText().replace(",", "."));
                          
                         System.out.println("kundprufer in JDialogVerwendete: " + kundPrufer.getGroesse() + "-" + kundPrufer.getFarbe() + "" + kundPrufer.getVariante());
         
