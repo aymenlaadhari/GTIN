@@ -491,11 +491,11 @@
                                 <Column editable="true" title="KdMenge" type="java.lang.Object"/>
                                 <Column editable="true" title="KdPreis" type="java.lang.Object"/>
                                 <Column editable="true" title="Kommission" type="java.lang.Object"/>
-                                <Column editable="false" title="Lager-Nr" type="java.lang.Object"/>
+                                <Column editable="true" title="Lager-Nr" type="java.lang.Object"/>
                                 <Column editable="true" title="Art-Summe" type="java.lang.Object"/>
-                                <Column editable="true" title="S1" type="java.lang.Object"/>
-                                <Column editable="true" title="S2" type="java.lang.Object"/>
-                                <Column editable="true" title="F" type="java.lang.Object"/>
+                                <Column editable="true" title="Status" type="java.lang.Object"/>
+                                <Column editable="true" title="Ubergabe" type="java.lang.Object"/>
+                                <Column editable="true" title="ID" type="java.lang.Object"/>
                               </Table>
                             </Property>
                             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">

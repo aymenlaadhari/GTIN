@@ -92,14 +92,13 @@ public class JDialogVerwendete extends javax.swing.JDialog {
         jTextFieldVarianten.setText(verwendeteMengenstaffel.getVerwendetePreise().getVarianten().replace(".", ","));
         jTextFieldWGZ.setText(verwendeteMengenstaffel.getVerwendeterGroßenzuschlag().getWgZuchlag());
         
-        System.out.println("basispreis: " + verwendeteMengenstaffel.getVerwendetePreise().getBasisPreis());
+//        System.out.println("basispreis: " + verwendeteMengenstaffel.getVerwendetePreise().getBasisPreis());
         if (!verwendeteMengenstaffel.getVerwendetePreise().getBasisPreis().isEmpty()) {
             jTextFieldbasisPreisVerw.setText(verwendeteMengenstaffel.getVerwendetePreise().getBasisPreis().replace(".", ","));
         } else {
 
             jTextFieldbasisPreisVerw.setText("");
         }
-
         tableModel.setRowCount(0);
         tablemodelvarianten.setRowCount(0);
         tableModelGroessen.setRowCount(0);
@@ -815,7 +814,7 @@ public class JDialogVerwendete extends javax.swing.JDialog {
                         // kljdf
                         List<LieferKundPrufer> listGtinAnderung = jlieferDaoInterface.getListGtinAnderung(kundPrufer.getKundNummer(), cnsmr.getKdArtNum(), cnsmr.getKdFarbe(), cnsmr.getKdGrosse(), kundPrufer.getVariante(), meldung1, cnsmr.getGp1(), jTextFieldVarianten.getText().replace(",", "."));
                          
-                        System.out.println("kundprufer in JDialogVerwendete: " + kundPrufer.getGroesse() + "-" + kundPrufer.getFarbe() + "" + kundPrufer.getVariante());
+//                        System.out.println("kundprufer in JDialogVerwendete: " + kundPrufer.getGroesse() + "-" + kundPrufer.getFarbe() + "" + kundPrufer.getVariante());
         
                         JDialogKundenArtikelDatenAndern artikelDatenAndern = new JDialogKundenArtikelDatenAndern(this, true, listGtinAnderung, kundPruferFamakIn, kundPrufer, this.dbUrl, meldung1, cnsmr.getGp1(), jTextFieldVarianten.getText(), message2);
                         artikelDatenAndern.setVisible(true);
@@ -843,7 +842,6 @@ public class JDialogVerwendete extends javax.swing.JDialog {
                 insertIntoList(kundNum, cnsmr.getKdArtNum(), cnsmr.getKdFarbe(), cnsmr.getKdGrosse(), cnsmr.getKdVariante(), kundPruferFamakIn.getGtin(), kundPruferFamakIn.getPosGrId(), cnsmr.getGp1(), jTextFieldVarianten.getText(), meldung2, message2 + ";" + meldung2);
             }
         });
-
         JDialogProtokoll dialogProtokoll = new JDialogProtokoll(this, true, protokolls);
         dialogProtokoll.setVisible(true);
 

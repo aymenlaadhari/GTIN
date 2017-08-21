@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import model.ABDaten;
 import model.Faktor;
+import model.KopfDaten;
 import model.Kund;
 import model.LieferKund;
 import model.LieferKundDoppel;
@@ -239,6 +240,80 @@ public class JlieferDao implements JlieferDaoInterface {
         return listGtinAnderung;
     
         
+    }
+
+    @Override
+    public List<KopfDaten> getListKopfDaten(String kdNum, String kdBestNum, String kdBestDat) {
+       
+    List<KopfDaten> kopfDatens = new ArrayList<>();
+    
+    String procName = "{CALL GTIN_Kunden_Bestellung_suchen ('" + kdNum + "','" + kdBestNum + "','" + kdBestDat + "','')}";
+    Connection conProdukt;
+     try {
+            conProdukt = DriverManager.getConnection(dburlProdukt);
+            CallableStatement cs = conProdukt.prepareCall(procName);
+            try (ResultSet rs = cs.executeQuery()) {
+                while (rs.next()) {
+                    KopfDaten kopfDaten = new KopfDaten();
+                    kopfDaten.setBemerkung(rs.getString(9));
+                    kopfDaten.setErfassDatum(rs.getString(7));
+                    kopfDaten.setErfasser(rs.getString(6));
+                    kopfDaten.setKdBestnum(rs.getString(4));
+                    kopfDaten.setKdName(rs.getString(2));
+                    kopfDaten.setKdNum(rs.getString(1));
+                    kopfDaten.setKdBestDatum(rs.getString(5));
+                    kopfDaten.setKdWunchDat(rs.getString(10));
+                    kopfDaten.setOrt(rs.getString(3));
+                    kopfDaten.setStatus(rs.getString(8));
+                    kopfDatens.add(kopfDaten);
+                }
+                rs.close();
+                cs.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    return kopfDatens;
+           
+    }
+
+    @Override
+    public List<LieferKund> getListLieferGenerated(String KdNum, String KdBestnum, String KdBestDatum, String status) {
+        List<LieferKund> lieferKunds = new ArrayList<>();
+        String procName = "{CALL GTIN_Erfassungsdaten_oeffnen ('" + KdNum + "','" + KdBestnum + "','" + KdBestDatum + "','" + status + "')}";
+        System.out.println(procName);
+    Connection conProdukt;
+     try {
+            conProdukt = DriverManager.getConnection(dburlProdukt);
+            CallableStatement cs = conProdukt.prepareCall(procName);
+            try (ResultSet rs = cs.executeQuery()) {
+                while (rs.next()) {
+                    LieferKund lieferKund = new LieferKund();
+                    
+                    lieferKund.setPosiNummer(rs.getString(5));
+                    lieferKund.setArtikel_Nr(rs.getString(6));
+                    lieferKund.setFarbe(rs.getString(7));
+                    lieferKund.setGroesse(rs.getString(8));
+                    lieferKund.setVariante(rs.getString(9));
+                    lieferKund.setMenge(rs.getString(10));
+                    lieferKund.setPreis(rs.getString(11));
+                    lieferKund.setKommission(rs.getString(12));
+                    lieferKund.setLagerNum(rs.getString(13));
+                    lieferKund.setSumme(rs.getString(14));
+                    lieferKund.setStatus(rs.getString(15));
+                    lieferKund.setUbergabe(rs.getString(16));
+                    lieferKund.setId(rs.getString(17));
+                    lieferKunds.add(lieferKund);
+                }
+                rs.close();
+                cs.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return lieferKunds;
     }
 
     @Override

@@ -10,6 +10,7 @@ import dasLieferdao.JlieferDao;
 import dasLieferdao.JlieferDaoInterface;
 import dasLieferDialog.JDialogGTIN;
 import dasLieferDialog.JDialogKundenbestellung;
+import dasLieferDialog.JDialogListKopfDaten;
 import dasLieferDialog.JDialogSuchen;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -58,6 +59,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
+import model.KopfDaten;
 import model.LieferKund;
 import model.LieferKundDoppel;
 import model.LieferKundPrufer;
@@ -97,7 +99,6 @@ public class MainFrame extends javax.swing.JFrame {
     private final TableCellListener tclLieferKund;
     private TableCellListener tclLiefKund;
     Integer indexPos;
-    
 
     /**
      * Creates new form MainFrame
@@ -136,7 +137,7 @@ public class MainFrame extends javax.swing.JFrame {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 String preisVariante = jlieferDaoInterface.getPreisVariante(kundPruferFamak.getPosGrId());
-                
+
                 JDialogGTIN dialogGTIN = new JDialogGTIN(MainFrame.this, true, kundPrufer, kundPruferFamak, preisVariante, dbUrl);
                 dialogGTIN.setVisible(true);
             }
@@ -144,16 +145,16 @@ public class MainFrame extends javax.swing.JFrame {
         menuItemAddSuche.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-              
-                  if (!liefkunds.get(jTable.getSelectedRow()).getId().isEmpty()) {
-                    JDialogSuchen dialogSuchen = new JDialogSuchen(MainFrame.this,liefkunds.get(jTable.getSelectedRow()),jTextFieldKdNr.getText(), dbUrl );
+
+                if (!liefkunds.get(jTable.getSelectedRow()).getId().isEmpty()) {
+                    JDialogSuchen dialogSuchen = new JDialogSuchen(MainFrame.this, liefkunds.get(jTable.getSelectedRow()), jTextFieldKdNr.getText(), dbUrl);
                     dialogSuchen.setVisible(true);
-                    
+
                 }
-                
-                }
+
+            }
         });
-        
+
         popupMenu.add(menuItemAdd);
         popupMenueingaben.add(menuItemAddSuche);
         ctrlPressed = false;
@@ -300,7 +301,28 @@ public class MainFrame extends javax.swing.JFrame {
             @Override
             public void keyPressed(KeyEvent arg0) {
                 if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
-                    jXDatePickerWunch.requestFocus();
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+                    String dateBest = "1900/01/01";
+                    if (jXDatePickerKdBestDat.getDate() != null) {
+                        dateBest = format.format(jXDatePickerKdBestDat.getDate());
+                    }
+                    List<KopfDaten> kopfDatens = jlieferDaoInterface.getListKopfDaten(jTextFieldKdNr.getText(), jTextFieldKdBestNr.getText(), dateBest);
+                    if (!kopfDatens.isEmpty()) {
+                        JDialogListKopfDaten dialogListKopfDaten = new JDialogListKopfDaten(MainFrame.this, true, kopfDatens);
+                        dialogListKopfDaten.setVisible(true);
+                        KopfDaten kopfDaten = dialogListKopfDaten.getSelectedKopfDatenIn();
+                        if (kopfDaten != null) {
+                            List<LieferKund> lieferKundsIn = jlieferDaoInterface.getListLieferGenerated(kopfDaten.getKdNum(), kopfDaten.getKdBestnum(), kopfDaten.getKdBestDatum(), kopfDaten.getStatus());
+                            System.out.println("liefersList isze = " + lieferKundsIn.size());
+                            populateTableGenarate(lieferKundsIn);
+                        } else {
+                            jXDatePickerWunch.requestFocus();
+                        }
+
+                    } else {
+                        jXDatePickerWunch.requestFocus();
+                    }
+
                 }
             }
         });
@@ -320,7 +342,7 @@ public class MainFrame extends javax.swing.JFrame {
                 }
             }
         });
-        
+
         liefkunds = new ArrayList<>();
         liefPrufers = new ArrayList<>();
 
@@ -448,36 +470,31 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     private void addToTable(LieferKund lieferKund, boolean changeInthtable) {
-        
-        
+
         if (jTable.getRowCount() == 0) {
 
             count = (Integer.valueOf(jTextFieldKdPosNr.getText()));
         }
 
         if (changeInthtable) {
-           
+
             rowDataMuster[0] = lieferKund.getPosiNummer();
-            
-        } else{
+
+        } else {
 
             if (changedJtextPosition) {
                 rowDataMuster[0] = count++;
-            }else{
-                
+            } else if ((Integer.valueOf(jTextFieldKdPosNr.getText()) % 10) == 0) {
 
-                if ((Integer.valueOf(jTextFieldKdPosNr.getText()) % 10) == 0) {
-
-                    if ((Integer.valueOf(jTextFieldKdPosNr.getText()) % 100) == 0) {
-                        rowDataMuster[0] = (jTable.getRowCount() + increment) * 100;
-                    } else {
-                        rowDataMuster[0] = (jTable.getRowCount() + increment) * 10;
-                    }
+                if ((Integer.valueOf(jTextFieldKdPosNr.getText()) % 100) == 0) {
+                    rowDataMuster[0] = (jTable.getRowCount() + increment) * 100;
                 } else {
-                    rowDataMuster[0] = (jTable.getRowCount() + increment);
+                    rowDataMuster[0] = (jTable.getRowCount() + increment) * 10;
                 }
+            } else {
+                rowDataMuster[0] = (jTable.getRowCount() + increment);
             }
-           liefkunds.get(liefkunds.size() - 1).setPosiNummer(String.valueOf(rowDataMuster[0]));  
+            liefkunds.get(liefkunds.size() - 1).setPosiNummer(String.valueOf(rowDataMuster[0]));
         }
         rowDataMuster[1] = lieferKund.getArtikel_Nr();
         rowDataMuster[2] = lieferKund.getFarbe();
@@ -493,7 +510,7 @@ public class MainFrame extends javax.swing.JFrame {
         rowDataMuster[12] = lieferKund.getId();
     }
 
-    private void addToTableNormal(LieferKund lieferKund){
+    private void addToTableNormal(LieferKund lieferKund) {
         rowDataMuster[0] = lieferKund.getPosiNummer();
         rowDataMuster[1] = lieferKund.getArtikel_Nr();
         rowDataMuster[2] = lieferKund.getFarbe();
@@ -508,10 +525,11 @@ public class MainFrame extends javax.swing.JFrame {
         rowDataMuster[11] = lieferKund.getUbergabe();
         rowDataMuster[12] = lieferKund.getId();
     }
+
     private void populateJtable() {
 
         LieferKund lieferKund = new LieferKund();
-        
+
         if ((!liefkunds.isEmpty()) && jTextFieldKdArtNr.getText().equals("")) {
             lieferKund.setArtikel_Nr(liefkunds.get(liefkunds.size() - 1).getArtikel_Nr());
         } else if (jTextFieldKdArtNr.getText().contains(suchen) && suchen != null) {
@@ -528,7 +546,7 @@ public class MainFrame extends javax.swing.JFrame {
         lieferKund.setGroesse(jTextFieldKdGroesse.getText());
         lieferKund.setVariante(jTextFieldKdVariant.getText());
         lieferKund.setMenge(jTextFieldMenge.getText());
-      
+
         if ((!liefkunds.isEmpty()) && jTextFieldkdPreis.getText().equals("") && jTextFieldKdArtNr.getText().equals("")) {
             lieferKund.setPreis(liefkunds.get(liefkunds.size() - 1).getPreis());
         } else if (jTextFieldkdPreis.getText().contains(",")) {
@@ -548,8 +566,7 @@ public class MainFrame extends javax.swing.JFrame {
         if (liefkunds.isEmpty()) {
             lieferKund.setSumme(lieferKund.getMenge());
         }
-        
-       
+
         liefkunds.add(lieferKund);
 
         String kdArtNum = lieferKund.getArtikel_Nr();
@@ -583,9 +600,9 @@ public class MainFrame extends javax.swing.JFrame {
         addToTable(lieferKund, false);
 
         tableModel.addRow(rowDataMuster);
-        
+
         indexPos++;
-        
+
         indexList.stream().forEach(cnsmr -> {
             tableModel.setValueAt(summe, cnsmr, 9);
 
@@ -595,8 +612,15 @@ public class MainFrame extends javax.swing.JFrame {
         jTable.scrollRectToVisible(new Rectangle(jTable.getCellRect(jTable.getRowCount() - 1, 0, true)));
     }
 
+    private void populateTableGenarate(List<LieferKund> lieferKunds) {
+        tableModel.setRowCount(0);
+        lieferKunds.stream().forEach(cnsmr -> {
+            addToTableNormal(cnsmr);
+            tableModel.addRow(rowDataMuster);
+        });
+    }
+
     private void refreshTable(List<LieferKund> lieferKunds) {
-        
         tableModel.setRowCount(0);
         lieferKunds.stream().forEach(cnsmr -> {
             addToTableNormal(cnsmr);
@@ -605,7 +629,7 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     private void refreshTableLiefKund(int position, boolean changeArtnum, boolean changeFarb, boolean changeVariante) {
-       
+
         String kdArtNum = liefkunds.get(position).getArtikel_Nr();
         String kdFarbe = liefkunds.get(position).getFarbe();
         String kdVariante = liefkunds.get(position).getVariante();
@@ -631,7 +655,7 @@ public class MainFrame extends javax.swing.JFrame {
         liefkunds.get(position).setSumme(String.valueOf(summe));
         //liefkunds.notifyAll();
         tableModel.setRowCount(0);
-        String newCount = String.valueOf(Integer.valueOf(liefkunds.get(liefkunds.size()-1).getPosiNummer())+1);
+        String newCount = String.valueOf(Integer.valueOf(liefkunds.get(liefkunds.size() - 1).getPosiNummer()) + 1);
         jTextFieldKdPosNr.setText(newCount);
         liefkunds.stream().forEach(cnsmr -> {
             addToTable(cnsmr, true);
@@ -667,7 +691,7 @@ public class MainFrame extends javax.swing.JFrame {
                 // TODO add your handling code here:
                 try {
                     recorded = jlieferDaoInterface.updateTableGin(jTextFieldKdNr.getText(), jTextFieldKdBestNr.getText(), dateBest, wunchDat, jTextFieldErfasser.getText(), dateTod, jTextFieldKposAktiv.getText(), liefkunds, id);
-                      
+
                 } catch (Exception ex) {
                     Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
 
@@ -685,7 +709,7 @@ public class MainFrame extends javax.swing.JFrame {
                         liefkunds.stream().forEach(liefKund -> {
                             if (liefKund.getPosiNummer().equals(cnsmr)) {
                                 switch (id) {
-                                    case "0": 
+                                    case "0":
                                         liefKund.setStatus("1");
                                         liefKund.setUbergabe("1");
                                         liefKund.setId("1");
@@ -747,21 +771,20 @@ public class MainFrame extends javax.swing.JFrame {
                 // TODO add your handling code here:
                 try {
                     list = jlieferDaoInterface.updateInFamak(jTextFieldKdNr.getText(), jTextFieldKdBestNr.getText(), dateBest, wunchDat, liefkunds);
-                    list.stream().forEach(cnsmr ->{
-                        
-                    });
-                    
-                    liefkunds.stream().forEach(cnsmr->{
-                    
-                        
-                    });
-                    
                     list.stream().forEach(cnsmr -> {
-                        
+
+                    });
+
+                    liefkunds.stream().forEach(cnsmr -> {
+
+                    });
+
+                    list.stream().forEach(cnsmr -> {
+
                         String[] parts = cnsmr.split("//");
                         if (parts.length != 0) {
                             String part1 = parts[0];
-                            String part2 = parts[1];                              
+                            String part2 = parts[1];
                             meldungs.add(part1);
                             for (LieferKund kund : liefkunds) {
                                 if (kund.hashCode() == Integer.valueOf(part2)) {
@@ -769,11 +792,10 @@ public class MainFrame extends javax.swing.JFrame {
                                     break;
                                 }
                             }
-                            
-                           // liefkunds.get(Integer.valueOf(part2)).setMeldungFamak(part1);
-                            
+
+                            // liefkunds.get(Integer.valueOf(part2)).setMeldungFamak(part1);
                         }
-                    });                    
+                    });
                 } catch (Exception ex) {
                     Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
 
@@ -804,8 +826,6 @@ public class MainFrame extends javax.swing.JFrame {
 //                    Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
 //
 //                }
-                
-                
                 return null;
             }
 
@@ -833,8 +853,6 @@ public class MainFrame extends javax.swing.JFrame {
 //                        }
 //                    });
 //                });
-
-
                 insertIntoDb("3");
                 //refreshTable(liefkunds);
 
@@ -1009,8 +1027,8 @@ public class MainFrame extends javax.swing.JFrame {
                     JOptionPane.ERROR_MESSAGE);
         }
     }
-    
-    private void doppelErfassungPrüfen(){
+
+    private void doppelErfassungPrüfen() {
         List<LieferKundDoppel> kundDoppels = jlieferDaoInterface.getListDoppelErfassung();
         JDialogDoppelErfassung dialogDoppelErfassung = new JDialogDoppelErfassung(this, true, kundDoppels, dbUrl);
         dialogDoppelErfassung.setVisible(true);
@@ -1337,17 +1355,9 @@ public class MainFrame extends javax.swing.JFrame {
 
             },
             new String [] {
-                "KdPosNr", "KdArtNr", "KdFarbe", "KdGroesse", "Kdvariant", "KdMenge", "KdPreis", "Kommission", "Lager-Nr", "Art-Summe", "S1", "S2", "F"
+                "KdPosNr", "KdArtNr", "KdFarbe", "KdGroesse", "Kdvariant", "KdMenge", "KdPreis", "Kommission", "Lager-Nr", "Art-Summe", "Status", "Ubergabe", "ID"
             }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                true, true, true, true, true, true, true, true, false, true, true, true, true
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
+        ));
         jTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTableMouseClicked(evt);
@@ -1921,7 +1931,7 @@ public class MainFrame extends javax.swing.JFrame {
                     dialogKundenbestellung.setVisible(true);
                     if (dialogKundenbestellung.isRefresh()) {
                         populateJtablePrufung();
-                    }  
+                    }
                 }
 
             } else if (evt.getButton() == MouseEvent.BUTTON3) {
@@ -1948,39 +1958,38 @@ public class MainFrame extends javax.swing.JFrame {
     private void jTableKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTableKeyPressed
         // TODO add your handling code here:
         if (evt.getKeyCode() == KeyEvent.VK_DELETE) {
-            
-            if (jTable.getRowCount()!= 0) {
+
+            if (jTable.getRowCount() != 0) {
                 int[] rows = jTable.getSelectedRows();
                 String phrase = "";
                 if (rows.length == 1) {
                     phrase = "Möchten Sie die markierte Zeile löschen?";
-                } else if (rows.length>1) {
+                } else if (rows.length > 1) {
                     phrase = "Möchten Sie die markierte Zeilen löschen?";
                 }
-        int dialogResult = JOptionPane.showConfirmDialog(null, phrase, "Actung", JOptionPane.YES_NO_OPTION);
+                int dialogResult = JOptionPane.showConfirmDialog(null, phrase, "Actung", JOptionPane.YES_NO_OPTION);
                 if (dialogResult == JOptionPane.YES_OPTION) {
-                    
-            for (int i = 0; i < rows.length; i++) {
-                //MusterArtikel musterArtikel = musterArtikels.get(rows[i] - i);
-                LieferKund lieferKund = liefkunds.get(rows[i] - i);
-                tableModel.removeRow(rows[i] - i);
-                liefkunds.remove(lieferKund);
-            }
-            if (jTable.getRowCount() == 0) {
-                //musterArtikels = new ArrayList<>();
-                //selectedMusterArtikel = new MusterArtikel();
-                tableModel.setRowCount(0);
-                liefkunds.clear();
-                tableModelPreislIste.setRowCount(0);
 
-                //initilizeFelder();
-            }
+                    for (int i = 0; i < rows.length; i++) {
+                        //MusterArtikel musterArtikel = musterArtikels.get(rows[i] - i);
+                        LieferKund lieferKund = liefkunds.get(rows[i] - i);
+                        tableModel.removeRow(rows[i] - i);
+                        liefkunds.remove(lieferKund);
+                    }
+                    if (jTable.getRowCount() == 0) {
+                        //musterArtikels = new ArrayList<>();
+                        //selectedMusterArtikel = new MusterArtikel();
+                        tableModel.setRowCount(0);
+                        liefkunds.clear();
+                        tableModelPreislIste.setRowCount(0);
 
-            //refreshPosition(jTable.getRowCount());
-            tableModel.fireTableDataChanged();
+                        //initilizeFelder();
+                    }
+
+                    //refreshPosition(jTable.getRowCount());
+                    tableModel.fireTableDataChanged();
                 }
             }
-            
 
         }
     }//GEN-LAST:event_jTableKeyPressed
@@ -2220,7 +2229,7 @@ public class MainFrame extends javax.swing.JFrame {
             jTextFieldKdBestNr.requestFocus();
             jTextFieldMengenBezeug.setText(jlieferDaoInterface.getMengenbezug(jTextFieldKdNr.getText()));
             tableModelPreislIste.setRowCount(0);
-            indexPos = Integer.valueOf(jTextFieldKdPosNr.getText()); 
+            indexPos = Integer.valueOf(jTextFieldKdPosNr.getText());
         }
     }//GEN-LAST:event_jTextFieldKdNrKeyPressed
 
@@ -2283,7 +2292,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void jTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableMouseReleased
         // TODO add your handling code here:
-         int rowindex = jTable.getSelectedRow();
+        int rowindex = jTable.getSelectedRow();
         if (rowindex < 0) {
             return;
         }
@@ -2312,7 +2321,7 @@ public class MainFrame extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        
+
         //</editor-fold>
 
         /* Create and display the form */

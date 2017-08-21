@@ -8,6 +8,7 @@ package dasLieferdao;
 import java.util.List;
 import model.ABDaten;
 import model.Faktor;
+import model.KopfDaten;
 import model.Kund;
 import model.LieferKund;
 import model.LieferKundDoppel;
@@ -87,4 +88,7 @@ public interface JlieferDaoInterface {
     public List<LieferKundPrufer> getLieferKundSuche(String kdNummer,String kdArtNummer, String kdFarbe,String kdGroesse, String kdVariante);
     public String insertInFamak(String kundnummer, String kdBest, String kdBesDate, String kundWunch, LieferKund cnsmr);
     public boolean insertIntoDb(String kundnummer, String kdBest, String kdBesDate, String kundWunch, String erfasser, String erDatum, String kdPosActiv,LieferKund cnsmr, String id);
+    
+    public List<KopfDaten> getListKopfDaten(String kdNum, String kdBestNum, String kdBestDat);
+    public List<LieferKund> getListLieferGenerated(String KdNum, String KdBestnum, String KdBestDatum, String status);
 }
