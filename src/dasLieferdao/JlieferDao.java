@@ -255,16 +255,16 @@ public class JlieferDao implements JlieferDaoInterface {
             try (ResultSet rs = cs.executeQuery()) {
                 while (rs.next()) {
                     KopfDaten kopfDaten = new KopfDaten();
-                    kopfDaten.setBemerkung(rs.getString(9));
-                    kopfDaten.setErfassDatum(rs.getString(7));
-                    kopfDaten.setErfasser(rs.getString(6));
-                    kopfDaten.setKdBestnum(rs.getString(4));
-                    kopfDaten.setKdName(rs.getString(2));
-                    kopfDaten.setKdNum(rs.getString(1));
-                    kopfDaten.setKdBestDatum(rs.getString(5));
-                    kopfDaten.setKdWunchDat(rs.getString(10));
-                    kopfDaten.setOrt(rs.getString(3));
-                    kopfDaten.setStatus(rs.getString(8));
+                    kopfDaten.setBemerkung(rs.getString(9)!= null ? rs.getString(9) : "");
+                    kopfDaten.setErfassDatum(rs.getString(7)!= null ? rs.getString(7) : "");
+                    kopfDaten.setErfasser(rs.getString(6)!= null ? rs.getString(6) : "");
+                    kopfDaten.setKdBestnum(rs.getString(4)!= null ? rs.getString(4) : "");
+                    kopfDaten.setKdName(rs.getString(2)!= null ? rs.getString(2) : "");
+                    kopfDaten.setKdNum(rs.getString(1)!= null ? rs.getString(1) : "");
+                    kopfDaten.setKdBestDatum(rs.getString(5)!= null ? rs.getString(5) : "");
+                    kopfDaten.setKdWunchDat(rs.getString(10)!= null ? rs.getString(10) : "");
+                    kopfDaten.setOrt(rs.getString(3)!= null ? rs.getString(3) : "");
+                    kopfDaten.setStatus(rs.getString(8)!= null ? rs.getString(8) : "");
                     kopfDatens.add(kopfDaten);
                 }
                 rs.close();
@@ -291,19 +291,19 @@ public class JlieferDao implements JlieferDaoInterface {
                 while (rs.next()) {
                     LieferKund lieferKund = new LieferKund();
                     
-                    lieferKund.setPosiNummer(rs.getString(5));
-                    lieferKund.setArtikel_Nr(rs.getString(6));
-                    lieferKund.setFarbe(rs.getString(7));
-                    lieferKund.setGroesse(rs.getString(8));
-                    lieferKund.setVariante(rs.getString(9));
-                    lieferKund.setMenge(rs.getString(10));
-                    lieferKund.setPreis(rs.getString(11));
-                    lieferKund.setKommission(rs.getString(12));
-                    lieferKund.setLagerNum(rs.getString(13));
-                    lieferKund.setSumme(rs.getString(14));
-                    lieferKund.setStatus(rs.getString(15));
-                    lieferKund.setUbergabe(rs.getString(16));
-                    lieferKund.setId(rs.getString(17));
+                    lieferKund.setPosiNummer(rs.getString(5)!= null ? rs.getString(5) : "");
+                    lieferKund.setArtikel_Nr(rs.getString(6)!= null ? rs.getString(6) : "");
+                    lieferKund.setFarbe(rs.getString(7)!= null ? rs.getString(7) : "");
+                    lieferKund.setGroesse(rs.getString(8)!= null ? rs.getString(8) : "");
+                    lieferKund.setVariante(rs.getString(9)!= null ? rs.getString(9) : "");
+                    lieferKund.setMenge(rs.getString(10)!= null ? rs.getString(10) : "");
+                    lieferKund.setPreis(rs.getString(11)!= null ? rs.getString(11) : "");
+                    lieferKund.setKommission(rs.getString(12)!= null ? rs.getString(12) : "");
+                    lieferKund.setLagerNum(rs.getString(13)!= null ? rs.getString(13) : "");
+                    lieferKund.setSumme(rs.getString(14)!= null ? rs.getString(14) : "");
+                    lieferKund.setStatus(rs.getString(15)!= null ? rs.getString(15) : "");
+                    lieferKund.setUbergabe(rs.getString(16)!= null ? rs.getString(16) : "");
+                    lieferKund.setId(rs.getString(17)!= null ? rs.getString(17) : "");
                     lieferKunds.add(lieferKund);
                 }
                 rs.close();

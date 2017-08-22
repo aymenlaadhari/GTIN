@@ -85,7 +85,8 @@ public class MainFrame extends javax.swing.JFrame {
     private final Object[] rowDataPrufung = new Object[31];
     private final Object[] rowDataPreisListe = new Object[5];
     private boolean changedJtextPosition;
-    private int count, increment, summe;
+    private int count, increment;
+    private float summe;
     private String suchen, ersetzen;
     private List<LieferKund> liefkunds;
     private List<LieferKundPrufer> liefPrufers;
@@ -313,6 +314,7 @@ public class MainFrame extends javax.swing.JFrame {
                         KopfDaten kopfDaten = dialogListKopfDaten.getSelectedKopfDatenIn();
                         if (kopfDaten != null) {
                             List<LieferKund> lieferKundsIn = jlieferDaoInterface.getListLieferGenerated(kopfDaten.getKdNum(), kopfDaten.getKdBestnum(), kopfDaten.getKdBestDatum(), kopfDaten.getStatus());
+                            liefkunds = lieferKundsIn;
                             System.out.println("liefersList isze = " + lieferKundsIn.size());
                             populateTableGenarate(lieferKundsIn);
                         } else {
@@ -574,16 +576,18 @@ public class MainFrame extends javax.swing.JFrame {
         String kdVariante = lieferKund.getVariante();
         ArrayList<Integer> indexList = new ArrayList<>();
         for (int i = 0; i < liefkunds.size(); i++) {
+            //System.out.println(liefkunds.get(i).getArtikel_Nr()+" "+liefkunds.get(i).getFarbe()+" "+liefkunds.get(i).getVariante());
             if (liefkunds.get(i).getArtikel_Nr().equals(kdArtNum) && liefkunds.get(i).getFarbe().equals(kdFarbe) && liefkunds.get(i).getVariante().equals(kdVariante)) {
                 indexList.add(i);
             }
         }
 
         summe = 0;
+       
         indexList.stream().forEach(cnsmr -> {
             String menge = liefkunds.get(cnsmr).getMenge();
             if (!menge.isEmpty()) {
-                summe = summe + Integer.parseInt(liefkunds.get(cnsmr).getMenge());
+                summe = summe + Float.parseFloat(liefkunds.get(cnsmr).getMenge());
             } else {
                 summe = summe + 0;
             }
@@ -643,12 +647,12 @@ public class MainFrame extends javax.swing.JFrame {
         indexList.stream().forEach(cnsmr -> {
             String menge = liefkunds.get(cnsmr).getMenge();
             if (!menge.isEmpty()) {
-                summe = summe + Integer.parseInt(liefkunds.get(cnsmr).getMenge());
+                summe = summe + Float.parseFloat(liefkunds.get(cnsmr).getMenge());
             } else {
                 summe = summe + 0;
             }
         });
-
+        
         indexList.stream().forEach(cnsmr -> {
             liefkunds.get(cnsmr).setSumme(String.valueOf(summe));
         });
