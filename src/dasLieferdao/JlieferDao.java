@@ -24,6 +24,7 @@ import model.LieferKund;
 import model.LieferKundDoppel;
 import model.LieferKundPrufer;
 import model.ParameterKund;
+import model.Status;
 import model.VarPreis;
 import model.Varianten;
 import model.VerfugbareGroßen;
@@ -79,6 +80,24 @@ public class JlieferDao implements JlieferDaoInterface {
             Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         return ret;
+    }
+
+    @Override
+    public void datenInfamakSchreiben(KopfDaten kopfDaten) {
+        try {
+            String proc = "CALL GTIN_Famak_verarbeiten( '" + kopfDaten.getKdNum() + "', '" + kopfDaten.getKdBestnum() + "', '" + kopfDaten.getKdBestDatum() + "')";
+            Connection conProdukt = DriverManager.getConnection(dburlProdukt);
+
+            Statement s = conProdukt.createStatement();
+            try (ResultSet rs = s.executeQuery(proc)) {
+
+                rs.close();
+                s.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
@@ -189,6 +208,32 @@ public class JlieferDao implements JlieferDaoInterface {
 
         }
         return ret.equals("TRUE");
+    }
+
+    @Override
+    public boolean famakVorbereiten() {
+    
+    String ret = "";
+        try {
+            String proc = "SELECT GTIN_Famak_vorbereiten()";
+
+            Connection conProdukt = DriverManager.getConnection(dburlProdukt);
+            Statement s = conProdukt.createStatement();
+            try (ResultSet rs = s.executeQuery(proc)) {
+                while (rs.next()) {
+                    ret = rs.getString(1);
+                }
+                rs.close();
+                s.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+
+        }
+        return ret.equals("TRUE");
+         
     }
 
     @Override
@@ -819,6 +864,30 @@ public class JlieferDao implements JlieferDaoInterface {
     }
 
     @Override
+    public List<Status> getStatusListe() {
+    List<Status> statuses = new ArrayList<>();
+     try {
+            String proc = "SELECT Code, Meldung_Text FROM GTIN_Meldungen WHERE Vorgang_Nr = '900' ORDER BY 1";
+            Connection conProdukt = DriverManager.getConnection(dburlProdukt);
+            Statement s = conProdukt.createStatement();
+            try (ResultSet rs = s.executeQuery(proc)) {
+                while (rs.next()) {
+                   Status status = new Status();
+                   status.setCode(rs.getString(1));
+                   status.setText(rs.getString(2));
+                   statuses.add(status);
+                }
+                rs.close();
+                s.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+     return statuses;
+    }
+
+    @Override
     public VerwendeteMengenstaffel getVerMengen(String indice, String posGridId) {
         VerwendeteMengenstaffel verwendeteMengenstaffel = new VerwendeteMengenstaffel();
         VerwendetePreise verwendetePreise = new VerwendetePreise();
@@ -910,6 +979,57 @@ public class JlieferDao implements JlieferDaoInterface {
             Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         return ret;
+    }
+
+    @Override
+    public boolean speichern(LieferKund cnsmr, KopfDaten daten, String posAktiv) {
+        boolean liefRecorded = false;
+        String procName = "{CALL GTIN_Erfassungsdaten_in_DB_schreiben( '" + daten.getKdNum()
+                                + "', '" + daten.getKdBestnum() + "', '" + daten.getKdBestDatum() + "', '" + daten.getKdWunchDat() + "', '" + daten.getErfasser()
+                                + "', '" + daten.getErfassDatum() + "', '" + posAktiv + "' , '" + cnsmr.getPosiNummer()
+                                + "', '" + cnsmr.getArtikel_Nr() + "', '" + cnsmr.getFarbe() + "', '" + cnsmr.getGroesse()
+                                + "', '" + cnsmr.getVariante() + "', '" + cnsmr.getMenge() + "', '" + cnsmr.getPreis()
+                                + "', '" + cnsmr.getKommission() + "', '" + cnsmr.getLagerNum() + "', '" + cnsmr.getStatus() + "', '" + cnsmr.getUbergabe() + "', '" + cnsmr.getId() + "')}";
+          
+        try {
+            Connection conProdukt = DriverManager.getConnection(dburlProdukt);
+           
+            try (CallableStatement cs = conProdukt.prepareCall(procName)) {
+                if (daten.getKdBestnum() == null) {
+                    cs.setNull(3, java.sql.Types.DATE);
+                }
+                if (daten.getKdWunchDat() == null) {
+                    cs.setNull(4, java.sql.Types.DATE);
+                }
+                if (daten.getErfassDatum() == null) {
+                    cs.setNull(6, java.sql.Types.DATE);
+                }
+                //cs.executeUpdate();
+
+                ResultSet rs = cs.executeQuery();
+                System.out.println(procName);
+                
+                System.out.println(rs.getMetaData().getColumnName(1));
+                
+                liefRecorded = rs.getMetaData().getColumnName(1).equals("'TRUE'");
+                
+                cs.close();
+                conProdukt.close();
+                
+               // indexes.add(cnsmr.getPosiNummer());
+            }
+           //recorded = true;
+          
+           
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+            //recorded = false;
+            liefRecorded = false;
+           // exceptionRecord = ex.getMessage();
+        }
+        
+        return liefRecorded;
+    
     }
 
     @Override

@@ -14,6 +14,7 @@ import model.LieferKund;
 import model.LieferKundDoppel;
 import model.LieferKundPrufer;
 import model.ParameterKund;
+import model.Status;
 import model.VarPreis;
 import model.VerfugbareGroßen;
 import model.VerfugbareMengenstaffeln;
@@ -91,4 +92,9 @@ public interface JlieferDaoInterface {
     
     public List<KopfDaten> getListKopfDaten(String kdNum, String kdBestNum, String kdBestDat);
     public List<LieferKund> getListLieferGenerated(String KdNum, String KdBestnum, String KdBestDatum, String status);
+    public List<Status> getStatusListe();
+    
+    public boolean  speichern(LieferKund lieferKund, KopfDaten daten, String posAktiv);
+    public boolean famakVorbereiten();
+    public void datenInfamakSchreiben(KopfDaten kopfDaten);
 }

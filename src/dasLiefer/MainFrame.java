@@ -11,6 +11,7 @@ import dasLieferdao.JlieferDaoInterface;
 import dasLieferDialog.JDialogGTIN;
 import dasLieferDialog.JDialogKundenbestellung;
 import dasLieferDialog.JDialogListKopfDaten;
+import dasLieferDialog.JDialogStatus;
 import dasLieferDialog.JDialogSuchen;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -64,6 +65,7 @@ import model.LieferKund;
 import model.LieferKundDoppel;
 import model.LieferKundPrufer;
 import model.ParameterKund;
+import model.Status;
 import model.VarPreis;
 import model.VerwendeteMengenstaffel;
 import util.JTextFieldAutoCompletion;
@@ -100,6 +102,8 @@ public class MainFrame extends javax.swing.JFrame {
     private final TableCellListener tclLieferKund;
     private TableCellListener tclLiefKund;
     Integer indexPos;
+    private KopfDaten kopfDaten;
+    boolean result;
 
     /**
      * Creates new form MainFrame
@@ -152,7 +156,6 @@ public class MainFrame extends javax.swing.JFrame {
                     dialogSuchen.setVisible(true);
 
                 }
-
             }
         });
 
@@ -311,7 +314,7 @@ public class MainFrame extends javax.swing.JFrame {
                     if (!kopfDatens.isEmpty()) {
                         JDialogListKopfDaten dialogListKopfDaten = new JDialogListKopfDaten(MainFrame.this, true, kopfDatens);
                         dialogListKopfDaten.setVisible(true);
-                        KopfDaten kopfDaten = dialogListKopfDaten.getSelectedKopfDatenIn();
+                        kopfDaten = dialogListKopfDaten.getSelectedKopfDatenIn();
                         if (kopfDaten != null) {
                             List<LieferKund> lieferKundsIn = jlieferDaoInterface.getListLieferGenerated(kopfDaten.getKdNum(), kopfDaten.getKdBestnum(), kopfDaten.getKdBestDatum(), kopfDaten.getStatus());
                             liefkunds = lieferKundsIn;
@@ -564,11 +567,12 @@ public class MainFrame extends javax.swing.JFrame {
         }
 
         lieferKund.setLagerNum(jlieferDaoInterface.getLagerNr(jTextFieldKdNr.getText(), lieferKund.getArtikel_Nr(), lieferKund.getFarbe(), lieferKund.getGroesse(), lieferKund.getVariante()));
+        lieferKund.setUbergabe("X");
 
         if (liefkunds.isEmpty()) {
             lieferKund.setSumme(lieferKund.getMenge());
         }
-
+       
         liefkunds.add(lieferKund);
 
         String kdArtNum = lieferKund.getArtikel_Nr();
@@ -582,24 +586,24 @@ public class MainFrame extends javax.swing.JFrame {
             }
         }
 
-        summe = 0;
-       
-        indexList.stream().forEach(cnsmr -> {
-            String menge = liefkunds.get(cnsmr).getMenge();
-            if (!menge.isEmpty()) {
-                summe = summe + Float.parseFloat(liefkunds.get(cnsmr).getMenge());
-            } else {
-                summe = summe + 0;
-            }
+//        summe = 0;
+//       
+//        indexList.stream().forEach(cnsmr -> {
+//            String menge = liefkunds.get(cnsmr).getMenge();
+//            if (!menge.isEmpty()) {
+//                summe = summe + Float.parseFloat(liefkunds.get(cnsmr).getMenge());
+//            } else {
+//                summe = summe + 0;
+//            }
+//
+//        });
 
-        });
+//        indexList.stream().forEach(cnsmr -> {
+//            liefkunds.get(cnsmr).setSumme(String.valueOf(summe));
+//
+//        });
 
-        indexList.stream().forEach(cnsmr -> {
-            liefkunds.get(cnsmr).setSumme(String.valueOf(summe));
-
-        });
-
-        lieferKund.setSumme(String.valueOf(summe));
+//        lieferKund.setSumme(String.valueOf(summe));
 
         addToTable(lieferKund, false);
 
@@ -607,10 +611,10 @@ public class MainFrame extends javax.swing.JFrame {
 
         indexPos++;
 
-        indexList.stream().forEach(cnsmr -> {
-            tableModel.setValueAt(summe, cnsmr, 9);
-
-        });
+//        indexList.stream().forEach(cnsmr -> {
+//            tableModel.setValueAt(summe, cnsmr, 9);
+//
+//        });
 
         jTable.setRowSelectionInterval(jTable.getRowCount() - 1, jTable.getRowCount() - 1);
         jTable.scrollRectToVisible(new Rectangle(jTable.getCellRect(jTable.getRowCount() - 1, 0, true)));
@@ -622,6 +626,9 @@ public class MainFrame extends javax.swing.JFrame {
             addToTableNormal(cnsmr);
             tableModel.addRow(rowDataMuster);
         });
+        
+        jTable.setRowSelectionInterval(0,0);
+        jTable.scrollRectToVisible(new Rectangle(jTable.getCellRect(0, 0, true)));
     }
 
     private void refreshTable(List<LieferKund> lieferKunds) {
@@ -643,20 +650,20 @@ public class MainFrame extends javax.swing.JFrame {
                 indexList.add(i);
             }
         }
-        summe = 0;
-        indexList.stream().forEach(cnsmr -> {
-            String menge = liefkunds.get(cnsmr).getMenge();
-            if (!menge.isEmpty()) {
-                summe = summe + Float.parseFloat(liefkunds.get(cnsmr).getMenge());
-            } else {
-                summe = summe + 0;
-            }
-        });
+//        summe = 0;
+//        indexList.stream().forEach(cnsmr -> {
+//            String menge = liefkunds.get(cnsmr).getMenge();
+//            if (!menge.isEmpty()) {
+//                summe = summe + Float.parseFloat(liefkunds.get(cnsmr).getMenge());
+//            } else {
+//                summe = summe + 0;
+//            }
+//        });
         
-        indexList.stream().forEach(cnsmr -> {
-            liefkunds.get(cnsmr).setSumme(String.valueOf(summe));
-        });
-        liefkunds.get(position).setSumme(String.valueOf(summe));
+//        indexList.stream().forEach(cnsmr -> {
+//            liefkunds.get(cnsmr).setSumme(String.valueOf(summe));
+//        });
+//        liefkunds.get(position).setSumme(String.valueOf(summe));
         //liefkunds.notifyAll();
         tableModel.setRowCount(0);
         String newCount = String.valueOf(Integer.valueOf(liefkunds.get(liefkunds.size() - 1).getPosiNummer()) + 1);
@@ -668,6 +675,11 @@ public class MainFrame extends javax.swing.JFrame {
         });
     }
 
+    private List<Status> getStatus(){
+        List<Status> statuses = jlieferDaoInterface.getStatusListe();
+        return statuses;
+    }
+    
     private void insertIntoDb(String id) {
 
         SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
@@ -805,31 +817,7 @@ public class MainFrame extends javax.swing.JFrame {
 
                 }
 
-//                try {
-//                    for (LieferKund liefkund : liefkunds) {
-//                        String meldungFamak = jlieferDaoInterface.insertInFamak(jTextFieldKdNr.getText(), jTextFieldKdBestNr.getText(), dateBest, wunchDat, liefkund);
-//                        String[] parts = meldungFamak.split("-");
-//                        if (parts.length != 0) {
-//                            String part1 = parts[0];
-//                            String part2 = parts[1];
-//                            meldungs.add(part2);
-//                            liefkund.setMeldungFamak(meldungFamak);
-//
-//                        }
-//                        if (liefkund.getPosiNummer().equals(jlieferDaoInterface.getOneIndexInFamak())) {
-//                                //liefKund.setStatus("1");
-//                                liefkund.setId("1");
-//                            }
-//                        
-//                        insertIntoDb("3",liefkund);
-//
-//                    }
-//                   
-//                    
-//                } catch (Exception ex) {
-//                    Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-//
-//                }
+
                 return null;
             }
 
@@ -859,7 +847,6 @@ public class MainFrame extends javax.swing.JFrame {
 //                });
                 insertIntoDb("3");
                 //refreshTable(liefkunds);
-
             }
         };
         sw.execute();
@@ -1052,7 +1039,19 @@ public class MainFrame extends javax.swing.JFrame {
             columnModel.getColumn(column).setPreferredWidth(width);
         }
     }
+    
+    private void speichern(LieferKund cnsmr, KopfDaten daten, String posAktiv){
+        result = jlieferDaoInterface.speichern(cnsmr, daten, posAktiv);
+      
+    }
 
+    private boolean famakVorbereiten(){
+        return jlieferDaoInterface.famakVorbereiten();
+    }
+    
+    private void inFamakSchreiben(KopfDaten kopfDaten){
+        jlieferDaoInterface.datenInfamakSchreiben(kopfDaten);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -1112,10 +1111,10 @@ public class MainFrame extends javax.swing.JFrame {
         jLabel25 = new javax.swing.JLabel();
         jButton5 = new javax.swing.JButton();
         jPanel9 = new javax.swing.JPanel();
-        jButtonSaveInDb = new javax.swing.JButton();
+        jButtonSpeichern = new javax.swing.JButton();
         jLabel18 = new javax.swing.JLabel();
         jLabel20 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        jButtonSpeichernUnter = new javax.swing.JButton();
         jLabel21 = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
@@ -1410,7 +1409,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         jLabel22.setText("oder");
 
-        jButtonSpeichern1.setText("Speichern 1");
+        jButtonSpeichern1.setText("Famak vorbereiten");
         jButtonSpeichern1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonSpeichern1ActionPerformed(evt);
@@ -1419,7 +1418,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         jLabel23.setText(">>");
 
-        jButton3.setText("Speichern 2 (Prüfung)");
+        jButton3.setText("Öffnen");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
@@ -1491,10 +1490,10 @@ public class MainFrame extends javax.swing.JFrame {
 
         jPanel9.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jButtonSaveInDb.setText("Erfassungsdaten speichern");
-        jButtonSaveInDb.addActionListener(new java.awt.event.ActionListener() {
+        jButtonSpeichern.setText("Speichern");
+        jButtonSpeichern.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonSaveInDbActionPerformed(evt);
+                jButtonSpeichernActionPerformed(evt);
             }
         });
 
@@ -1502,10 +1501,10 @@ public class MainFrame extends javax.swing.JFrame {
 
         jLabel20.setText(">> Daten in Famak eingeben >>");
 
-        jButton1.setText("Erfassungsdaten verarbeiten");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        jButtonSpeichernUnter.setText("Speichern Unter");
+        jButtonSpeichernUnter.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                jButtonSpeichernUnterActionPerformed(evt);
             }
         });
 
@@ -1519,11 +1518,11 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGap(16, 16, 16)
                 .addComponent(jLabel18)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButtonSaveInDb, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jButtonSpeichern, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(28, 28, 28)
                 .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jButtonSpeichernUnter, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel21)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -1533,10 +1532,10 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(jPanel9Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButtonSaveInDb, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonSpeichern, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel18)
                     .addComponent(jLabel20)
-                    .addComponent(jButton1)
+                    .addComponent(jButtonSpeichernUnter)
                     .addComponent(jLabel21))
                 .addContainerGap(26, Short.MAX_VALUE))
         );
@@ -1649,7 +1648,15 @@ public class MainFrame extends javax.swing.JFrame {
             new String [] {
                 "Zeile", "VarNr", "VarText", "KdPreis", "VKPreis"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane3.setViewportView(jTablePreisListe);
 
         jCheckBoxPreisSofort.setText("Preis sofort anzeigen");
@@ -1947,10 +1954,36 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jTablePruferMouseClicked
 
-    private void jButtonSaveInDbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveInDbActionPerformed
+    private void jButtonSpeichernActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSpeichernActionPerformed
         // TODO add your handling code here:
-        insertIntoDb("0");
-    }//GEN-LAST:event_jButtonSaveInDbActionPerformed
+        liefkunds.stream().forEach(cnsmr->{
+        
+            if (cnsmr.getStatus().equals("")) {
+                JDialogStatus dialogStatus = new JDialogStatus(MainFrame.this, true, getStatus());
+                dialogStatus.setVisible(true);
+                Status status = dialogStatus.getSelectedStatus();
+                cnsmr.setStatus(status.getCode());
+                speichern(cnsmr, kopfDaten, jTextFieldKposAktiv.getText());
+                
+            }else{
+                speichern(cnsmr, kopfDaten, jTextFieldKposAktiv.getText());
+            }
+        });
+        
+          if (result) {
+            System.out.println("successuful recorded");
+            JOptionPane.showMessageDialog(MainFrame.this,
+                    "successuful recorded");
+            tableModel.setRowCount(0);
+            liefkunds.clear();
+        } else {
+            JOptionPane.showMessageDialog(MainFrame.this,
+                    "Eroor when recording",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+        //insertIntoDb("0");
+    }//GEN-LAST:event_jButtonSpeichernActionPerformed
 
     private void jButtonAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddActionPerformed
         // TODO add your handling code here:
@@ -2266,17 +2299,50 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void jButtonInFamakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonInFamakActionPerformed
         // TODO add your handling code here:
-        insertIntoFamak();
+        inFamakSchreiben(kopfDaten);
+        //insertIntoFamak();
     }//GEN-LAST:event_jButtonInFamakActionPerformed
 
     private void jButtonSpeichern1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSpeichern1ActionPerformed
         // TODO add your handling code here:
-        insertIntoDb("1");
+        if (famakVorbereiten()) {
+            JOptionPane.showMessageDialog(MainFrame.this,
+    "Successuful");
+        }else{
+            JOptionPane.showMessageDialog(MainFrame.this,
+    "Eroor when processing.",
+    "Error",
+    JOptionPane.ERROR_MESSAGE);
+        }
+
+       // insertIntoDb("1");
     }//GEN-LAST:event_jButtonSpeichern1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        insertIntoDb("2");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+                    String dateBest = "1900/01/01";
+                    if (jXDatePickerKdBestDat.getDate() != null) {
+                        dateBest = format.format(jXDatePickerKdBestDat.getDate());
+                    }
+                    List<KopfDaten> kopfDatens = jlieferDaoInterface.getListKopfDaten(jTextFieldKdNr.getText(), jTextFieldKdBestNr.getText(), dateBest);
+                    if (!kopfDatens.isEmpty()) {
+                        JDialogListKopfDaten dialogListKopfDaten = new JDialogListKopfDaten(MainFrame.this, true, kopfDatens);
+                        dialogListKopfDaten.setVisible(true);
+                        kopfDaten = dialogListKopfDaten.getSelectedKopfDatenIn();
+                        if (kopfDaten != null) {
+                            List<LieferKund> lieferKundsIn = jlieferDaoInterface.getListLieferGenerated(kopfDaten.getKdNum(), kopfDaten.getKdBestnum(), kopfDaten.getKdBestDatum(), kopfDaten.getStatus());
+                            liefkunds = lieferKundsIn;
+                            System.out.println("liefersList isze = " + lieferKundsIn.size());
+                            populateTableGenarate(lieferKundsIn);
+                        } else {
+                            jXDatePickerWunch.requestFocus();
+                        }
+
+                    } else {
+                        jXDatePickerWunch.requestFocus();
+                    }
+       // insertIntoDb("2");
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButtonDoppelErfasungActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDoppelErfasungActionPerformed
@@ -2284,10 +2350,31 @@ public class MainFrame extends javax.swing.JFrame {
         doppelErfassungPrüfen();
     }//GEN-LAST:event_jButtonDoppelErfasungActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void jButtonSpeichernUnterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSpeichernUnterActionPerformed
         // TODO add your handling code here:
-        erfassungVerarbeiten();
-    }//GEN-LAST:event_jButton1ActionPerformed
+        JDialogStatus dialogStatus = new JDialogStatus(MainFrame.this, true, getStatus());
+            dialogStatus.setVisible(true);
+            Status status = dialogStatus.getSelectedStatus();
+            
+        liefkunds.stream().forEach(cnsmr -> {
+            cnsmr.setStatus(status.getCode());
+            speichern(cnsmr, kopfDaten, jTextFieldKposAktiv.getText());
+        });
+            if (result) {
+            System.out.println("successuful recorded");
+            JOptionPane.showMessageDialog(MainFrame.this,
+                    "successuful recorded");
+            tableModel.setRowCount(0);
+            liefkunds.clear();
+        } else {
+            JOptionPane.showMessageDialog(MainFrame.this,
+                    "Eroor when recording",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+        
+        //erfassungVerarbeiten();
+    }//GEN-LAST:event_jButtonSpeichernUnterActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
@@ -2338,7 +2425,6 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButtonAbOZu;
@@ -2347,8 +2433,9 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JButton jButtonInFamak;
     private javax.swing.JButton jButtonLaden;
     private javax.swing.JButton jButtonManZu;
-    private javax.swing.JButton jButtonSaveInDb;
+    private javax.swing.JButton jButtonSpeichern;
     private javax.swing.JButton jButtonSpeichern1;
+    private javax.swing.JButton jButtonSpeichernUnter;
     private javax.swing.JButton jButtonVerarbeiten;
     private javax.swing.JButton jButtonteilManZu;
     private javax.swing.JCheckBox jCheckBoxPreisSofort;

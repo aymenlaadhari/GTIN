@@ -666,7 +666,7 @@
                         </Component>
                         <Component class="javax.swing.JButton" name="jButtonSpeichern1">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Speichern 1"/>
+                            <Property name="text" type="java.lang.String" value="Famak vorbereiten"/>
                           </Properties>
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonSpeichern1ActionPerformed"/>
@@ -679,7 +679,7 @@
                         </Component>
                         <Component class="javax.swing.JButton" name="jButton3">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Speichern 2 (Pr&#xfc;fung)"/>
+                            <Property name="text" type="java.lang.String" value="&#xd6;ffnen"/>
                           </Properties>
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton3ActionPerformed"/>
@@ -729,11 +729,11 @@
                                   <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
                                   <Component id="jLabel18" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="jButtonSaveInDb" min="-2" pref="204" max="-2" attributes="0"/>
+                                  <Component id="jButtonSpeichern" min="-2" pref="204" max="-2" attributes="0"/>
                                   <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
                                   <Component id="jLabel20" min="-2" pref="189" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="jButton1" min="-2" pref="197" max="-2" attributes="0"/>
+                                  <Component id="jButtonSpeichernUnter" min="-2" pref="197" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="jLabel21" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="32767" attributes="0"/>
@@ -745,10 +745,10 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="3" attributes="0">
-                                      <Component id="jButtonSaveInDb" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
+                                      <Component id="jButtonSpeichern" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
                                       <Component id="jLabel18" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="jLabel20" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jButtonSpeichernUnter" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="jLabel21" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace pref="26" max="32767" attributes="0"/>
@@ -757,12 +757,12 @@
                         </DimensionLayout>
                       </Layout>
                       <SubComponents>
-                        <Component class="javax.swing.JButton" name="jButtonSaveInDb">
+                        <Component class="javax.swing.JButton" name="jButtonSpeichern">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Erfassungsdaten speichern"/>
+                            <Property name="text" type="java.lang.String" value="Speichern"/>
                           </Properties>
                           <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonSaveInDbActionPerformed"/>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonSpeichernActionPerformed"/>
                           </Events>
                         </Component>
                         <Component class="javax.swing.JLabel" name="jLabel18">
@@ -775,12 +775,12 @@
                             <Property name="text" type="java.lang.String" value="&gt;&gt; Daten in Famak eingeben &gt;&gt;"/>
                           </Properties>
                         </Component>
-                        <Component class="javax.swing.JButton" name="jButton1">
+                        <Component class="javax.swing.JButton" name="jButtonSpeichernUnter">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Erfassungsdaten verarbeiten"/>
+                            <Property name="text" type="java.lang.String" value="Speichern Unter"/>
                           </Properties>
                           <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonSpeichernUnterActionPerformed"/>
                           </Events>
                         </Component>
                         <Component class="javax.swing.JLabel" name="jLabel21">
@@ -848,11 +848,11 @@
                           <Properties>
                             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                               <Table columnCount="5" rowCount="4">
-                                <Column editable="true" title="Zeile" type="java.lang.Object"/>
-                                <Column editable="true" title="VarNr" type="java.lang.Object"/>
-                                <Column editable="true" title="VarText" type="java.lang.Object"/>
-                                <Column editable="true" title="KdPreis" type="java.lang.Object"/>
-                                <Column editable="true" title="VKPreis" type="java.lang.Object"/>
+                                <Column editable="false" title="Zeile" type="java.lang.Object"/>
+                                <Column editable="false" title="VarNr" type="java.lang.Object"/>
+                                <Column editable="false" title="VarText" type="java.lang.Object"/>
+                                <Column editable="false" title="KdPreis" type="java.lang.Object"/>
+                                <Column editable="false" title="VKPreis" type="java.lang.Object"/>
                               </Table>
                             </Property>
                             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
