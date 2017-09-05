@@ -96,5 +96,6 @@ public interface JlieferDaoInterface {
     
     public boolean  speichern(LieferKund lieferKund, KopfDaten daten, String posAktiv);
     public boolean famakVorbereiten();
-    public void datenInfamakSchreiben(KopfDaten kopfDaten);
+    public List<String> datenInfamakSchreiben(KopfDaten kopfDaten);
+    public void getColumnName();
 }

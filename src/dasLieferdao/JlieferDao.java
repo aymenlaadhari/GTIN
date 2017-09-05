@@ -5,10 +5,13 @@
  */
 package dasLieferdao;
 
+import java.sql.Array;
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -83,14 +86,18 @@ public class JlieferDao implements JlieferDaoInterface {
     }
 
     @Override
-    public void datenInfamakSchreiben(KopfDaten kopfDaten) {
+    public List<String> datenInfamakSchreiben(KopfDaten kopfDaten) {
+        List<String> meldungen = new ArrayList<>();
         try {
             String proc = "CALL GTIN_Famak_verarbeiten( '" + kopfDaten.getKdNum() + "', '" + kopfDaten.getKdBestnum() + "', '" + kopfDaten.getKdBestDatum() + "')";
             Connection conProdukt = DriverManager.getConnection(dburlProdukt);
-
             Statement s = conProdukt.createStatement();
+            System.out.println(proc);
             try (ResultSet rs = s.executeQuery(proc)) {
-
+                 while (rs.next()) {
+                     meldungen.add(rs.getString(1)+"---"+rs.getString(2));
+                     
+                }
                 rs.close();
                 s.close();
                 conProdukt.close();
@@ -98,6 +105,7 @@ public class JlieferDao implements JlieferDaoInterface {
         } catch (SQLException ex) {
             Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return meldungen;
     }
 
     @Override
@@ -234,6 +242,62 @@ public class JlieferDao implements JlieferDaoInterface {
         }
         return ret.equals("TRUE");
          
+    }
+
+    @Override
+    public void getColumnName() {
+        try {
+            Connection conProdukt = null;
+            conProdukt = DriverManager.getConnection(dburlProdukt);
+            Statement s = conProdukt.createStatement();
+            DatabaseMetaData md = null;
+
+            try {
+                md = conProdukt.getMetaData();
+
+                ResultSet rs = null;
+
+                rs = md.getTables(null, null, "%", null);
+
+                while (rs.next()) {
+                    String tableName = rs.getString(3);
+                    int rowCount = rs.getRow();
+                   
+                    if (rowCount > 160) {
+                        //System.out.println("---------------"+rowCount + ": " + tableName+"---------------------");
+                        if (!tableName.equals("kunden_ansprechpartner_mailing")) {
+                        ResultSet rs1 = s.executeQuery("SELECT * FROM DBA." + tableName);
+                        ResultSetMetaData md1 = rs1.getMetaData();
+                        int col = md1.getColumnCount();
+                        //System.out.println("Number of Column : " + col);
+                       
+                        for (int i = 1; i <= col; i++) {
+                            String col_name = md1.getColumnName(i);
+                            if (col_name.contains("ohn")) {
+                               System.out.println("Found in: "+tableName+" with the column name: "+col_name); 
+                            }
+                            
+                        }
+
+                        //ResultSet rs1 = s.executeQuery("SELECT * FROM DBA."+tableName);
+//                        while (rs1.next()) {
+//                            ResultSetMetaData rsmd = rs1.getMetaData();
+//                            String name = rsmd.getColumnName(1);
+//                            if (name.contains("ohn")) {
+//                                System.out.println(name + "in" + tableName);
+//                            }
+//                        }
+
+                    }
+                }
+
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override

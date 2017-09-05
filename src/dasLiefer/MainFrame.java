@@ -28,6 +28,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -113,6 +115,7 @@ public class MainFrame extends javax.swing.JFrame {
         initilize();
         loadPropertie("installation");
         initializeDataBase();
+        kopfDaten = new KopfDaten();
         tableModel = (DefaultTableModel) jTable.getModel();
         tableModelPrufer = (DefaultTableModel) jTablePrufer.getModel();
         tableModelPrufer.setRowCount(0);
@@ -240,6 +243,34 @@ public class MainFrame extends javax.swing.JFrame {
                 refreshTableLiefKund(tclLiefKund.getRow(), changeArtnum, changeFarb, changeVar);
             }
         });
+        jTextFieldKdBestNr.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void changedUpdate(DocumentEvent de) {
+                kopfDaten.setKdBestnum(jTextFieldKdBestNr.getText());
+                 }
+
+            @Override
+            public void insertUpdate(DocumentEvent de) {
+               kopfDaten.setKdBestnum(jTextFieldKdBestNr.getText());
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent de) {
+            
+                kopfDaten.setKdBestnum(jTextFieldKdBestNr.getText());
+            }
+        });
+        
+        
+    }
+    
+    private void checkKopfDaten(){
+        kopfDaten.setKdBestnum(jTextFieldKdBestNr.getText());
+        kopfDaten.setKdBestDatum(new SimpleDateFormat("dd.MM.yyyy").format(jXDatePickerKdBestDat.getDate()));
+        kopfDaten.setErfassDatum(new SimpleDateFormat("dd.MM.yyyy").format(jXDatePickerErfassung.getDate()));
+        kopfDaten.setKdWunchDat(new SimpleDateFormat("dd.MM.yyyy").format(jXDatePickerWunch.getDate()));
+        kopfDaten.setErfasser(jTextFieldErfasser.getText());
+        kopfDaten.setKdBestnum(jTextFieldKdBestNr.getText());
     }
 
     private void selecteItems() {
@@ -298,7 +329,7 @@ public class MainFrame extends javax.swing.JFrame {
         LocalDateTime now = LocalDateTime.now();
         Instant instant = now.atZone(ZoneId.systemDefault()).toInstant();
         Date dateFromOld = Date.from(instant);
-        jXDatePickerToday.setDate(dateFromOld);
+        jXDatePickerErfassung.setDate(dateFromOld);
         jXDatePickerBisDatum.setDate(dateFromOld);
         jTextFieldErfasser.setText(System.getProperty("user.name"));
         jXDatePickerKdBestDat.getEditor().addKeyListener(new KeyAdapter() {
@@ -316,6 +347,18 @@ public class MainFrame extends javax.swing.JFrame {
                         dialogListKopfDaten.setVisible(true);
                         kopfDaten = dialogListKopfDaten.getSelectedKopfDatenIn();
                         if (kopfDaten != null) {
+                            DateFormat df = new SimpleDateFormat("dd.MM.yyyy"); 
+                            Date dateWunsch = null;
+                            Date dateErfass = null;
+                            try {
+                                dateWunsch = df.parse(kopfDaten.getKdWunchDat());
+                                dateErfass = df.parse(kopfDaten.getErfassDatum());
+                            } catch (ParseException ex) {
+                                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            jXDatePickerWunch.setDate(dateWunsch);
+                            jXDatePickerErfassung.setDate(dateErfass);
+                            
                             List<LieferKund> lieferKundsIn = jlieferDaoInterface.getListLieferGenerated(kopfDaten.getKdNum(), kopfDaten.getKdBestnum(), kopfDaten.getKdBestDatum(), kopfDaten.getStatus());
                             liefkunds = lieferKundsIn;
                             System.out.println("liefersList isze = " + lieferKundsIn.size());
@@ -339,7 +382,7 @@ public class MainFrame extends javax.swing.JFrame {
                 }
             }
         });
-        jXDatePickerToday.getEditor().addKeyListener(new KeyAdapter() {
+        jXDatePickerErfassung.getEditor().addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent arg0) {
                 if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -568,7 +611,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         lieferKund.setLagerNum(jlieferDaoInterface.getLagerNr(jTextFieldKdNr.getText(), lieferKund.getArtikel_Nr(), lieferKund.getFarbe(), lieferKund.getGroesse(), lieferKund.getVariante()));
         lieferKund.setUbergabe("X");
-
+        lieferKund.setStatus(kopfDaten.getStatus());
         if (liefkunds.isEmpty()) {
             lieferKund.setSumme(lieferKund.getMenge());
         }
@@ -699,7 +742,7 @@ public class MainFrame extends javax.swing.JFrame {
 
                 }
                 if (jXDatePickerKdBestDat.getDate() != null) {
-                    dateTod = format.format(jXDatePickerToday.getDate());
+                    dateTod = format.format(jXDatePickerErfassung.getDate());
                 }
                 if (jXDatePickerWunch.getDate() != null) {
                     wunchDat = format.format(jXDatePickerWunch.getDate());
@@ -787,13 +830,13 @@ public class MainFrame extends javax.swing.JFrame {
                 // TODO add your handling code here:
                 try {
                     list = jlieferDaoInterface.updateInFamak(jTextFieldKdNr.getText(), jTextFieldKdBestNr.getText(), dateBest, wunchDat, liefkunds);
-                    list.stream().forEach(cnsmr -> {
-
-                    });
-
-                    liefkunds.stream().forEach(cnsmr -> {
-
-                    });
+//                    list.stream().forEach(cnsmr -> {
+//
+//                    });
+//
+//                    liefkunds.stream().forEach(cnsmr -> {
+//
+//                    });
 
                     list.stream().forEach(cnsmr -> {
 
@@ -837,14 +880,6 @@ public class MainFrame extends javax.swing.JFrame {
                     });
                 });
 
-//                jlieferDaoInterface.getFehlerIndexes().forEach(cnsmr -> {
-//                    liefkunds.stream().forEach(liefKund -> {
-//                        if (liefKund.getPosiNummer().equals(cnsmr)) {
-//                            liefKund.setStatus("1");
-//
-//                        }
-//                    });
-//                });
                 insertIntoDb("3");
                 //refreshTable(liefkunds);
             }
@@ -1050,7 +1085,9 @@ public class MainFrame extends javax.swing.JFrame {
     }
     
     private void inFamakSchreiben(KopfDaten kopfDaten){
-        jlieferDaoInterface.datenInfamakSchreiben(kopfDaten);
+        List<String> meldungs = jlieferDaoInterface.datenInfamakSchreiben(kopfDaten);
+         JOptionPane.showMessageDialog(null,
+                        new JScrollPane(new JList(meldungs.toArray())), "Meldung von Famak", 1);
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -1076,7 +1113,7 @@ public class MainFrame extends javax.swing.JFrame {
         jTextFieldKdBestNr = new javax.swing.JTextField();
         jTextFieldErfasser = new javax.swing.JTextField();
         jTextFieldKposAktiv = new javax.swing.JTextField();
-        jXDatePickerToday = new org.jdesktop.swingx.JXDatePicker();
+        jXDatePickerErfassung = new org.jdesktop.swingx.JXDatePicker();
         jXDatePickerKdBestDat = new org.jdesktop.swingx.JXDatePicker();
         jXDatePickerWunch = new org.jdesktop.swingx.JXDatePicker();
         jPanel2 = new javax.swing.JPanel();
@@ -1215,7 +1252,7 @@ public class MainFrame extends javax.swing.JFrame {
                         .addComponent(jLabel5)
                         .addGap(59, 59, 59)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jXDatePickerToday, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jXDatePickerErfassung, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1241,7 +1278,7 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(jTextFieldKdBestNr, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextFieldErfasser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextFieldKposAktiv, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jXDatePickerToday, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jXDatePickerErfassung, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jXDatePickerKdBestDat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jXDatePickerWunch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(33, Short.MAX_VALUE))
@@ -1956,6 +1993,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void jButtonSpeichernActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSpeichernActionPerformed
         // TODO add your handling code here:
+        checkKopfDaten();
         liefkunds.stream().forEach(cnsmr->{
         
             if (cnsmr.getStatus().equals("")) {
@@ -2239,7 +2277,7 @@ public class MainFrame extends javax.swing.JFrame {
     private void jTextFieldErfasserKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldErfasserKeyPressed
         // TODO add your handling code here:
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            jXDatePickerToday.requestFocus();
+            jXDatePickerErfassung.requestFocus();
         }
     }//GEN-LAST:event_jTextFieldErfasserKeyPressed
 
@@ -2299,6 +2337,8 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void jButtonInFamakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonInFamakActionPerformed
         // TODO add your handling code here:
+        checkKopfDaten();
+       
         inFamakSchreiben(kopfDaten);
         //insertIntoFamak();
     }//GEN-LAST:event_jButtonInFamakActionPerformed
@@ -2347,20 +2387,22 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void jButtonDoppelErfasungActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDoppelErfasungActionPerformed
         // TODO add your handling code here:
-        doppelErfassungPrüfen();
+        System.out.println("here we go");
+        jlieferDaoInterface.getColumnName();
+        //doppelErfassungPrüfen();
     }//GEN-LAST:event_jButtonDoppelErfasungActionPerformed
 
     private void jButtonSpeichernUnterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSpeichernUnterActionPerformed
         // TODO add your handling code here:
         JDialogStatus dialogStatus = new JDialogStatus(MainFrame.this, true, getStatus());
-            dialogStatus.setVisible(true);
-            Status status = dialogStatus.getSelectedStatus();
-            
+        dialogStatus.setVisible(true);
+        Status status = dialogStatus.getSelectedStatus();
+        checkKopfDaten();
         liefkunds.stream().forEach(cnsmr -> {
             cnsmr.setStatus(status.getCode());
             speichern(cnsmr, kopfDaten, jTextFieldKposAktiv.getText());
         });
-            if (result) {
+        if (result) {
             System.out.println("successuful recorded");
             JOptionPane.showMessageDialog(MainFrame.this,
                     "successuful recorded");
@@ -2372,7 +2414,7 @@ public class MainFrame extends javax.swing.JFrame {
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
         }
-        
+
         //erfassungVerarbeiten();
     }//GEN-LAST:event_jButtonSpeichernUnterActionPerformed
 
@@ -2495,8 +2537,8 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JTextField jTextFieldMengenBezeug;
     private javax.swing.JTextField jTextFieldkdPreis;
     private org.jdesktop.swingx.JXDatePicker jXDatePickerBisDatum;
+    private org.jdesktop.swingx.JXDatePicker jXDatePickerErfassung;
     private org.jdesktop.swingx.JXDatePicker jXDatePickerKdBestDat;
-    private org.jdesktop.swingx.JXDatePicker jXDatePickerToday;
     private org.jdesktop.swingx.JXDatePicker jXDatePickerWunch;
     // End of variables declaration//GEN-END:variables
 }

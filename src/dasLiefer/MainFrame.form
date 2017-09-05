@@ -150,7 +150,7 @@
                                   </Group>
                               </Group>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jXDatePickerToday" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jXDatePickerErfassung" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace pref="12" max="32767" attributes="0"/>
@@ -181,7 +181,7 @@
                                   <Component id="jTextFieldKdBestNr" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="jTextFieldErfasser" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="jTextFieldKposAktiv" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jXDatePickerToday" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jXDatePickerErfassung" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="jXDatePickerKdBestDat" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="jXDatePickerWunch" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
@@ -246,7 +246,7 @@
                         <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextFieldKposAktivKeyPressed"/>
                       </Events>
                     </Component>
-                    <Component class="org.jdesktop.swingx.JXDatePicker" name="jXDatePickerToday">
+                    <Component class="org.jdesktop.swingx.JXDatePicker" name="jXDatePickerErfassung">
                     </Component>
                     <Component class="org.jdesktop.swingx.JXDatePicker" name="jXDatePickerKdBestDat">
                     </Component>
