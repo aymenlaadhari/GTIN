@@ -91,7 +91,7 @@ public class MainFrame extends javax.swing.JFrame {
     private boolean changedJtextPosition;
     private int count, increment;
     private float summe;
-    private String suchen, ersetzen;
+    private String suchen, ersetzen, statusIn = "";
     private List<LieferKund> liefkunds;
     private List<LieferKundPrufer> liefPrufers;
     private final JDialog dlgProgress;
@@ -265,6 +265,10 @@ public class MainFrame extends javax.swing.JFrame {
     }
     
     private void checkKopfDaten(){
+        if (kopfDaten == null) {
+            kopfDaten = new KopfDaten();
+        }
+        kopfDaten.setKdNum(jTextFieldKdNr.getText());
         kopfDaten.setKdBestnum(jTextFieldKdBestNr.getText());
         kopfDaten.setKdBestDatum(new SimpleDateFormat("dd.MM.yyyy").format(jXDatePickerKdBestDat.getDate()));
         kopfDaten.setErfassDatum(new SimpleDateFormat("dd.MM.yyyy").format(jXDatePickerErfassung.getDate()));
@@ -314,7 +318,7 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     private void initiliseFelder() {
-
+        
         jTextFieldKdArtNr.setText("");
         jTextFieldKdFarbe.setText("");
         jTextFieldKdGroesse.setText("");
@@ -322,7 +326,10 @@ public class MainFrame extends javax.swing.JFrame {
         jTextFieldMenge.setText("");
         jTextFieldkdPreis.setText("");
         jTextFieldKommission.setText("");
+        statusIn = "";
+        liefkunds.clear();
         jTextFieldKdArtNr.requestFocus();
+        
     }
 
     private void initilize() {
@@ -346,6 +353,7 @@ public class MainFrame extends javax.swing.JFrame {
                         JDialogListKopfDaten dialogListKopfDaten = new JDialogListKopfDaten(MainFrame.this, true, kopfDatens);
                         dialogListKopfDaten.setVisible(true);
                         kopfDaten = dialogListKopfDaten.getSelectedKopfDatenIn();
+                        statusIn = kopfDaten.getStatus();
                         if (kopfDaten != null) {
                             DateFormat df = new SimpleDateFormat("dd.MM.yyyy"); 
                             Date dateWunsch = null;
@@ -611,6 +619,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         lieferKund.setLagerNum(jlieferDaoInterface.getLagerNr(jTextFieldKdNr.getText(), lieferKund.getArtikel_Nr(), lieferKund.getFarbe(), lieferKund.getGroesse(), lieferKund.getVariante()));
         lieferKund.setUbergabe("X");
+        checkKopfDaten();
         lieferKund.setStatus(kopfDaten.getStatus());
         if (liefkunds.isEmpty()) {
             lieferKund.setSumme(lieferKund.getMenge());
@@ -1995,8 +2004,8 @@ public class MainFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         checkKopfDaten();
         liefkunds.stream().forEach(cnsmr->{
-        
-            if (cnsmr.getStatus().equals("")) {
+            System.out.println(cnsmr.getArtikel_Nr());
+            if (statusIn.equals("")) {
                 JDialogStatus dialogStatus = new JDialogStatus(MainFrame.this, true, getStatus());
                 dialogStatus.setVisible(true);
                 Status status = dialogStatus.getSelectedStatus();
@@ -2293,7 +2302,7 @@ public class MainFrame extends javax.swing.JFrame {
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             initiliseFelder();
             jTextFieldKdBestNr.setText("");
-
+            
             jXDatePickerWunch.setDate(null);
             jXDatePickerKdBestDat.setDate(null);
             tableModel.setRowCount(0);
@@ -2396,6 +2405,9 @@ public class MainFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         JDialogStatus dialogStatus = new JDialogStatus(MainFrame.this, true, getStatus());
         dialogStatus.setVisible(true);
+        if (dialogStatus.getSelectedStatus() != null) {
+            
+        
         Status status = dialogStatus.getSelectedStatus();
         checkKopfDaten();
         liefkunds.stream().forEach(cnsmr -> {
@@ -2414,7 +2426,7 @@ public class MainFrame extends javax.swing.JFrame {
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
         }
-
+       }
         //erfassungVerarbeiten();
     }//GEN-LAST:event_jButtonSpeichernUnterActionPerformed
 

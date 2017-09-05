@@ -11,7 +11,7 @@ package model;
  */
 public class LieferKund {
 
-    private String posiNummer = "", Kd_Pos_activ = "", Pos_Zaehler = "", Artikel_Nr = "", Farbe = "", Groesse = "", Variante = "", Menge = "", Preis = "", Kommission = "", lagerNum = "", summe = "0", status = "0", ubergabe = "0", id = "0", meldungFamak="";
+    private String posiNummer = "", Kd_Pos_activ = "", Pos_Zaehler = "", Artikel_Nr = "", Farbe = "", Groesse = "", Variante = "", Menge = "", Preis = "", Kommission = "", lagerNum = "", summe = "0", status = "", ubergabe = "0", id = "0", meldungFamak="";
 
     private boolean liefRecorded;
     public String getSumme() {

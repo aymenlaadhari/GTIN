@@ -61,9 +61,6 @@ public class JlieferDao implements JlieferDaoInterface {
     public String anlegenAndern(String indicator, String kundNummer, String kundArtNummer, String kundfarbe, String kundGroesse, String variante, String gtin, String posGrId, String grundPreis, String varPreis) {
         String ret = "";
         try {
-            //System.out.println("in dao: '"+indicator+"', '"+kundNummer+"', '"+kundArtNummer+"', '"+kundfarbe+"', '"+kundGroesse+"', '"+variante);
-            // String proc = "SELECT GTIN_Stammsatz_anlegen_aendern ( '0', '1040', '13', 'EL', ';001;002;061O;072;091;111C;111D;', '', '2230531' )";
-            //String proc = "SELECT GTIN_Kunde_KdArtNr_anlegen_aendern( '0', '104008', 'null', 'null', 'null', null, '"+gtin+"', '"+posGrId+"', '"+grundPreis+"', '"+varPreis+"' )";
             String proc = "SELECT GTIN_Kunde_KdArtNr_anlegen_aendern( '" + indicator + "', '" + kundNummer + "', '" + kundArtNummer + "', '" + kundfarbe + "', '" + kundGroesse + "', '" + variante + "', '" + gtin + "', '" + posGrId + "', '" + grundPreis + "', '" + varPreis + "' )";
             
             System.out.println("here steht: "+proc);
@@ -1054,7 +1051,7 @@ public class JlieferDao implements JlieferDaoInterface {
                                 + "', '" + cnsmr.getArtikel_Nr() + "', '" + cnsmr.getFarbe() + "', '" + cnsmr.getGroesse()
                                 + "', '" + cnsmr.getVariante() + "', '" + cnsmr.getMenge() + "', '" + cnsmr.getPreis()
                                 + "', '" + cnsmr.getKommission() + "', '" + cnsmr.getLagerNum() + "', '" + cnsmr.getStatus() + "', '" + cnsmr.getUbergabe() + "', '" + cnsmr.getId() + "')}";
-          
+        System.out.println(procName);  
         try {
             Connection conProdukt = DriverManager.getConnection(dburlProdukt);
            
