@@ -48,7 +48,7 @@ public class JlieferDao implements JlieferDaoInterface {
     String exceptionUpdate = "";
     boolean verify, proceed = false;
     List<String> indexes = new ArrayList<>(), infamakIndexes = new ArrayList<>(), fehlerIndexes = new ArrayList<>();
-    String indexFamak;
+    String indexFamak, errorSpeichern;
     boolean recorded = true;
     boolean updated = true;
     List<String> listMeldung;
@@ -1051,7 +1051,7 @@ public class JlieferDao implements JlieferDaoInterface {
                                 + "', '" + cnsmr.getArtikel_Nr() + "', '" + cnsmr.getFarbe() + "', '" + cnsmr.getGroesse()
                                 + "', '" + cnsmr.getVariante() + "', '" + cnsmr.getMenge() + "', '" + cnsmr.getPreis()
                                 + "', '" + cnsmr.getKommission() + "', '" + cnsmr.getLagerNum() + "', '" + cnsmr.getStatus() + "', '" + cnsmr.getUbergabe() + "', '" + cnsmr.getId() + "')}";
-        System.out.println(procName);  
+         
         try {
             Connection conProdukt = DriverManager.getConnection(dburlProdukt);
            
@@ -1068,10 +1068,10 @@ public class JlieferDao implements JlieferDaoInterface {
                 //cs.executeUpdate();
 
                 ResultSet rs = cs.executeQuery();
-                System.out.println(procName);
                 
-                System.out.println(rs.getMetaData().getColumnName(1));
                 
+                System.out.println("we are here: "+rs.getMetaData().getColumnName(1));
+                errorSpeichern = rs.getMetaData().getColumnName(1);
                 liefRecorded = rs.getMetaData().getColumnName(1).equals("'TRUE'");
                 
                 cs.close();
@@ -1083,7 +1083,9 @@ public class JlieferDao implements JlieferDaoInterface {
           
            
         } catch (SQLException ex) {
+            
             Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+            
             //recorded = false;
             liefRecorded = false;
            // exceptionRecord = ex.getMessage();
@@ -1093,6 +1095,12 @@ public class JlieferDao implements JlieferDaoInterface {
     
     }
 
+    @Override
+    public String returnError() {
+        return  errorSpeichern;
+        }
+
+    
     @Override
     public String updateFaktor(String indice, String KdNr, String ArtikelNr, String Faktor, String runden, String NKS) {
         String ret = "";

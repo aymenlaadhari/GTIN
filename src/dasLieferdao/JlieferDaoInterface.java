@@ -98,4 +98,5 @@ public interface JlieferDaoInterface {
     public boolean famakVorbereiten();
     public List<String> datenInfamakSchreiben(KopfDaten kopfDaten);
     public void getColumnName();
+    public String returnError();
 }

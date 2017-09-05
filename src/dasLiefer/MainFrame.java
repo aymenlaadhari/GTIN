@@ -327,7 +327,7 @@ public class MainFrame extends javax.swing.JFrame {
         jTextFieldkdPreis.setText("");
         jTextFieldKommission.setText("");
         statusIn = "";
-        liefkunds.clear();
+        
         jTextFieldKdArtNr.requestFocus();
         
     }
@@ -352,6 +352,8 @@ public class MainFrame extends javax.swing.JFrame {
                     if (!kopfDatens.isEmpty()) {
                         JDialogListKopfDaten dialogListKopfDaten = new JDialogListKopfDaten(MainFrame.this, true, kopfDatens);
                         dialogListKopfDaten.setVisible(true);
+                        if (dialogListKopfDaten.getSelectedKopfDatenIn()!= null) {
+                            
                         kopfDaten = dialogListKopfDaten.getSelectedKopfDatenIn();
                         statusIn = kopfDaten.getStatus();
                         if (kopfDaten != null) {
@@ -374,6 +376,7 @@ public class MainFrame extends javax.swing.JFrame {
                         } else {
                             jXDatePickerWunch.requestFocus();
                         }
+                    }
 
                     } else {
                         jXDatePickerWunch.requestFocus();
@@ -968,7 +971,7 @@ public class MainFrame extends javax.swing.JFrame {
     private void populateJtablePreisListe() {
         tableModelPreislIste.setRowCount(0);
         int selectedRow = jTable.getSelectedRow();
-
+        System.out.println(liefkunds.size());
         LieferKund lieferKund = liefkunds.get(selectedRow);
         List<VarPreis> varPreises;
         if (jTextFieldMengenBezeug.getText().equals("P")) {
@@ -2003,12 +2006,13 @@ public class MainFrame extends javax.swing.JFrame {
     private void jButtonSpeichernActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSpeichernActionPerformed
         // TODO add your handling code here:
         checkKopfDaten();
+        JDialogStatus dialogStatus = new JDialogStatus(MainFrame.this, true, getStatus());
+        dialogStatus.setVisible(true);
+        Status status = dialogStatus.getSelectedStatus();
         liefkunds.stream().forEach(cnsmr->{
-            System.out.println(cnsmr.getArtikel_Nr());
+  
             if (statusIn.equals("")) {
-                JDialogStatus dialogStatus = new JDialogStatus(MainFrame.this, true, getStatus());
-                dialogStatus.setVisible(true);
-                Status status = dialogStatus.getSelectedStatus();
+                
                 cnsmr.setStatus(status.getCode());
                 speichern(cnsmr, kopfDaten, jTextFieldKposAktiv.getText());
                 
@@ -2024,8 +2028,9 @@ public class MainFrame extends javax.swing.JFrame {
             tableModel.setRowCount(0);
             liefkunds.clear();
         } else {
+              String error = jlieferDaoInterface.returnError();
             JOptionPane.showMessageDialog(MainFrame.this,
-                    "Eroor when recording",
+                    "Error when recording: "+error,
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
         }
@@ -2302,7 +2307,7 @@ public class MainFrame extends javax.swing.JFrame {
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             initiliseFelder();
             jTextFieldKdBestNr.setText("");
-            
+            liefkunds.clear();
             jXDatePickerWunch.setDate(null);
             jXDatePickerKdBestDat.setDate(null);
             tableModel.setRowCount(0);
