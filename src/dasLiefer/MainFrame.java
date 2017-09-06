@@ -353,7 +353,7 @@ public class MainFrame extends javax.swing.JFrame {
                         JDialogListKopfDaten dialogListKopfDaten = new JDialogListKopfDaten(MainFrame.this, true, kopfDatens);
                         dialogListKopfDaten.setVisible(true);
                         if (dialogListKopfDaten.getSelectedKopfDatenIn()!= null) {
-                            
+                        
                         kopfDaten = dialogListKopfDaten.getSelectedKopfDatenIn();
                         statusIn = kopfDaten.getStatus();
                         if (kopfDaten != null) {
@@ -2384,7 +2384,25 @@ public class MainFrame extends javax.swing.JFrame {
                         JDialogListKopfDaten dialogListKopfDaten = new JDialogListKopfDaten(MainFrame.this, true, kopfDatens);
                         dialogListKopfDaten.setVisible(true);
                         kopfDaten = dialogListKopfDaten.getSelectedKopfDatenIn();
+                      
                         if (kopfDaten != null) {
+                            statusIn = kopfDaten.getStatus();
+                             DateFormat df = new SimpleDateFormat("dd.MM.yyyy"); 
+                            Date dateWunsch = null;
+                            Date dateErfass = null;
+                            Date bestell = null;
+                              try {
+                                dateWunsch = df.parse(kopfDaten.getKdWunchDat());
+                                dateErfass = df.parse(kopfDaten.getErfassDatum());
+                                bestell = df.parse(kopfDaten.getKdBestDatum());
+                            } catch (ParseException ex) {
+                                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                              jXDatePickerWunch.setDate(dateWunsch);
+                            jXDatePickerErfassung.setDate(dateErfass);
+                            jXDatePickerKdBestDat.setDate(bestell);
+                            jTextFieldKdNr.setText(kopfDaten.getKdNum());
+                            jTextFieldKdBestNr.setText(kopfDaten.getKdBestnum());
                             List<LieferKund> lieferKundsIn = jlieferDaoInterface.getListLieferGenerated(kopfDaten.getKdNum(), kopfDaten.getKdBestnum(), kopfDaten.getKdBestDatum(), kopfDaten.getStatus());
                             liefkunds = lieferKundsIn;
                             System.out.println("liefersList isze = " + lieferKundsIn.size());
@@ -2401,9 +2419,9 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void jButtonDoppelErfasungActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDoppelErfasungActionPerformed
         // TODO add your handling code here:
-        System.out.println("here we go");
-        jlieferDaoInterface.getColumnName();
-        //doppelErfassungPrüfen();
+//        System.out.println("here we go");
+//        jlieferDaoInterface.getColumnName();
+        doppelErfassungPrüfen();
     }//GEN-LAST:event_jButtonDoppelErfasungActionPerformed
 
     private void jButtonSpeichernUnterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSpeichernUnterActionPerformed
