@@ -275,6 +275,13 @@ public class MainFrame extends javax.swing.JFrame {
         kopfDaten.setKdWunchDat(new SimpleDateFormat("dd.MM.yyyy").format(jXDatePickerWunch.getDate()));
         kopfDaten.setErfasser(jTextFieldErfasser.getText());
         kopfDaten.setKdBestnum(jTextFieldKdBestNr.getText());
+        statusIn = kopfDaten.getStatus();
+        if (statusIn.equals("")) {
+            JDialogStatus dialogStatus = new JDialogStatus(MainFrame.this, true, getStatus());
+        dialogStatus.setVisible(true);
+        Status status = dialogStatus.getSelectedStatus();
+        statusIn = status.getCode();
+        }
     }
 
     private void selecteItems() {
@@ -2006,19 +2013,20 @@ public class MainFrame extends javax.swing.JFrame {
     private void jButtonSpeichernActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSpeichernActionPerformed
         // TODO add your handling code here:
         checkKopfDaten();
-        JDialogStatus dialogStatus = new JDialogStatus(MainFrame.this, true, getStatus());
-        dialogStatus.setVisible(true);
-        Status status = dialogStatus.getSelectedStatus();
+        
+        
+        
+        
         liefkunds.stream().forEach(cnsmr->{
   
-            if (statusIn.equals("")) {
+//            if (statusIn.equals("")) {
                 
-                cnsmr.setStatus(status.getCode());
+                //cnsmr.setStatus(status.getCode());
                 speichern(cnsmr, kopfDaten, jTextFieldKposAktiv.getText());
                 
-            }else{
-                speichern(cnsmr, kopfDaten, jTextFieldKposAktiv.getText());
-            }
+//            }else{
+//                speichern(cnsmr, kopfDaten, jTextFieldKposAktiv.getText());
+//            }
         });
         
           if (result) {
@@ -2387,6 +2395,7 @@ public class MainFrame extends javax.swing.JFrame {
                       
                         if (kopfDaten != null) {
                             statusIn = kopfDaten.getStatus();
+                            System.out.println(statusIn);
                              DateFormat df = new SimpleDateFormat("dd.MM.yyyy"); 
                             Date dateWunsch = null;
                             Date dateErfass = null;
@@ -2403,6 +2412,8 @@ public class MainFrame extends javax.swing.JFrame {
                             jXDatePickerKdBestDat.setDate(bestell);
                             jTextFieldKdNr.setText(kopfDaten.getKdNum());
                             jTextFieldKdBestNr.setText(kopfDaten.getKdBestnum());
+                            parameterKund = jlieferDaoInterface.getKundenParameter(jTextFieldKdNr.getText());
+                            jTextFieldKposAktiv.setText(parameterKund.getKd_Pos_activ());
                             List<LieferKund> lieferKundsIn = jlieferDaoInterface.getListLieferGenerated(kopfDaten.getKdNum(), kopfDaten.getKdBestnum(), kopfDaten.getKdBestDatum(), kopfDaten.getStatus());
                             liefkunds = lieferKundsIn;
                             System.out.println("liefersList isze = " + lieferKundsIn.size());
@@ -2414,7 +2425,7 @@ public class MainFrame extends javax.swing.JFrame {
                     } else {
                         jXDatePickerWunch.requestFocus();
                     }
-       // insertIntoDb("2");
+       // insertIntoDb("2"); 
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButtonDoppelErfasungActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDoppelErfasungActionPerformed
