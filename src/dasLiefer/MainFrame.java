@@ -672,6 +672,7 @@ public class MainFrame extends javax.swing.JFrame {
         tableModel.addRow(rowDataMuster);
 
         indexPos++;
+        jTextFieldKdPosNr.setText(String.valueOf(indexPos));
 
 //        indexList.stream().forEach(cnsmr -> {
 //            tableModel.setValueAt(summe, cnsmr, 9);
@@ -691,6 +692,7 @@ public class MainFrame extends javax.swing.JFrame {
         
         jTable.setRowSelectionInterval(0,0);
         jTable.scrollRectToVisible(new Rectangle(jTable.getCellRect(0, 0, true)));
+        indexPos = Integer.valueOf(jTextFieldKdPosNr.getText());
     }
 
     private void refreshTable(List<LieferKund> lieferKunds) {
@@ -2413,9 +2415,13 @@ public class MainFrame extends javax.swing.JFrame {
                             jTextFieldKdNr.setText(kopfDaten.getKdNum());
                             jTextFieldKdBestNr.setText(kopfDaten.getKdBestnum());
                             parameterKund = jlieferDaoInterface.getKundenParameter(jTextFieldKdNr.getText());
+                            configureTable(parameterKund);
                             jTextFieldKposAktiv.setText(parameterKund.getKd_Pos_activ());
                             List<LieferKund> lieferKundsIn = jlieferDaoInterface.getListLieferGenerated(kopfDaten.getKdNum(), kopfDaten.getKdBestnum(), kopfDaten.getKdBestDatum(), kopfDaten.getStatus());
                             liefkunds = lieferKundsIn;
+                           
+                            jTextFieldKdPosNr.setText(String.valueOf(Integer.parseInt(lieferKundsIn.get(lieferKundsIn.size()-1).getPosiNummer())+1));
+                            
                             System.out.println("liefersList isze = " + lieferKundsIn.size());
                             populateTableGenarate(lieferKundsIn);
                         } else {
