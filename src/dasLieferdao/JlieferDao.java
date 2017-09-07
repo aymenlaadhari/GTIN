@@ -1043,14 +1043,14 @@ public class JlieferDao implements JlieferDaoInterface {
     }
 
     @Override
-    public boolean speichern(LieferKund cnsmr, KopfDaten daten, String posAktiv) {
+    public boolean speichern(String status,LieferKund cnsmr, KopfDaten daten, String posAktiv) {
         boolean liefRecorded = false;
         String procName = "{CALL GTIN_Erfassungsdaten_in_DB_schreiben( '" + daten.getKdNum()
                                 + "', '" + daten.getKdBestnum() + "', '" + daten.getKdBestDatum() + "', '" + daten.getKdWunchDat() + "', '" + daten.getErfasser()
                                 + "', '" + daten.getErfassDatum() + "', '" + posAktiv + "' , '" + cnsmr.getPosiNummer()
                                 + "', '" + cnsmr.getArtikel_Nr() + "', '" + cnsmr.getFarbe() + "', '" + cnsmr.getGroesse()
                                 + "', '" + cnsmr.getVariante() + "', '" + cnsmr.getMenge() + "', '" + cnsmr.getPreis()
-                                + "', '" + cnsmr.getKommission() + "', '" + cnsmr.getLagerNum() + "', '" + cnsmr.getStatus() + "', '" + cnsmr.getUbergabe() + "', '" + cnsmr.getId() + "')}";
+                                + "', '" + cnsmr.getKommission() + "', '" + cnsmr.getLagerNum() + "', '" + status + "', '" + cnsmr.getUbergabe() + "', '" + cnsmr.getId() + "')}";
          
         try {
             Connection conProdukt = DriverManager.getConnection(dburlProdukt);

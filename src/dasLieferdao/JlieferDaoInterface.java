@@ -94,7 +94,7 @@ public interface JlieferDaoInterface {
     public List<LieferKund> getListLieferGenerated(String KdNum, String KdBestnum, String KdBestDatum, String status);
     public List<Status> getStatusListe();
     
-    public boolean  speichern(LieferKund lieferKund, KopfDaten daten, String posAktiv);
+    public boolean  speichern(String status,LieferKund lieferKund, KopfDaten daten, String posAktiv);
     public boolean famakVorbereiten();
     public List<String> datenInfamakSchreiben(KopfDaten kopfDaten);
     public void getColumnName();

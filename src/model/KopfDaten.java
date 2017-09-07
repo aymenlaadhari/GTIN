@@ -10,7 +10,7 @@ package model;
  * @author aladhari
  */
 public class KopfDaten {
-    private String kdNum, kdName,ort, kdBestnum, kdBestDatum, erfasser,erfassDatum,status,bemerkung,kdWunchDat;
+    private String kdNum, kdName,ort, kdBestnum, kdBestDatum, erfasser,erfassDatum,status="",bemerkung,kdWunchDat;
 
     public String getKdNum() {
         return kdNum;
