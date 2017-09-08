@@ -99,4 +99,5 @@ public interface JlieferDaoInterface {
     public List<String> datenInfamakSchreiben(KopfDaten kopfDaten);
     public void getColumnName();
     public String returnError();
+    public String removeLieferKund(String lieferKundID);
 }

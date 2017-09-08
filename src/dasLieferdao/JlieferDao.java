@@ -5,7 +5,7 @@
  */
 package dasLieferdao;
 
-import java.sql.Array;
+
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -55,6 +55,33 @@ public class JlieferDao implements JlieferDaoInterface {
 
     public JlieferDao(String dburlProdukt) {
         this.dburlProdukt = dburlProdukt;
+    }
+
+    @Override
+    public String removeLieferKund(String lieferKundID) {
+        
+    String ret = "";
+        try {
+            String proc = "CALL GTIN_DoppelErfassung_Zeile_loeschen( '" + lieferKundID + "')";
+            
+            
+            
+            Connection conProdukt = DriverManager.getConnection(dburlProdukt);
+            
+            Statement s = conProdukt.createStatement();
+            try (ResultSet rs = s.executeQuery(proc)) {
+                while (rs.next()) {
+                    ret = rs.getString(1);
+                }
+                rs.close();
+                s.close();
+                conProdukt.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JlieferDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return ret;
+        
     }
 
     @Override

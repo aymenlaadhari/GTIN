@@ -272,7 +272,7 @@ public class MainFrame extends javax.swing.JFrame {
             @Override
             public void removeUpdate(DocumentEvent de) {
             
-                kopfDaten.setKdBestnum(jTextFieldKdBestNr.getText());
+                //kopfDaten.setKdBestnum(jTextFieldKdBestNr.getText());
             }
         });
         
@@ -359,6 +359,7 @@ public class MainFrame extends javax.swing.JFrame {
         jXDatePickerKdBestDat.getEditor().addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent arg0) {
+                
                 if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
                     SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
                     String dateBest = "1900/01/01";
@@ -388,7 +389,7 @@ public class MainFrame extends javax.swing.JFrame {
                             
                             List<LieferKund> lieferKundsIn = jlieferDaoInterface.getListLieferGenerated(kopfDaten.getKdNum(), kopfDaten.getKdBestnum(), kopfDaten.getKdBestDatum(), kopfDaten.getStatus());
                             liefkunds = lieferKundsIn;
-                            System.out.println("liefersList isze = " + lieferKundsIn.size());
+                            
                             populateTableGenarate(lieferKundsIn);
                         } else {
                             jXDatePickerWunch.requestFocus();
@@ -605,7 +606,7 @@ public class MainFrame extends javax.swing.JFrame {
     private void populateJtable() {
 
         LieferKund lieferKund = new LieferKund();
-
+        statusIn = "";
         if ((!liefkunds.isEmpty()) && jTextFieldKdArtNr.getText().equals("")) {
             lieferKund.setArtikel_Nr(liefkunds.get(liefkunds.size() - 1).getArtikel_Nr());
         } else if (jTextFieldKdArtNr.getText().contains(suchen) && suchen != null) {
@@ -640,7 +641,7 @@ public class MainFrame extends javax.swing.JFrame {
         lieferKund.setLagerNum(jlieferDaoInterface.getLagerNr(jTextFieldKdNr.getText(), lieferKund.getArtikel_Nr(), lieferKund.getFarbe(), lieferKund.getGroesse(), lieferKund.getVariante()));
         lieferKund.setUbergabe("X");
         checkKopfDaten();
-        lieferKund.setStatus(kopfDaten.getStatus());
+        lieferKund.setStatus(statusIn);
         if (liefkunds.isEmpty()) {
             lieferKund.setSumme(lieferKund.getMenge());
         }
@@ -652,7 +653,6 @@ public class MainFrame extends javax.swing.JFrame {
         String kdVariante = lieferKund.getVariante();
         ArrayList<Integer> indexList = new ArrayList<>();
         for (int i = 0; i < liefkunds.size(); i++) {
-            //System.out.println(liefkunds.get(i).getArtikel_Nr()+" "+liefkunds.get(i).getFarbe()+" "+liefkunds.get(i).getVariante());
             if (liefkunds.get(i).getArtikel_Nr().equals(kdArtNum) && liefkunds.get(i).getFarbe().equals(kdFarbe) && liefkunds.get(i).getVariante().equals(kdVariante)) {
                 indexList.add(i);
             }
@@ -968,7 +968,6 @@ public class MainFrame extends javax.swing.JFrame {
     private void populateJtablePreisListe() {
         tableModelPreislIste.setRowCount(0);
         int selectedRow = jTable.getSelectedRow();
-        System.out.println(liefkunds.size());
         LieferKund lieferKund = liefkunds.get(selectedRow);
         List<VarPreis> varPreises;
         if (jTextFieldMengenBezeug.getText().equals("P")) {
@@ -981,8 +980,35 @@ public class MainFrame extends javax.swing.JFrame {
         varPreises.stream().forEach(cnsmr -> {
             addToTablePreisListe(cnsmr);
             tableModelPreislIste.addRow(rowDataPreisListe);
+            
         });
+        for (int i = 0; i < tableModelPreislIste.getRowCount(); i++) {
+            
+            if (jTablePreisListe.getValueAt(i, 1)!= null) {
+                
+             switch (jTablePreisListe.getValueAt(i, 1).toString()) {
+            case "DIFF":
+                jTablePreisListe.getSelectionModel().addSelectionInterval(i, i);
+                jTablePreisListe.setSelectionBackground(Color.decode("#ef6462"));
+                     break;
+            case "OK":  
+                jTablePreisListe.getSelectionModel().addSelectionInterval(i, i);
+                jTablePreisListe.setSelectionBackground(Color.decode("#00AF33"));
+                     break;
+            case "1× 0":  
+                jTablePreisListe.getSelectionModel().addSelectionInterval(i, i);
+                jTablePreisListe.setSelectionBackground(Color.decode("#f9df7f"));
+                     break;
+            
+        }
 
+        }
+            
+            if (jTablePreisListe.getValueAt(i, 2)!= null && jTablePreisListe.getValueAt(i, 2).toString().contains("•••")){
+                jTablePreisListe.getSelectionModel().addSelectionInterval(i, i);
+                jTablePreisListe.setSelectionBackground(Color.decode("#f9df7f"));
+            }
+        }
         jTablePreisListe.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         resizeColumnWidth(jTablePreisListe);
     }
@@ -1011,7 +1037,6 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     private void erfassungManuelle() {
-        //System.out.println("0"+ kundPrufer.getId()+";"+ kundPruferFamak.getPosGrId()+";"+ kundPrufer.getStatus());
         String meldung3 = jlieferDaoInterface.erfassungManuelzuweisen("0", kundPrufer.getId(), kundPruferFamak.getPosGrId(), kundPrufer.getStatus());
         String message = jlieferDaoInterface.getMeldung("3", meldung3);
         String[] parts3 = message.split("--");
@@ -1024,7 +1049,6 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     private void erfassungManuelleteilmenge() {
-        //System.out.println("0"+ kundPrufer.getId()+";"+ kundPruferFamak.getPosGrId()+";"+ kundPrufer.getStatus());
         String meldung3 = jlieferDaoInterface.erfassungManuelzuweisen("1", kundPrufer.getId(), kundPruferFamak.getPosGrId(), kundPrufer.getStatus());
         String message = jlieferDaoInterface.getMeldung("3", meldung3);
         String[] parts3 = message.split("--");
@@ -1049,7 +1073,6 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     private void erfassungVerarbeiten() {
-        //System.out.println(jlieferDaoInterface.erfassungVerarbeiten());
         if (jlieferDaoInterface.erfassungVerarbeiten()) {
             JOptionPane.showMessageDialog(null,
                     "Erledigt",
@@ -1898,7 +1921,7 @@ public class MainFrame extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(jTablePrufer);
 
-        jButtonVerarbeiten.setText("Änderungen verarbeiten");
+        jButtonVerarbeiten.setText("Erfassungsdaten verarbeiten");
         jButtonVerarbeiten.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonVerarbeitenActionPerformed(evt);
@@ -1920,20 +1943,17 @@ public class MainFrame extends javax.swing.JFrame {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                        .addContainerGap()
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGap(19, 19, 19)
                         .addComponent(jButtonLaden, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(46, 46, 46)
+                        .addComponent(jXDatePickerBisDatum, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
                         .addComponent(jButtonVerarbeiten))
                     .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addGap(190, 190, 190)
-                                .addComponent(jXDatePickerBisDatum, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addGap(236, 236, 236)
-                                .addComponent(jLabel16)))
-                        .addGap(0, 192, Short.MAX_VALUE)))
+                        .addGap(236, 236, 236)
+                        .addComponent(jLabel16)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -1942,12 +1962,11 @@ public class MainFrame extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel16)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jXDatePickerBisDatum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jXDatePickerBisDatum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButtonVerarbeiten, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButtonLaden, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                .addGap(50, 50, 50))
         );
 
         jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Manuelle Verarbeitung", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.DEFAULT_POSITION));
@@ -2010,7 +2029,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(38, 38, 38)
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(1223, Short.MAX_VALUE))
+                .addContainerGap(1201, Short.MAX_VALUE))
             .addComponent(jScrollPane2)
         );
         jPanel4Layout.setVerticalGroup(
@@ -2020,11 +2039,11 @@ public class MainFrame extends javax.swing.JFrame {
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(75, 75, 75)
-                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGap(65, 65, 65)
-                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(75, 75, 75)
+                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(473, Short.MAX_VALUE))
         );
 
@@ -2058,7 +2077,6 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void jTablePruferKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTablePruferKeyPressed
         // TODO add your handling code here:
-        //System.out.println(evt.isControlDown());
         ctrlPressed = evt.isControlDown();
 
     }//GEN-LAST:event_jTablePruferKeyPressed
@@ -2087,8 +2105,7 @@ public class MainFrame extends javax.swing.JFrame {
                 }
 
             } else if (evt.getButton() == MouseEvent.BUTTON3) {
-                //System.out.println("right button");
-            } else {
+                } else {
                 selectInTheTable();
             }
 
@@ -2098,40 +2115,30 @@ public class MainFrame extends javax.swing.JFrame {
     private void jButtonSpeichernActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSpeichernActionPerformed
         // TODO add your handling code here:
         checkKopfDaten();
-        
+
         if (statusIn.equals("")) {
             JDialogStatus dialogStatus = new JDialogStatus(MainFrame.this, true, getStatus());
             dialogStatus.setVisible(true);
             Status status = dialogStatus.getSelectedStatus();
             statusIn = status.getCode();
         }
-        
-        
-        liefkunds.stream().forEach(cnsmr->{
-  
-//            if (statusIn.equals("")) {
-                
-                //cnsmr.setStatus(status.getCode());
-                speichern(statusIn,cnsmr, kopfDaten, jTextFieldKposAktiv.getText());
-                
-//            }else{
-//                speichern(cnsmr, kopfDaten, jTextFieldKposAktiv.getText());
-//            }
+
+        liefkunds.stream().forEach(cnsmr -> {
+            speichern(statusIn, cnsmr, kopfDaten, jTextFieldKposAktiv.getText());
         });
-        
-          if (result) {
-            System.out.println("successuful recorded");
+
+        if (result) {
             JOptionPane.showMessageDialog(MainFrame.this,
                     "successuful recorded");
             tableModel.setRowCount(0);
             liefkunds.clear();
-            statusIn="";
+            statusIn = "";
             jTextFieldKdPosNr.setText("");
-            indexPos=1;
+            indexPos = 1;
         } else {
-              String error = jlieferDaoInterface.returnError();
+            String error = jlieferDaoInterface.returnError();
             JOptionPane.showMessageDialog(MainFrame.this,
-                    "Error when recording: "+error,
+                    "Error when recording: " + error,
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
         }
@@ -2152,6 +2159,7 @@ public class MainFrame extends javax.swing.JFrame {
             if (jTable.getRowCount() != 0) {
                 int[] rows = jTable.getSelectedRows();
                 String phrase = "";
+                List<String> listMeldungRemove = new ArrayList<>();
                 if (rows.length == 1) {
                     phrase = "Möchten Sie die markierte Zeile löschen?";
                 } else if (rows.length > 1) {
@@ -2165,18 +2173,22 @@ public class MainFrame extends javax.swing.JFrame {
                         LieferKund lieferKund = liefkunds.get(rows[i] - i);
                         tableModel.removeRow(rows[i] - i);
                         liefkunds.remove(lieferKund);
+                        String removeMeldung = jlieferDaoInterface.removeLieferKund(lieferKund.getId());
+                        listMeldungRemove.add(removeMeldung);
+                        
                     }
+                    
+                    JOptionPane.showMessageDialog(null,
+                        new JScrollPane(new JList(listMeldungRemove.toArray())), "Hinweise", 1);
                     if (jTable.getRowCount() == 0) {
                         //musterArtikels = new ArrayList<>();
                         //selectedMusterArtikel = new MusterArtikel();
                         tableModel.setRowCount(0);
                         liefkunds.clear();
                         tableModelPreislIste.setRowCount(0);
-
-                        //initilizeFelder();
+                        statusIn="";
+                        
                     }
-
-                    //refreshPosition(jTable.getRowCount());
                     tableModel.fireTableDataChanged();
                 }
             }
@@ -2420,6 +2432,7 @@ public class MainFrame extends javax.swing.JFrame {
             jTextFieldMengenBezeug.setText(jlieferDaoInterface.getMengenbezug(jTextFieldKdNr.getText()));
             tableModelPreislIste.setRowCount(0);
             indexPos = Integer.valueOf(jTextFieldKdPosNr.getText());
+            statusIn = "";
         }
     }//GEN-LAST:event_jTextFieldKdNrKeyPressed
 
@@ -2476,60 +2489,55 @@ public class MainFrame extends javax.swing.JFrame {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
         SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
-                    String dateBest = "1900/01/01";
-                    if (jXDatePickerKdBestDat.getDate() != null) {
-                        dateBest = format.format(jXDatePickerKdBestDat.getDate());
-                    }
-                    List<KopfDaten> kopfDatens = jlieferDaoInterface.getListKopfDaten(jTextFieldKdNr.getText(), jTextFieldKdBestNr.getText(), dateBest);
-                    System.out.println(kopfDatens.size());
-                    if (!kopfDatens.isEmpty()) {
-                        JDialogListKopfDaten dialogListKopfDaten = new JDialogListKopfDaten(MainFrame.this, true, kopfDatens);
-                        dialogListKopfDaten.setVisible(true);
-                        kopfDaten = dialogListKopfDaten.getSelectedKopfDatenIn();
-                      
-                        if (kopfDaten != null) {
-                            statusIn = kopfDaten.getStatus();
-                            System.out.println(statusIn);
-                             DateFormat df = new SimpleDateFormat("dd.MM.yyyy"); 
-                            Date dateWunsch = null;
-                            Date dateErfass = null;
-                            Date bestell = null;
-                              try {
-                                dateWunsch = df.parse(kopfDaten.getKdWunchDat());
-                                dateErfass = df.parse(kopfDaten.getErfassDatum());
-                                bestell = df.parse(kopfDaten.getKdBestDatum());
-                            } catch (ParseException ex) {
-                                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                              jXDatePickerWunch.setDate(dateWunsch);
-                            jXDatePickerErfassung.setDate(dateErfass);
-                            jXDatePickerKdBestDat.setDate(bestell);
-                            jTextFieldKdNr.setText(kopfDaten.getKdNum());
-                            jTextFieldKdBestNr.setText(kopfDaten.getKdBestnum());
-                            parameterKund = jlieferDaoInterface.getKundenParameter(jTextFieldKdNr.getText());
-                            configureTable(parameterKund);
-                            jTextFieldKposAktiv.setText(parameterKund.getKd_Pos_activ());
-                            List<LieferKund> lieferKundsIn = jlieferDaoInterface.getListLieferGenerated(kopfDaten.getKdNum(), kopfDaten.getKdBestnum(), kopfDaten.getKdBestDatum(), kopfDaten.getStatus());
-                            liefkunds = lieferKundsIn;
-                           
-                            jTextFieldKdPosNr.setText(String.valueOf(Integer.parseInt(lieferKundsIn.get(lieferKundsIn.size()-1).getPosiNummer())+1));
-                            
-                            System.out.println("liefersList isze = " + lieferKundsIn.size());
-                            populateTableGenarate(lieferKundsIn);
-                        } else {
-                            jXDatePickerWunch.requestFocus();
-                        }
+        String dateBest = "1900/01/01";
+        if (jXDatePickerKdBestDat.getDate() != null) {
+            dateBest = format.format(jXDatePickerKdBestDat.getDate());
+        }
+        List<KopfDaten> kopfDatens = jlieferDaoInterface.getListKopfDaten(jTextFieldKdNr.getText(), jTextFieldKdBestNr.getText(), dateBest);
+        if (!kopfDatens.isEmpty()) {
+            JDialogListKopfDaten dialogListKopfDaten = new JDialogListKopfDaten(MainFrame.this, true, kopfDatens);
+            dialogListKopfDaten.setVisible(true);
+            kopfDaten = dialogListKopfDaten.getSelectedKopfDatenIn();
 
-                    } else {
-                        jXDatePickerWunch.requestFocus();
-                    }
-       // insertIntoDb("2"); 
+            if (kopfDaten != null) {
+                statusIn = kopfDaten.getStatus();
+                DateFormat df = new SimpleDateFormat("dd.MM.yyyy");
+                Date dateWunsch = null;
+                Date dateErfass = null;
+                Date bestell = null;
+                try {
+                    dateWunsch = df.parse(kopfDaten.getKdWunchDat());
+                    dateErfass = df.parse(kopfDaten.getErfassDatum());
+                    bestell = df.parse(kopfDaten.getKdBestDatum());
+                } catch (ParseException ex) {
+                    Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                jXDatePickerWunch.setDate(dateWunsch);
+                jXDatePickerErfassung.setDate(dateErfass);
+                jXDatePickerKdBestDat.setDate(bestell);
+                jTextFieldKdNr.setText(kopfDaten.getKdNum());
+                jTextFieldKdBestNr.setText(kopfDaten.getKdBestnum());
+                parameterKund = jlieferDaoInterface.getKundenParameter(jTextFieldKdNr.getText());
+                configureTable(parameterKund);
+                jTextFieldKposAktiv.setText(parameterKund.getKd_Pos_activ());
+                List<LieferKund> lieferKundsIn = jlieferDaoInterface.getListLieferGenerated(kopfDaten.getKdNum(), kopfDaten.getKdBestnum(), kopfDaten.getKdBestDatum(), kopfDaten.getStatus());
+                liefkunds = lieferKundsIn;
+
+                jTextFieldKdPosNr.setText(String.valueOf(Integer.parseInt(lieferKundsIn.get(lieferKundsIn.size() - 1).getPosiNummer()) + 1));
+
+                populateTableGenarate(lieferKundsIn);
+            } else {
+                jXDatePickerWunch.requestFocus();
+            }
+
+        } else {
+            jXDatePickerWunch.requestFocus();
+        }
+        // insertIntoDb("2"); 
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButtonDoppelErfasungActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDoppelErfasungActionPerformed
         // TODO add your handling code here:
-//        System.out.println("here we go");
-//        jlieferDaoInterface.getColumnName();
         doppelErfassungPrüfen();
     }//GEN-LAST:event_jButtonDoppelErfasungActionPerformed
 
@@ -2548,7 +2556,7 @@ public class MainFrame extends javax.swing.JFrame {
             speichern(statusIn,cnsmr, kopfDaten, jTextFieldKposAktiv.getText());
         });
         if (result) {
-            System.out.println("successuful recorded");
+            
             JOptionPane.showMessageDialog(MainFrame.this,
                     "successuful recorded");
             tableModel.setRowCount(0);
