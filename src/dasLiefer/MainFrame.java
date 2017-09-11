@@ -206,6 +206,11 @@ public class MainFrame extends javax.swing.JFrame {
                 tclLiefKund = (TableCellListener) e.getSource();
                 switch (tclLiefKund.getColumn()) {
 
+                    case 0:
+                        liefkunds.get(tclLiefKund.getRow()).setPosiNummer(tclLiefKund.getNewValue().toString());
+                        changeArtnum = true;
+                        break;
+                        
                     case 1:
                         liefkunds.get(tclLiefKund.getRow()).setArtikel_Nr(tclLiefKund.getNewValue().toString());
                         changeArtnum = true;
@@ -640,7 +645,9 @@ public class MainFrame extends javax.swing.JFrame {
 
         lieferKund.setLagerNum(jlieferDaoInterface.getLagerNr(jTextFieldKdNr.getText(), lieferKund.getArtikel_Nr(), lieferKund.getFarbe(), lieferKund.getGroesse(), lieferKund.getVariante()));
         lieferKund.setUbergabe("X");
+        System.out.println("statusIn before check= "+statusIn);
         checkKopfDaten();
+        System.out.println("statusIn= "+statusIn);
         lieferKund.setStatus(statusIn);
         if (liefkunds.isEmpty()) {
             lieferKund.setSumme(lieferKund.getMenge());
@@ -1004,10 +1011,10 @@ public class MainFrame extends javax.swing.JFrame {
 
         }
             
-            if (jTablePreisListe.getValueAt(i, 2)!= null && jTablePreisListe.getValueAt(i, 2).toString().contains("•••")){
-                jTablePreisListe.getSelectionModel().addSelectionInterval(i, i);
-                jTablePreisListe.setSelectionBackground(Color.decode("#f9df7f"));
-            }
+//            if (jTablePreisListe.getValueAt(i, 2)!= null && jTablePreisListe.getValueAt(i, 2).toString().contains("•••")){
+//                jTablePreisListe.getSelectionModel().addSelectionInterval(i, i);
+//                jTablePreisListe.setSelectionBackground(Color.decode("#f9df7f"));
+//            }
         }
         jTablePreisListe.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         resizeColumnWidth(jTablePreisListe);
@@ -2432,6 +2439,7 @@ public class MainFrame extends javax.swing.JFrame {
             jTextFieldMengenBezeug.setText(jlieferDaoInterface.getMengenbezug(jTextFieldKdNr.getText()));
             tableModelPreislIste.setRowCount(0);
             indexPos = Integer.valueOf(jTextFieldKdPosNr.getText());
+            kopfDaten = new KopfDaten();
             statusIn = "";
         }
     }//GEN-LAST:event_jTextFieldKdNrKeyPressed
