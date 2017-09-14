@@ -998,14 +998,14 @@ public class MainFrame extends javax.swing.JFrame {
                 jTablePreisListe.getSelectionModel().addSelectionInterval(i, i);
                 jTablePreisListe.setSelectionBackground(Color.decode("#ef6462"));
                      break;
-            case "OK":  
-                jTablePreisListe.getSelectionModel().addSelectionInterval(i, i);
-                jTablePreisListe.setSelectionBackground(Color.decode("#00AF33"));
-                     break;
-            case "1× 0":  
-                jTablePreisListe.getSelectionModel().addSelectionInterval(i, i);
-                jTablePreisListe.setSelectionBackground(Color.decode("#f9df7f"));
-                     break;
+//            case "OK":  
+//                jTablePreisListe.getSelectionModel().addSelectionInterval(i, i);
+//                jTablePreisListe.setSelectionBackground(Color.decode("#00AF33"));
+//                     break;
+//            case "1× 0":  
+//                jTablePreisListe.getSelectionModel().addSelectionInterval(i, i);
+//                jTablePreisListe.setSelectionBackground(Color.decode("#f9df7f"));
+//                     break;
             
         }
 
