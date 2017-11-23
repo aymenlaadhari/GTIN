@@ -20,6 +20,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
+import model.KopfDaten;
 
 import model.LieferKundDoppel;
 import util.TableCellListener;
@@ -37,6 +38,7 @@ public class JDialogDoppelErfassung extends javax.swing.JDialog {
     private final TableCellListener tclLieferKund;
     private TableCellListener tclLiefKund;
     private JlieferDaoInterface jlieferDaoInterface;
+    private KopfDaten kopfDaten;
 
     /**
      * Creates new form NewJDialogDoppelErfassung
@@ -45,8 +47,9 @@ public class JDialogDoppelErfassung extends javax.swing.JDialog {
      * @param modal
      * @param kundDoppels
      * @param dburlProdukt
+     * @param kopfDaten
      */
-    public JDialogDoppelErfassung(java.awt.Frame parent, boolean modal, List<LieferKundDoppel> kundDoppels, String dburlProdukt) {
+    public JDialogDoppelErfassung(java.awt.Frame parent, boolean modal, List<LieferKundDoppel> kundDoppels, String dburlProdukt, KopfDaten kopfDaten) {
         super(parent, modal);
         initComponents();
         jlieferDaoInterface = new JlieferDao(dburlProdukt);
@@ -57,6 +60,7 @@ public class JDialogDoppelErfassung extends javax.swing.JDialog {
         jTable.setPreferredScrollableViewportSize(Toolkit.getDefaultToolkit().getScreenSize());
         resizeColumnWidth(jTable);
         listSelectionModel = jTable.getSelectionModel();
+        this.kopfDaten = kopfDaten;
 
         //ColumnsAutoSizer.sizeColumnsToFit(jTable);
         tclLieferKund = new TableCellListener(jTable, new AbstractAction() {
@@ -325,7 +329,7 @@ public class JDialogDoppelErfassung extends javax.swing.JDialog {
 
     private void jButtonerneutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonerneutActionPerformed
         // TODO add your handling code here:
-        populateJtable(jlieferDaoInterface.getListDoppelErfassung());
+        populateJtable(jlieferDaoInterface.getListDoppelErfassung(kopfDaten));
     }//GEN-LAST:event_jButtonerneutActionPerformed
 
     private void jButtonmarkierteLöschenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonmarkierteLöschenActionPerformed
@@ -371,7 +375,7 @@ public class JDialogDoppelErfassung extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                JDialogDoppelErfassung dialog = new JDialogDoppelErfassung(new javax.swing.JFrame(), true, new ArrayList<>(), "");
+                JDialogDoppelErfassung dialog = new JDialogDoppelErfassung(new javax.swing.JFrame(), true, new ArrayList<>(), "", new KopfDaten());
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

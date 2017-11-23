@@ -219,10 +219,10 @@ public class JlieferDao implements JlieferDaoInterface {
     }
 
     @Override
-    public boolean erfassungVerarbeiten() {
+    public boolean erfassungVerarbeiten(KopfDaten kopfDaten) {
         String ret = "";
         try {
-            String proc = "CALL GTIN_Erfassungsdaten_verarbeiten('')";
+            String proc = "CALL GTIN_Erfassungsdaten_verarbeiten('" + kopfDaten.getKdNum() + "', '" + kopfDaten.getKdBestnum() + "', '" + kopfDaten.getKdBestDatum() + "')";
 
             Connection conProdukt = DriverManager.getConnection(dburlProdukt);
             Statement s = conProdukt.createStatement();
@@ -243,11 +243,11 @@ public class JlieferDao implements JlieferDaoInterface {
     }
 
     @Override
-    public boolean famakVorbereiten() {
+    public boolean famakVorbereiten(KopfDaten kopfDaten) {
     
     String ret = "";
         try {
-            String proc = "SELECT GTIN_Famak_vorbereiten()";
+            String proc = "SELECT GTIN_Famak_vorbereiten('" + kopfDaten.getKdNum() + "', '" + kopfDaten.getKdBestnum() + "', '" + kopfDaten.getKdBestDatum() + "')";
 
             Connection conProdukt = DriverManager.getConnection(dburlProdukt);
             Statement s = conProdukt.createStatement();
@@ -297,7 +297,7 @@ public class JlieferDao implements JlieferDaoInterface {
                        
                         for (int i = 1; i <= col; i++) {
                             String col_name = md1.getColumnName(i);
-                            if (col_name.contains("ohn")) {
+                            if (col_name.contains("estellung")) {
                                System.out.println("Found in: "+tableName+" with the column name: "+col_name); 
                             }
                             
@@ -553,9 +553,9 @@ public class JlieferDao implements JlieferDaoInterface {
     }
 
     @Override
-    public List<LieferKundDoppel> getListDoppelErfassung() {
+    public List<LieferKundDoppel> getListDoppelErfassung(KopfDaten kopfDaten) {
         List<LieferKundDoppel> listLiefDoppel = new ArrayList<>();
-        String procName = "{CALL GTIN_DoppelErfassung_verarbeiten()}";
+        String procName = "{CALL GTIN_DoppelErfassung_verarbeiten('" + kopfDaten.getKdNum() + "', '" + kopfDaten.getKdBestnum() + "', '" + kopfDaten.getKdBestDatum() + "')}";
         Connection conProdukt;
         try {
             conProdukt = DriverManager.getConnection(dburlProdukt);
@@ -730,9 +730,9 @@ public class JlieferDao implements JlieferDaoInterface {
     }
 
     @Override
-    public List<LieferKundPrufer> getListPrufers(String datum) {
+    public List<LieferKundPrufer> getListPrufers(String datum, KopfDaten kopfDaten) {
         List<LieferKundPrufer> kundPrufers = new ArrayList<>();
-        String procName = "{CALL GTIN_Erfassungsdaten_pruefen ('" + datum + "')}";
+        String procName = "{CALL GTIN_Erfassungsdaten_pruefen ('" + datum + "','" + kopfDaten.getKdNum() + "', '" + kopfDaten.getKdBestnum() + "', '" + kopfDaten.getKdBestDatum() + "')}";
         Connection conProdukt;
         try {
             conProdukt = DriverManager.getConnection(dburlProdukt);

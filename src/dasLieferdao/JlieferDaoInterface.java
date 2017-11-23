@@ -28,7 +28,7 @@ public interface JlieferDaoInterface {
 
     public List<String> getKundenNummers();
 
-    public List<LieferKundPrufer> getListPrufers(String datum);
+    public List<LieferKundPrufer> getListPrufers(String datum, KopfDaten kopfDaten);
 
     public ParameterKund getKundenParameter(String kundNummer);
 
@@ -68,7 +68,7 @@ public interface JlieferDaoInterface {
 
     public String erfassungAbschliessen(String id, String posGrosId);
 
-    public boolean erfassungVerarbeiten();
+    public boolean erfassungVerarbeiten(KopfDaten kopfDaten);
 
     public List<VarPreis> getListVarPreis(String kdNummer, String kdArtNummer, String kdFarbe, String kdGroesse, String kdVariante, String menge, String lagerNummer);
 
@@ -79,7 +79,7 @@ public interface JlieferDaoInterface {
     public String getOneIndexInFamak();
     public List<String> getFehlerIndexes();
     
-    public List<LieferKundDoppel> getListDoppelErfassung();
+    public List<LieferKundDoppel> getListDoppelErfassung(KopfDaten kopfDaten);
     public String erfassungAktualisieren(String id,String kdPosnr,String kdArtNr,String kdfarb,String kdGros,String kdVar,String kdKomm,String kdMeng);
     public String erfassungLoschen(String id);
     public List<LieferKundDoppel> getListDoppelErfassungZuruck();
@@ -95,7 +95,7 @@ public interface JlieferDaoInterface {
     public List<Status> getStatusListe();
     
     public boolean  speichern(String status,LieferKund lieferKund, KopfDaten daten, String posAktiv);
-    public boolean famakVorbereiten();
+    public boolean famakVorbereiten(KopfDaten kopfDaten);
     public List<String> datenInfamakSchreiben(KopfDaten kopfDaten);
     public void getColumnName();
     public String returnError();

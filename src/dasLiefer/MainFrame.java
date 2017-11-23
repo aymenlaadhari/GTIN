@@ -37,6 +37,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -117,7 +118,7 @@ public class MainFrame extends javax.swing.JFrame {
         loadPropertie("installation");
         initializeDataBase();
         kopfDaten = new KopfDaten();
-        tableModel = (DefaultTableModel) jTable.getModel();
+        tableModel = (DefaultTableModel) jTableAllgemein.getModel();
         tableModelPrufer = (DefaultTableModel) jTablePrufer.getModel();
         tableModelPrufer.setRowCount(0);
         jTablePrufer.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -169,8 +170,8 @@ public class MainFrame extends javax.swing.JFrame {
             @Override
             public void actionPerformed(ActionEvent ae) {
 
-                if (!liefkunds.get(jTable.getSelectedRow()).getId().isEmpty()) {
-                    JDialogSuchen dialogSuchen = new JDialogSuchen(MainFrame.this, liefkunds.get(jTable.getSelectedRow()), jTextFieldKdNr.getText(), dbUrl);
+                if (!liefkunds.get(jTableAllgemein.getSelectedRow()).getId().isEmpty()) {
+                    JDialogSuchen dialogSuchen = new JDialogSuchen(MainFrame.this, liefkunds.get(jTableAllgemein.getSelectedRow()), jTextFieldKdNr.getText(), dbUrl);
                     dialogSuchen.setVisible(true);
 
                 }
@@ -181,7 +182,7 @@ public class MainFrame extends javax.swing.JFrame {
         popupMenueingaben.add(menuItemAddSuche);
         ctrlPressed = false;
 
-        listSelectionModel = jTable.getSelectionModel();
+        listSelectionModel = jTableAllgemein.getSelectionModel();
         listSelectionModel.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -199,7 +200,7 @@ public class MainFrame extends javax.swing.JFrame {
                 }
             }
         });
-        tclLieferKund = new TableCellListener(jTable, new AbstractAction() {
+        tclLieferKund = new TableCellListener(jTableAllgemein, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 boolean changeArtnum = false, changeFarb = false, changeVar = false;
@@ -208,32 +209,38 @@ public class MainFrame extends javax.swing.JFrame {
 
                     case 0:
                         liefkunds.get(tclLiefKund.getRow()).setPosiNummer(tclLiefKund.getNewValue().toString());
+                        liefkunds.get(tclLiefKund.getRow()).setUbergabe("X");
                         changeArtnum = true;
                         break;
                         
                     case 1:
                         liefkunds.get(tclLiefKund.getRow()).setArtikel_Nr(tclLiefKund.getNewValue().toString());
+                        liefkunds.get(tclLiefKund.getRow()).setUbergabe("X");
                         changeArtnum = true;
                         break;
 
                     case 2:
                         liefkunds.get(tclLiefKund.getRow()).setFarbe(tclLiefKund.getNewValue().toString());
+                        liefkunds.get(tclLiefKund.getRow()).setUbergabe("X");
                         changeFarb = true;
                         break;
 
                     case 3:
                         liefkunds.get(tclLiefKund.getRow()).setGroesse(tclLiefKund.getNewValue().toString());
-
+                        liefkunds.get(tclLiefKund.getRow()).setUbergabe("X");
                         break;
 
                     case 4:
                         liefkunds.get(tclLiefKund.getRow()).setVariante(tclLiefKund.getNewValue().toString());
+                        liefkunds.get(tclLiefKund.getRow()).setUbergabe("X");
                         changeVar = true;
                         break;
 
                     case 5:
 
                         liefkunds.get(tclLiefKund.getRow()).setMenge(tclLiefKund.getNewValue().toString());
+                        liefkunds.get(tclLiefKund.getRow()).setUbergabe("X");
+                        changeVar = true;
                         break;
 
                     case 6:
@@ -243,16 +250,20 @@ public class MainFrame extends javax.swing.JFrame {
                         } else {
                             liefkunds.get(tclLiefKund.getRow()).setPreis(tclLiefKund.getNewValue().toString());
                         }
+                        liefkunds.get(tclLiefKund.getRow()).setUbergabe("X");
+                        changeVar = true;
                         break;
 
                     case 7:
                         liefkunds.get(tclLiefKund.getRow()).setKommission(tclLiefKund.getNewValue().toString());
-
+                        liefkunds.get(tclLiefKund.getRow()).setUbergabe("X");
+                        changeVar = true;
                         break;
 
                     case 8:
                         liefkunds.get(tclLiefKund.getRow()).setLagerNum(tclLiefKund.getNewValue().toString());
-
+                        liefkunds.get(tclLiefKund.getRow()).setUbergabe("X");
+                        changeVar = true;
                         break;
 
                     case 9:
@@ -267,11 +278,13 @@ public class MainFrame extends javax.swing.JFrame {
             @Override
             public void changedUpdate(DocumentEvent de) {
                 kopfDaten.setKdBestnum(jTextFieldKdBestNr.getText());
+                jTextFieldKdBestNrCopi.setText(jTextFieldKdBestNr.getText());
                  }
 
             @Override
             public void insertUpdate(DocumentEvent de) {
                kopfDaten.setKdBestnum(jTextFieldKdBestNr.getText());
+               jTextFieldKdBestNrCopi.setText(jTextFieldKdBestNr.getText());
             }
 
             @Override
@@ -553,7 +566,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void addToTable(LieferKund lieferKund, boolean changeInthtable) {
 
-        if (jTable.getRowCount() == 0) {
+        if (jTableAllgemein.getRowCount() == 0) {
 
             count = (Integer.valueOf(jTextFieldKdPosNr.getText()));
         }
@@ -569,12 +582,12 @@ public class MainFrame extends javax.swing.JFrame {
             } else if ((Integer.valueOf(jTextFieldKdPosNr.getText()) % 10) == 0) {
 
                 if ((Integer.valueOf(jTextFieldKdPosNr.getText()) % 100) == 0) {
-                    rowDataMuster[0] = (jTable.getRowCount() + increment) * 100;
+                    rowDataMuster[0] = (jTableAllgemein.getRowCount() + increment) * 100;
                 } else {
-                    rowDataMuster[0] = (jTable.getRowCount() + increment) * 10;
+                    rowDataMuster[0] = (jTableAllgemein.getRowCount() + increment) * 10;
                 }
             } else {
-                rowDataMuster[0] = (jTable.getRowCount() + increment);
+                rowDataMuster[0] = (jTableAllgemein.getRowCount() + increment);
             }
             liefkunds.get(liefkunds.size() - 1).setPosiNummer(String.valueOf(rowDataMuster[0]));
         }
@@ -674,8 +687,8 @@ public class MainFrame extends javax.swing.JFrame {
 //
 //        });
 
-        jTable.setRowSelectionInterval(jTable.getRowCount() - 1, jTable.getRowCount() - 1);
-        jTable.scrollRectToVisible(new Rectangle(jTable.getCellRect(jTable.getRowCount() - 1, 0, true)));
+        jTableAllgemein.setRowSelectionInterval(jTableAllgemein.getRowCount() - 1, jTableAllgemein.getRowCount() - 1);
+        jTableAllgemein.scrollRectToVisible(new Rectangle(jTableAllgemein.getCellRect(jTableAllgemein.getRowCount() - 1, 0, true)));
     }
 
     private void populateTableGenarate(List<LieferKund> lieferKunds) {
@@ -685,8 +698,8 @@ public class MainFrame extends javax.swing.JFrame {
             tableModel.addRow(rowDataMuster);
         });
         
-        jTable.setRowSelectionInterval(0,0);
-        jTable.scrollRectToVisible(new Rectangle(jTable.getCellRect(0, 0, true)));
+        jTableAllgemein.setRowSelectionInterval(0,0);
+        jTableAllgemein.scrollRectToVisible(new Rectangle(jTableAllgemein.getCellRect(0, 0, true)));
         indexPos = Integer.valueOf(jTextFieldKdPosNr.getText());
     }
 
@@ -912,7 +925,7 @@ public class MainFrame extends javax.swing.JFrame {
             @Override
             protected Void doInBackground() throws Exception {
                 try {
-                    liefPrufers = jlieferDaoInterface.getListPrufers(format.format(jXDatePickerBisDatum.getDate()));
+                    liefPrufers = jlieferDaoInterface.getListPrufers(format.format(jXDatePickerBisDatum.getDate()), kopfDaten);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(null,
                             "Error getting DATA  " + jlieferDaoInterface.getException() + "," + e.getMessage() + ", date or database error",
@@ -974,7 +987,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void populateJtablePreisListe() {
         tableModelPreislIste.setRowCount(0);
-        int selectedRow = jTable.getSelectedRow();
+        int selectedRow = jTableAllgemein.getSelectedRow();
         LieferKund lieferKund = liefkunds.get(selectedRow);
         List<VarPreis> varPreises;
         if (jTextFieldMengenBezeug.getText().equals("P")) {
@@ -1080,7 +1093,7 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     private void erfassungVerarbeiten() {
-        if (jlieferDaoInterface.erfassungVerarbeiten()) {
+        if (jlieferDaoInterface.erfassungVerarbeiten(kopfDaten)) {
             JOptionPane.showMessageDialog(null,
                     "Erledigt",
                     "Information",
@@ -1094,8 +1107,8 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     private void doppelErfassungPrüfen() {
-        List<LieferKundDoppel> kundDoppels = jlieferDaoInterface.getListDoppelErfassung();
-        JDialogDoppelErfassung dialogDoppelErfassung = new JDialogDoppelErfassung(this, true, kundDoppels, dbUrl);
+        List<LieferKundDoppel> kundDoppels = jlieferDaoInterface.getListDoppelErfassung(kopfDaten);
+        JDialogDoppelErfassung dialogDoppelErfassung = new JDialogDoppelErfassung(this, true, kundDoppels, dbUrl, kopfDaten);
         dialogDoppelErfassung.setVisible(true);
     }
 
@@ -1120,7 +1133,7 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     private boolean famakVorbereiten(){
-        return jlieferDaoInterface.famakVorbereiten();
+        return jlieferDaoInterface.famakVorbereiten(kopfDaten);
     }
     
     private void inFamakSchreiben(KopfDaten kopfDaten){
@@ -1173,7 +1186,7 @@ public class MainFrame extends javax.swing.JFrame {
         jTextFieldkdPreis = new javax.swing.JTextField();
         jTextFieldKommission = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable = new javax.swing.JTable();
+        jTableAllgemein = new javax.swing.JTable();
         jButtonAdd = new javax.swing.JButton();
         jPanel8 = new javax.swing.JPanel();
         jLabel19 = new javax.swing.JLabel();
@@ -1218,6 +1231,12 @@ public class MainFrame extends javax.swing.JFrame {
         jButtonManZu = new javax.swing.JButton();
         jButtonteilManZu = new javax.swing.JButton();
         jButtonAbOZu = new javax.swing.JButton();
+        jLabel31 = new javax.swing.JLabel();
+        jTextFieldKdNrCopie = new javax.swing.JTextField();
+        jLabel32 = new javax.swing.JLabel();
+        jTextFieldKdBestNrCopi = new javax.swing.JTextField();
+        jXDatePickerKdBestDatCopi = new org.jdesktop.swingx.JXDatePicker();
+        jLabel33 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -1441,7 +1460,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
-        jTable.setModel(new javax.swing.table.DefaultTableModel(
+        jTableAllgemein.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -1449,32 +1468,32 @@ public class MainFrame extends javax.swing.JFrame {
                 "KdPosNr", "KdArtNr", "KdFarbe", "KdGroesse", "Kdvariant", "KdMenge", "KdPreis", "Kommission", "Lager-Nr", "Art-Summe", "Status", "Ubergabe", "ID"
             }
         ));
-        jTable.addMouseListener(new java.awt.event.MouseAdapter() {
+        jTableAllgemein.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTableMouseClicked(evt);
+                jTableAllgemeinMouseClicked(evt);
             }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
-                jTableMouseReleased(evt);
+                jTableAllgemeinMouseReleased(evt);
             }
         });
-        jTable.addKeyListener(new java.awt.event.KeyAdapter() {
+        jTableAllgemein.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
-                jTableKeyPressed(evt);
+                jTableAllgemeinKeyPressed(evt);
             }
         });
-        jScrollPane1.setViewportView(jTable);
-        if (jTable.getColumnModel().getColumnCount() > 0) {
-            jTable.getColumnModel().getColumn(0).setPreferredWidth(5);
-            jTable.getColumnModel().getColumn(1).setResizable(false);
-            jTable.getColumnModel().getColumn(3).setPreferredWidth(10);
-            jTable.getColumnModel().getColumn(5).setPreferredWidth(20);
-            jTable.getColumnModel().getColumn(6).setPreferredWidth(20);
-            jTable.getColumnModel().getColumn(7).setPreferredWidth(10);
-            jTable.getColumnModel().getColumn(8).setPreferredWidth(5);
-            jTable.getColumnModel().getColumn(9).setPreferredWidth(5);
-            jTable.getColumnModel().getColumn(10).setPreferredWidth(2);
-            jTable.getColumnModel().getColumn(11).setPreferredWidth(2);
-            jTable.getColumnModel().getColumn(12).setPreferredWidth(2);
+        jScrollPane1.setViewportView(jTableAllgemein);
+        if (jTableAllgemein.getColumnModel().getColumnCount() > 0) {
+            jTableAllgemein.getColumnModel().getColumn(0).setPreferredWidth(5);
+            jTableAllgemein.getColumnModel().getColumn(1).setResizable(false);
+            jTableAllgemein.getColumnModel().getColumn(3).setPreferredWidth(10);
+            jTableAllgemein.getColumnModel().getColumn(5).setPreferredWidth(20);
+            jTableAllgemein.getColumnModel().getColumn(6).setPreferredWidth(20);
+            jTableAllgemein.getColumnModel().getColumn(7).setPreferredWidth(10);
+            jTableAllgemein.getColumnModel().getColumn(8).setPreferredWidth(5);
+            jTableAllgemein.getColumnModel().getColumn(9).setPreferredWidth(5);
+            jTableAllgemein.getColumnModel().getColumn(10).setPreferredWidth(2);
+            jTableAllgemein.getColumnModel().getColumn(11).setPreferredWidth(2);
+            jTableAllgemein.getColumnModel().getColumn(12).setPreferredWidth(2);
         }
 
         jButtonAdd.setText("---v");
@@ -2027,16 +2046,38 @@ public class MainFrame extends javax.swing.JFrame {
                 .addContainerGap(32, Short.MAX_VALUE))
         );
 
+        jLabel31.setText("KdNr");
+
+        jLabel32.setText("KdBestNr");
+
+        jLabel33.setText("BestDatum");
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(246, 246, 246)
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(38, 38, 38)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(307, 307, 307)
+                        .addComponent(jLabel31)
+                        .addGap(143, 143, 143)
+                        .addComponent(jLabel32)
+                        .addGap(159, 159, 159)
+                        .addComponent(jLabel33))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(246, 246, 246)
+                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(266, 266, 266)
+                        .addComponent(jTextFieldKdNrCopie, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(55, 55, 55)
+                        .addComponent(jTextFieldKdBestNrCopi, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(58, 58, 58)
+                        .addComponent(jXDatePickerKdBestDatCopi, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(135, 135, 135)
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(1201, Short.MAX_VALUE))
+                .addContainerGap(1100, Short.MAX_VALUE))
             .addComponent(jScrollPane2)
         );
         jPanel4Layout.setVerticalGroup(
@@ -2044,14 +2085,27 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGap(65, 65, 65)
-                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(24, 24, 24))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGap(75, 75, 75)
-                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(473, Short.MAX_VALUE))
+                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel31)
+                                .addComponent(jLabel32))
+                            .addComponent(jLabel33, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTextFieldKdNrCopie, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jTextFieldKdBestNrCopi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jXDatePickerKdBestDatCopi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(431, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("GTIN überprüfen", jPanel4);
@@ -2159,12 +2213,12 @@ public class MainFrame extends javax.swing.JFrame {
         configureTable(parameterKund);
     }//GEN-LAST:event_jButtonAddActionPerformed
 
-    private void jTableKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTableKeyPressed
+    private void jTableAllgemeinKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTableAllgemeinKeyPressed
         // TODO add your handling code here:
         if (evt.getKeyCode() == KeyEvent.VK_DELETE) {
 
-            if (jTable.getRowCount() != 0) {
-                int[] rows = jTable.getSelectedRows();
+            if (jTableAllgemein.getRowCount() != 0) {
+                int[] rows = jTableAllgemein.getSelectedRows();
                 String phrase = "";
                 List<String> listMeldungRemove = new ArrayList<>();
                 if (rows.length == 1) {
@@ -2187,7 +2241,7 @@ public class MainFrame extends javax.swing.JFrame {
                     
                     JOptionPane.showMessageDialog(null,
                         new JScrollPane(new JList(listMeldungRemove.toArray())), "Hinweise", 1);
-                    if (jTable.getRowCount() == 0) {
+                    if (jTableAllgemein.getRowCount() == 0) {
                         //musterArtikels = new ArrayList<>();
                         //selectedMusterArtikel = new MusterArtikel();
                         tableModel.setRowCount(0);
@@ -2201,7 +2255,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
 
         }
-    }//GEN-LAST:event_jTableKeyPressed
+    }//GEN-LAST:event_jTableAllgemeinKeyPressed
 
     private void jTextFieldKommissionKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldKommissionKeyPressed
         // TODO add your handling code here:
@@ -2419,6 +2473,7 @@ public class MainFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             jXDatePickerKdBestDat.requestFocus();
+            jTextFieldKdBestNrCopi.setText(jTextFieldKdBestNr.getText());
         }
     }//GEN-LAST:event_jTextFieldKdBestNrKeyPressed
 
@@ -2427,6 +2482,7 @@ public class MainFrame extends javax.swing.JFrame {
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             initiliseFelder();
             jTextFieldKdBestNr.setText("");
+            jTextFieldKdBestNrCopi.setText(jTextFieldKdBestNr.getText());
             liefkunds.clear();
             jXDatePickerWunch.setDate(null);
             jXDatePickerKdBestDat.setDate(null);
@@ -2441,6 +2497,7 @@ public class MainFrame extends javax.swing.JFrame {
             indexPos = Integer.valueOf(jTextFieldKdPosNr.getText());
             kopfDaten = new KopfDaten();
             statusIn = "";
+            jTextFieldKdNrCopie.setText(jTextFieldKdNr.getText());
         }
     }//GEN-LAST:event_jTextFieldKdNrKeyPressed
 
@@ -2464,12 +2521,12 @@ public class MainFrame extends javax.swing.JFrame {
         erfassungAbschliesen();
     }//GEN-LAST:event_jButtonAbOZuActionPerformed
 
-    private void jTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableMouseClicked
+    private void jTableAllgemeinMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableAllgemeinMouseClicked
         // TODO add your handling code here:
 
         populateJtablePreisListe();
 
-    }//GEN-LAST:event_jTableMouseClicked
+    }//GEN-LAST:event_jTableAllgemeinMouseClicked
 
     private void jButtonInFamakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonInFamakActionPerformed
         // TODO add your handling code here:
@@ -2525,6 +2582,8 @@ public class MainFrame extends javax.swing.JFrame {
                 jXDatePickerKdBestDat.setDate(bestell);
                 jTextFieldKdNr.setText(kopfDaten.getKdNum());
                 jTextFieldKdBestNr.setText(kopfDaten.getKdBestnum());
+                
+                jTextFieldKdBestNrCopi.setText(jTextFieldKdBestNr.getText());
                 parameterKund = jlieferDaoInterface.getKundenParameter(jTextFieldKdNr.getText());
                 configureTable(parameterKund);
                 jTextFieldKposAktiv.setText(parameterKund.getKd_Pos_activ());
@@ -2546,7 +2605,17 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void jButtonDoppelErfasungActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDoppelErfasungActionPerformed
         // TODO add your handling code here:
-        doppelErfassungPrüfen();
+       
+        Optional<LieferKund> lieferKundFirst
+                = liefkunds.stream().filter(obj -> obj.getUbergabe().equals("X")).findFirst();
+        if (lieferKundFirst != null) {
+            int reply = JOptionPane.showConfirmDialog(null, "Die Änderungen wurden noch nicht gespeichert. Wollen Sie fortfahren?", "Actung", JOptionPane.YES_NO_OPTION);
+            if (reply == JOptionPane.YES_OPTION) {
+                doppelErfassungPrüfen();
+            }
+
+        }
+
     }//GEN-LAST:event_jButtonDoppelErfasungActionPerformed
 
     private void jButtonSpeichernUnterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSpeichernUnterActionPerformed
@@ -2587,16 +2656,16 @@ public class MainFrame extends javax.swing.JFrame {
         erfassungVerarbeiten();
     }//GEN-LAST:event_jButton5ActionPerformed
 
-    private void jTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableMouseReleased
+    private void jTableAllgemeinMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableAllgemeinMouseReleased
         // TODO add your handling code here:
-        int rowindex = jTable.getSelectedRow();
+        int rowindex = jTableAllgemein.getSelectedRow();
         if (rowindex < 0) {
             return;
         }
         if (evt.isPopupTrigger() && evt.getComponent() instanceof JTable) {
             popupMenueingaben.show(evt.getComponent(), evt.getX(), evt.getY());
         }
-    }//GEN-LAST:event_jTableMouseReleased
+    }//GEN-LAST:event_jTableAllgemeinMouseReleased
 
     /**
      * @param args the command line arguments
@@ -2669,6 +2738,9 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel30;
+    private javax.swing.JLabel jLabel31;
+    private javax.swing.JLabel jLabel32;
+    private javax.swing.JLabel jLabel33;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -2692,15 +2764,17 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable;
+    private javax.swing.JTable jTableAllgemein;
     private javax.swing.JTable jTablePreisListe;
     private javax.swing.JTable jTablePrufer;
     private javax.swing.JTextField jTextFieldErfasser;
     private javax.swing.JTextField jTextFieldKdArtNr;
     private javax.swing.JTextField jTextFieldKdBestNr;
+    private javax.swing.JTextField jTextFieldKdBestNrCopi;
     private javax.swing.JTextField jTextFieldKdFarbe;
     private javax.swing.JTextField jTextFieldKdGroesse;
     private javax.swing.JTextField jTextFieldKdNr;
+    private javax.swing.JTextField jTextFieldKdNrCopie;
     private javax.swing.JTextField jTextFieldKdPosNr;
     private javax.swing.JTextField jTextFieldKdVariant;
     private javax.swing.JTextField jTextFieldKommission;
@@ -2711,6 +2785,7 @@ public class MainFrame extends javax.swing.JFrame {
     private org.jdesktop.swingx.JXDatePicker jXDatePickerBisDatum;
     private org.jdesktop.swingx.JXDatePicker jXDatePickerErfassung;
     private org.jdesktop.swingx.JXDatePicker jXDatePickerKdBestDat;
+    private org.jdesktop.swingx.JXDatePicker jXDatePickerKdBestDatCopi;
     private org.jdesktop.swingx.JXDatePicker jXDatePickerWunch;
     // End of variables declaration//GEN-END:variables
 }
