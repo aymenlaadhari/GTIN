@@ -2483,9 +2483,11 @@ public class MainFrame extends javax.swing.JFrame {
             initiliseFelder();
             jTextFieldKdBestNr.setText("");
             jTextFieldKdBestNrCopi.setText(jTextFieldKdBestNr.getText());
+            jTextFieldKdNrCopie.setText(jTextFieldKdNr.getText());
             liefkunds.clear();
             jXDatePickerWunch.setDate(null);
             jXDatePickerKdBestDat.setDate(null);
+            jXDatePickerKdBestDatCopi.setDate(null);
             tableModel.setRowCount(0);
             liefkunds.clear();
             parameterKund = jlieferDaoInterface.getKundenParameter(jTextFieldKdNr.getText());
@@ -2580,6 +2582,7 @@ public class MainFrame extends javax.swing.JFrame {
                 jXDatePickerWunch.setDate(dateWunsch);
                 jXDatePickerErfassung.setDate(dateErfass);
                 jXDatePickerKdBestDat.setDate(bestell);
+                jXDatePickerKdBestDatCopi.setDate(bestell);
                 jTextFieldKdNr.setText(kopfDaten.getKdNum());
                 jTextFieldKdBestNr.setText(kopfDaten.getKdBestnum());
                 
